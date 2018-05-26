@@ -1,0 +1,30 @@
+sudo: required
+language: node_js
+node_js:
+  - "8.11.2"
+
+services:
+  - mongodb
+
+before_install:
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH="$HOME/.meteor:$PATH"
+
+before_script:
+  - meteor npm install
+
+script:
+  - meteor build --server-only ../new_package && mv ../new_package/*.tar.gz package.tar.gz
+
+cache:
+  directories:
+    - node_modules
+
+stages:
+  name: deploy
+  # only deploy the application if merging to master
+  if: branch = master
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
