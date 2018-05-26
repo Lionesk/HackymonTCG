@@ -1,0 +1,34 @@
+sudo: required
+language: node_js
+node_js:
+- 8.11.2
+
+branches:
+  only:
+  - master
+
+services:
+  - mongodb
+
+before_install:
+  - openssl aes-256-cbc -K $encrypted_04f01bd5983c_key -iv $encrypted_04f01bd5983c_iv -in travis_key.enc -out travis_key -d
+  - chmod 0400 travis_key
+  - mv travis_key ~/.ssh/id_rsa
+  - curl https://install.meteor.com | /bin/sh
+  - export PATH="$HOME/.meteor:$PATH"
+
+before_script:
+  - meteor npm install
+
+script:
+  - meteor build --server-only ../new_package && mv ../new_package/*.tar.gz package.tar.gz
+cache:
+  directories:
+  - node_modules
+
+deploy:
+  provider: script
+  script: bash scripts/deploy.sh
+  skip_cleanup: true
+  on:
+    branch: master
