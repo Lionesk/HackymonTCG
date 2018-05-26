@@ -22,9 +22,14 @@ before_script:
 
 script:
   - meteor build --server-only ../new_package && mv ../new_package/*.tar.gz package.tar.gz
+
 cache:
   directories:
-  - node_modules
+    - node_modules
+
+addons:
+  ssh_known_hosts:
+    - dumblev4.encs.concordia.ca
 
 deploy:
   provider: script
