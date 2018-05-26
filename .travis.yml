@@ -20,11 +20,8 @@ cache:
   directories:
     - node_modules
 
-stages:
-  name: deploy
-  # only deploy the application if merging to master
-  if: branch = master
-
 deploy:
   provider: script
   script: bash scripts/deploy.sh
+  on:
+    branch: master
