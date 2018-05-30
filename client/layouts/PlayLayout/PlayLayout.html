@@ -1,0 +1,10 @@
+<Template name="PlayLayout">
+
+    <main>
+        {{#unless IsLoggedIn}}
+            {{RedirectToLandingLayout}}
+         {{/unless}}
+
+         <span>welcome to the play screen</span>
+    </main>
+</Template>
