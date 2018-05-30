@@ -1,11 +1,12 @@
 #!/bin bash
-scp package.tar.gz dev@dumblev4.encs.concordia.ca:
+scp package.tar.gz travis@dumblev4.encs.concordia.ca:
 
-ssh dev@dumblev4.encs.concordia.ca <<EOF
+ssh travis@dumblev4.encs.concordia.ca <<EOF
     mkdir -p /var/www/HackymonTCG/tmp
     cd /var/www/HackymonTCG/tmp
     tar xzf ~/package.tar.gz
 
+    cp /var/www/HackymonTCG/bundle/Passengerfile.json /var/www/HackymonTCG/tmp/bundle/
     cd /var/www/HackymonTCG/tmp/bundle/programs/server
     npm install --production
     npm prune --production
