@@ -6,8 +6,8 @@
     "alwaysStrict": true,
     "sourceMap": true,
     "jsx": "react",
-    "allowJs": true,
-    "noImplicitAny": false,
+    "allowJs": false,
+    "noImplicitAny": true,
     "strictNullChecks": false,
     "typeRoots": [
       "node_modules/@types"
