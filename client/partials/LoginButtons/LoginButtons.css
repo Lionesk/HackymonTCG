@@ -1,0 +1,23 @@
+.login-button{
+    background-color:black!important;
+    border-radius: 0px!important;
+}
+
+.accounts-dialog{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif!important;
+}
+.accounts-dialog a{
+    text-decoration: none!important;
+    color:black!important;
+}
+
+.login-link-text{
+    text-decoration: none!important;
+    color:black!important;
+    font-size: 1.5em!important;
+    float:right!important;
+}
+
+#login-buttons{
+    margin: 1.5rem;
+}
