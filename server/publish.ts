@@ -1,6 +1,3 @@
 import { Cards } from "../collections";
 
-Meteor.publish('cards',
-    function(){
-        return Cards.find();
-    });
+Meteor.publish('cards', () => Cards.find());
