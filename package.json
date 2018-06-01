@@ -8,6 +8,7 @@
     "@babel/runtime": "^7.0.0-beta.42",
     "@types/meteor": "^1.4.15",
     "@types/node": "^10.3.0",
+    "bcrypt": "^2.0.1",
     "meteor-node-stubs": "^0.3.2",
     "simpl-schema": "^1.5.0"
   }
