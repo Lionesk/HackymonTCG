@@ -1,4 +1,5 @@
 import { Mongo } from "meteor/mongo";
+import { Ability } from "./abilities";
 
 export enum CardType {
     POKEMON = "pokemon",
@@ -15,20 +16,40 @@ export enum PokemonCat {
 
 export enum TrainerCat {
     STADIUM = "stadium",
+    SUPPORTER = "supporter",
+    ITEM = "item",
 }
 
-export enum EnergyCat {}
+export enum EnergyCat {
+    COLORLESS = "colorless",
+    WATER = "water",
+    LIGHTNING = "lightning",
+}
 
-export interface CardSchema {
+export type CardCategory = PokemonCat | EnergyCat | TrainerCat;
+
+export interface Card {
     type: CardType;
     category: PokemonCat | TrainerCat | EnergyCat;
+    name: string;
+    abilities?: Ability[];
 }
 
-export interface PokemonCard extends CardSchema {
+export interface PokemonCard extends Card {
     type: CardType.POKEMON,
     category: PokemonCat,
 }
 
-let Cards = new Mongo.Collection<CardSchema>('cards');
+export interface TrainerCard extends Card {
+    type: CardType.TRAINER,
+    category: TrainerCat,
+}
 
-export {Cards};
+export interface EnergyCard extends Card {
+    type: CardType.ENERGY,
+    category: EnergyCat,
+}
+
+const Cards = new Mongo.Collection<Card>('cards');
+
+export { Cards };

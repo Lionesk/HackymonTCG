@@ -1,8 +1,8 @@
 import { Meteor } from "meteor/meteor";
-import { Cards, CardType, PokemonCat } from "../collections/Cards";
+import { Cards, CardType, PokemonCat } from "../collections";
 
 Meteor.methods({
-    printToServerConsole: function () {
+    printToServerConsole: () => {
         if(Meteor.isServer){
             // Cards.insert({
             //     type: CardType.POKEMON,
