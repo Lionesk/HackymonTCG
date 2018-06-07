@@ -1,3 +1,3 @@
-import { Cards } from "../collections";
+// import { Cards } from "../collections";
 
-Meteor.publish('cards', () => Cards.find());
+// Meteor.publish('cards', () => Cards.find());

@@ -9,7 +9,7 @@ export {
   EnergyCat,
   TrainerCat,
   PokemonCat,
-} from "./cards";
+} from "./Cards";
 
 export {
   Abilities,

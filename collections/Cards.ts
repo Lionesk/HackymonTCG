@@ -50,6 +50,7 @@ export interface EnergyCard extends Card {
     category: EnergyCat,
 }
 
-const Cards = new Mongo.Collection<Card>('cards');
-
-export { Cards };
+let Cards: Mongo.Collection<Card>;
+if(!Cards) {
+    Cards = new Mongo.Collection<Card>('cards');
+}

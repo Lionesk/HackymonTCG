@@ -30,6 +30,9 @@ export interface Ability {
   amount?: number;
 }
 
-const Abilities = new Mongo.Collection<Ability>("abilities");
+let Abilities: Mongo.Collection<Ability>;
+if(!Abilities) {
+  Abilities = new Mongo.Collection<Ability>("abilities");
+}
 
 export { Abilities };
