@@ -1,5 +1,5 @@
 import { Mongo } from "meteor/mongo";
-import { CardType, CardCategory } from "./cards";
+import { CardType, CardCategory } from "./Cards";
 
 export enum AbilityType {} // TODO
 

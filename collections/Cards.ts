@@ -54,3 +54,5 @@ let Cards: Mongo.Collection<Card>;
 if(!Cards) {
     Cards = new Mongo.Collection<Card>('cards');
 }
+
+export { Cards };
