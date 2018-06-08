@@ -16,7 +16,7 @@ before_install:
 before_script:
 - meteor npm install
 script:
-- meteor test --once --driver-package meteortesting:mocha
+- meteor npm test
 - meteor build --server-only ../new_package && mv ../new_package/*.tar.gz package.tar.gz
 cache:
   directories:
