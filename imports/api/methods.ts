@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Cards, CardType, PokemonCat } from "../collections";
+import { Cards, CardType, PokemonCat } from "./collections";
 
 Meteor.methods({
     printToServerConsole: () => {

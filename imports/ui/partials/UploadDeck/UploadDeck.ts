@@ -1,5 +1,6 @@
 import { Template } from 'meteor/templating'
-import { Cards, CardType, TrainerCat } from "../../../collections";
+import './UploadDeck.html'
+import { Cards, CardType, TrainerCat } from "../../../api/collections";
 
 Template.UploadDeck.events({
     'click .printToServer':function(){
@@ -8,8 +9,10 @@ Template.UploadDeck.events({
             category: TrainerCat.STADIUM,
             name: "Cool City Stadium",
         });
-        console.log(Cards.find().fetch());
+        
         Meteor.call('printToServerConsole'); //defined in lib/utilities.ts
+        console.log(Cards.find().count());
+    
     },
 });
 

@@ -1,6 +1,8 @@
 declare let FlowRouter: any;
 declare let BlazeLayout: any;
-
+import '../../ui/layouts/MainLayout/MainLayout.ts'
+import '../../ui/layouts/LandingLayout/LandingLayout.ts'
+import '../../ui/layouts/PlayLayout/PlayLayout.ts'
 
 FlowRouter.route('/',{
     name:'landing',
