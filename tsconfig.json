@@ -7,7 +7,7 @@
     "sourceMap": true,
     "jsx": "react",
     "allowJs": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": false,
     "lib": ["dom", "es7", "es2015", "es2017"],
     "typeRoots": [
