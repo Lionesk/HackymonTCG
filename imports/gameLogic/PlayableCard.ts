@@ -1,4 +1,4 @@
-import {Card, CardType, PokemonCard, EnergyCard, EnergyCat} from '../api/collections';
+import {Card, CardType, PokemonCard, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
 
 
 export class PlayableCard{
@@ -29,10 +29,22 @@ export class PlayableCard{
         return this.card.type == CardType.POKEMON;
     }
 
-    addEnergy(energyCard:EnergyCard){ 
+    isEnergy(){
+        return this.card.type == CardType.ENERGY;
+    }
+
+    isBasic(){
+        return this.isPokemon() & this.card.category == PokemonCat.BASIC;
+    }
+
+    isEvolution(){
+        return this.isPokemon() & this.card.category == PokemonCat.STAGE_ONE;
+    }
+
+    addEnergy(energyCard:PlayableCard){
 
         //TODO: check type is acceptable by pokemon
-        this.currentEnergy.concat(energyCard);
+        this.currentEnergy.concat(<EnergyCard>energyCard.card);
     }
 
     countEnergyOfType(energyCat:EnergyCat){
