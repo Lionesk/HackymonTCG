@@ -57,8 +57,8 @@ export class GameManager{
      * @returns {GameState}
      */
     evolve(toEvolve:PlayableCard, evolution:PlayableCard){
-        if(toEvolve.isPokemon() & evolution.isPokemon()){
-            if(toEvolve.isBasic() & evolution.isEvolution()){
+        if(toEvolve.isPokemon() && evolution.isPokemon()){
+            if(toEvolve.isBasic() && evolution.isEvolution()){
                 //TODO: Additional check to validate that the two cards are compatible for evolution
                 toEvolve.card = evolution.card;
             }
@@ -71,8 +71,8 @@ export class GameManager{
      * @returns {GameState}
      */
     addEnergy(player:Player, energy:PlayableCard, pokemon:PlayableCard){
-        if(pokemon.isPokemon() & energy.isEnergy()){
-            if(!this.placedEnergy & (player.active == pokemon | player.bench.includes(pokemon))){
+        if(pokemon.isPokemon() && energy.isEnergy()){
+            if(!this.placedEnergy && (player.active == pokemon || player.bench.includes(pokemon))){
                 //Pokemon must either be active or on the bench
                 pokemon.addEnergy(energy);
                 this.removeFromHand(player, energy);
@@ -87,7 +87,7 @@ export class GameManager{
      * @returns {GameState}
      */
     placeActive(player:Player, card:PlayableCard){
-        if(!player.active & card.isPokemon()){
+        if(!player.active && card.isPokemon()){
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
             this.removeFromHand(player, card);
@@ -100,7 +100,7 @@ export class GameManager{
      * @returns {GameState}
      */
     placeBench(player:Player, card:PlayableCard){
-        if(player.bench.length < 5 & card.isPokemon()){
+        if(player.bench.length < 5 && card.isPokemon()){
             //Only possible if player has less than 5 Pokemon on the bench
             player.bench.push(card);
             this.removeFromHand(player, card);

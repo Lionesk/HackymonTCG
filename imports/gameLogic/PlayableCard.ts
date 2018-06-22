@@ -34,11 +34,11 @@ export class PlayableCard{
     }
 
     isBasic(){
-        return this.isPokemon() & this.card.category == PokemonCat.BASIC;
+        return this.isPokemon() && this.card.category == PokemonCat.BASIC;
     }
 
     isEvolution(){
-        return this.isPokemon() & this.card.category == PokemonCat.STAGE_ONE;
+        return this.isPokemon() && this.card.category == PokemonCat.STAGE_ONE;
     }
 
     addEnergy(energyCard:PlayableCard){
