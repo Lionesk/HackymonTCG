@@ -9,9 +9,9 @@ enum UploadTypes {
 }
 
 const UploadMap: { [key in UploadTypes]: (string) => void } = {
-    cards: uploadCards,
-    deck: uploadDeck,
-    abilities: uploadAbilities,
+    cards: data => Meteor.call("uploadCards", { cardString: data }),
+    deck: data => Meteor.call("uploadDeck", { cardString: data }),
+    abilities: data => Meteor.call("uploadAbilities", { cardString: data }),
 }
 
 Template.UploadDeck.events({
@@ -50,21 +50,10 @@ async function loadFile(file: File): Promise<string> {
     let data: string;
     return new Promise<string>((resolve, reject) => {
         f.onloadend = (ev: any) => {
-            resolve(ev.originalTarget.result);
+            console.log(ev);
+            resolve(ev.currentTarget.result);
             return ev;
         };
         f.readAsText(file);
     });
-}
-
-function uploadCards(data: string): void {
-    Meteor.call("uploadCards", { cardString: data });
-}
-
-function uploadAbilities(data: string) {
-    Meteor.call("uploadAbilities", { cardString: data });
-}
-
-function uploadDeck(data: string): void {
-    Meteor.call("uploadDeck", { cardString: data });
 }
