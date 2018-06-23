@@ -4,7 +4,7 @@ export class GameManager{
     gameState:GameState;
 
     constructor(){
-        this.gameState = new GameState();
+        this.gameState = new GameState(Meteor.userId());
         this.gameState.humanFirst = this.coinFlip();
     }
 
