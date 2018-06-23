@@ -17,8 +17,8 @@ Meteor.methods({
     testModifyGameState:function(){
         if(Meteor.isServer){
             //simulates a change done by the gamemanager
-            let gs = new GameState(Meteor.userId());
-            gs.round=19;
+            let gs = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+            gs.round=++gs.round;
             GameStates.update({userid:Meteor.userId()},gs,{upsert:true});
         }
     }

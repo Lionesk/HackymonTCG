@@ -15,7 +15,10 @@ Template.PlayLayout.helpers({
     },
     getGameState:function(){
       // console.log("game berfore return "+ GameStates.find({"userid":Meteor.userId()}).fetch()[0])
+      //let gamestates = GameStates.find({"userid":Meteor.userId()}).fetch();
+      //console.log("game state size "+ gamestates.length ); 
+      
+      //todo:check if game DOES NOT exists
       return GameStates.find({"userid":Meteor.userId()}).fetch()[0];
     },
   })
-
