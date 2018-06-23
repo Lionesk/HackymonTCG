@@ -19,3 +19,7 @@ export {
   Status,
   Target,
 } from "./abilities";
+
+export{
+  GameStates
+} from './GamesStateCollection'
