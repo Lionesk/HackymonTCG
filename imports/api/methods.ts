@@ -14,6 +14,14 @@ Meteor.methods({
             GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
         }
     },
+    createNewStateIfNotExisting:function(){
+        if(Meteor.isServer){
+            let gs = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+            if(!gs){
+                GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
+            }
+        }
+    },
     testModifyGameState:function(){
         if(Meteor.isServer){
             //simulates a change done by the gamemanager
