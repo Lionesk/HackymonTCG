@@ -1,0 +1,11 @@
+<Template name="Hand" class="container">
+    <div class="row hand">
+        {{#each playableCard in hand}}
+            {{#if isCardDefined (playableCard)}}
+                <div class="col-sm-2 hand-card" >
+                    {{> Card playableCard=playableCard hidden = hidden}}
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+</Template>

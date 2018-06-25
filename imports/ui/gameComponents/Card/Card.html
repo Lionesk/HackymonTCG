@@ -1,0 +1,33 @@
+<Template name="Card" class="container">
+    
+        {{#if hidden}}
+        <div class="back-card">
+            <div class="row">
+                    <div class="col-sm-12">
+                        <img src="pokemon-card-back.png" height="200px" width="170px"  alt="pokemon-card-back"/>
+                    </div>
+            </div>
+        </div>
+
+        {{else}}
+        <div  class="card"> 
+            <!-- pokemoncard -->
+            {{#if true}}
+            <div class="row">
+                <div class="col-sm-8">
+                    <span>{{playableCard.card.name}}</span>
+                </div>
+                <div class="col-sm-4">
+                    HP
+                    <!-- TODO <span>{{playableCard.card.health}}</span> -->
+                </div>      
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <span>{{playableCard.card.name}}</span>
+                </div>
+            </div>
+            {{/if}}
+        </div>
+        {{/if}}
+</Template>

@@ -1,0 +1,21 @@
+<Template name="AISide" class="container">
+    <span>ai</span> 
+    
+    <div class="row">
+        <div class="col-sm-12">
+            {{>Hand hand = ai.hand hidden=true}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            {{>Bench bench = ai.bench}}
+        </div>
+    </div>
+
+    <div class="row" >
+        <div class="col-sm-12">
+            {{>Active active = ai.active}}
+        </div>
+    </div>
+</Template>

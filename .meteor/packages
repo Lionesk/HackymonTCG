@@ -21,7 +21,8 @@ barbatus:typescript
 kadira:flow-router
 kadira:blaze-layout
 accounts-ui@1.3.0
-accounts-password@1.5.1
+accounts-password
 accounts-base@1.4.2
 underscore
 meteortesting:mocha
+twbs:bootstrap

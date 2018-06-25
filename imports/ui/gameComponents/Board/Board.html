@@ -1,6 +1,26 @@
-<Template name="Board">
-    <br />
-    <span>round: {{gamestate.round}}</span>
-    <br />    
-    <span class="changeStateRoundNumberTest">click to increment mod round number</span>
+<Template name="Board" class="container">
+
+    <div class="row" >
+        <div class="col-sm-12">
+            <div class="changeTestGameState">change state</div>
+        </div>
+    </div>
+
+    <div class="board">
+        <div class="row" >
+            <div class="col-sm-12">
+                {{> AISide ai=gamestate.ai}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                {{> PlayerSide player=gamestate.player}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                {{> Controls}}
+            </div>
+        </div>
+    </div>
 </Template>
