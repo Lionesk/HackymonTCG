@@ -5,6 +5,7 @@ export enum AbilityType {
   DECK = "deck",
   DAMAGE = "dam",
   REDAMAGE = "redamage",
+  SWAP = "swap",
   CONDITIONAL = "cond",
   HEAL = "heal",
   APPLY_STAT = "applystat",
@@ -15,7 +16,7 @@ export enum AbilityType {
   DRAW = "draw",
   SHUFFLE = "shuffle",
   ADD = "add",
-} // TODO
+}
 
 export enum Target {
   YOUR_ACTIVE = "your-active",
@@ -24,9 +25,14 @@ export enum Target {
   YOUR = "your",
   YOUR_BENCH = "your-bench",
   OPPONENT_BENCH = "opponent-bench",
+  YOUR_POKEMON = "your-pokemon",
   THEM = "them",
   YOU = "you",
-} // TODO
+  DECK = "deck",
+  DISCARD = "discard",
+  LAST = "last",
+  TOP = "top",
+}
 
 export enum Choice {
   YOURS = "yours",
@@ -50,22 +56,34 @@ export enum AbilityFunction {
   COUNT = "count",
 }
 
+export enum Condition {
+
+}
+
 export interface AbilityAction {
   type: AbilityType;
   source?: Target;
-  destination?: Target;
+  target?: Target;
   choice?: Choice;
+  status?: Status;
   conditionalAbility?: {
     true?: AbilityAction;
     false?: AbilityAction;
+    condition?: Condition;
+    conditionAbility?: AbilityAction;
   };
   filter?: {
     category?: CardCategory;
     type?: CardType;
+    top?: boolean;
+    count?: number;
+    evolution?: boolean;
+    evolutionTarget?: Target;
   }
   amount?: number;
   multiplierTarget?: Target;
   multiplierFunction?: AbilityFunction;
+  specification?: string; // any additional data required for the action
 }
 
 let Abilities: Mongo.Collection<Ability>;
