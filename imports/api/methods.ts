@@ -3,9 +3,10 @@ import { Cards, CardType, PokemonCat, EnergyCat } from "./collections";
 import { GameStates, Card } from "./collections";
 import { GameState } from "../gameLogic/GameState";
 import { PlayableCard } from "../gameLogic/PlayableCard";
+import { parseAbilityString, parseCardString } from "../util/fileParsers";
 
 Meteor.methods({
-    printToServerConsole: function () {
+    printToServerConsole() {
         if(Meteor.isServer){
             console.log("Printing To Server Console");
         }
@@ -93,5 +94,20 @@ Meteor.methods({
 
             GameStates.update({userid:Meteor.userId()},gs,{upsert:true});
         }
-    }
+    },
+    uploadCards(data: { fileString: string }) {
+        if (Meteor.isServer) {
+            parseCardString(data.fileString);
+        }
+    },
+    uploadAbilities(data: { fileString: string }) {
+        if (Meteor.isServer) {
+            parseAbilityString(data.fileString)
+        }
+    },
+    uploadDeck(data: { fileString: string }) {
+        if (Meteor.isServer) {
+            console.log(data.fileString);
+        }
+    },
 });

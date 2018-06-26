@@ -5,7 +5,6 @@
     "moduleResolution": "node",
     "alwaysStrict": true,
     "sourceMap": true,
-    "jsx": "react",
     "allowJs": false,
     "noImplicitAny": false,
     "strictNullChecks": false,
@@ -19,6 +18,7 @@
   },
   "include": [
     "client/**/*",
+    "imports/**/*",
     "server/**/*"
   ],
   "exclude": [
