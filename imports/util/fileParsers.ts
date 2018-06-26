@@ -27,28 +27,32 @@ import {
 export function parseCardString(data: string): void {
   Cards.remove({}); // drop all cards
   
-  data.replace("#\n", "");
+  // data.replace("#\n", "");
   let ctr = 1;
   data.split("\n").forEach((cardStr: string) => {
-    const tokens: string[] = cardStr.split(':');
-    const name: string = tokens[0];
-    const type: CardType = tokens[1] as CardType;
-    let card: Card;
-    switch (type) {
-      case CardType.POKEMON:
-        card = parsePokemon(ctr++, name, type, tokens);
-        break;
-      case CardType.TRAINER:
-        card = parseTrainer(ctr++, name, type, tokens);
-        break;
-      case CardType.ENERGY:
-        card = parseEnergy(ctr++, name, type, tokens);
-        break;
-    }
-
-    console.log(card);
-    if (card) {
-      Cards.insert(card);
+    if (cardStr === "#") {
+      ++ctr;
+    } else {
+      const tokens: string[] = cardStr.split(':');
+      const name: string = tokens[0];
+      const type: CardType = tokens[1] as CardType;
+      let card: Card;
+      switch (type) {
+        case CardType.POKEMON:
+          card = parsePokemon(ctr++, name, type, tokens);
+          break;
+        case CardType.TRAINER:
+          card = parseTrainer(ctr++, name, type, tokens);
+          break;
+        case CardType.ENERGY:
+          card = parseEnergy(ctr++, name, type, tokens);
+          break;
+      }
+  
+      console.log(card);
+      if (card) {
+        Cards.insert(card);
+      }
     }
   });
 }
