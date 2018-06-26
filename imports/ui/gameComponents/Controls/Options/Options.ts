@@ -10,5 +10,14 @@ Template.Options.helpers({
         }else{
             return this.moveState.selectedEnergyCard != null;
         }
+    },
+    isEvolverSelected:function(){
+        if(this.moveState==undefined){
+            return false
+        }else if(this.moveState.selectedPokemonCard==undefined){
+            return false 
+        }else{
+            return this.moveState.selectedPokemonCard.card.evolution;
+        }
     }
 });

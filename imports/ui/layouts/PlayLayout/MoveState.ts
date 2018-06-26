@@ -39,8 +39,14 @@ export class MoveStateController{
             if(ms.selectedPokemonCard.card.name === pCard.card.name){
                 ms.selectedPokemonCard=null;
             }
-            else if(false/*ms.selectedPokemonCard.card.evolution*/){
-                //check if evolvable: then call meteor.methods evolve
+            else if(ms.selectedPokemonCard.card.evolution=pCard.card.name){//evolve case 1
+                Meteor.call("evolvePokemon",ms.selectedPokemonCard,pCard);
+                ms.selectedPokemonCard=null;                
+                return;
+            }
+            else if(pCard.card.evolution=ms.selectedPokemonCard.card.name){ //evolve case2
+                Meteor.call("evolvePokemon",pCard,ms.selectedPokemonCard);
+                ms.selectedPokemonCard=null;
                 return;
             }
             else{

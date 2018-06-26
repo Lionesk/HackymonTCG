@@ -29,6 +29,16 @@ Meteor.methods({
             console.log("printing from addEnergy: "+pokemonPlayableCard.card.name+" , "+energyPlayableCard.card.name);
         }
     },
+    evolvePokemon:function(pokemonPlayableCardEvolver:PlayableCard,pokemonPlayableCard:PlayableCard){
+        if(Meteor.isServer){
+            console.log("printing from evolving "+pokemonPlayableCard.card.name+" to: "+pokemonPlayableCardEvolver.card.name);
+        }
+    },
+    benchPokemon:function(pokemonPlayableCard:PlayableCard){
+        if(Meteor.isServer){
+            console.log("printing from bench pokemon "+pokemonPlayableCard.card.name);
+        }
+    },
     testModifyGameState:function(){
         if(Meteor.isServer){
             //simulates a change done by the gamemanager
@@ -74,11 +84,11 @@ Meteor.methods({
             gs.player.bench[1].card = Cards.find().fetch()[0];
             gs.player.bench[2].card = Cards.find().fetch()[0];
             gs.player.active.card = Cards.find().fetch()[0];
-            gs.player.hand[0].card.name="handcardname1";
-            gs.player.hand[2].card.name="handcardname2";
-            gs.player.hand[1].card.name="handcardname3";
-            gs.player.hand[0].card.type=CardType.ENERGY;
-            gs.player.hand[0].card.category=EnergyCat.LIGHTNING;
+            gs.player.hand[0].card.name="evolvercardname1";
+            gs.player.hand[2].card.name="handcardname3";
+            gs.player.hand[1].card.name="handcardname2";
+            gs.player.hand[0].card.type=CardType.POKEMON;
+            gs.player.hand[0].card.evolution="evolveecardname1";
             gs.player.hand[1].card.type=CardType.ENERGY;
             gs.player.hand[2].card.type=CardType.ENERGY;
             gs.player.bench[1].card.category=PokemonCat.FIGHTING;
@@ -87,10 +97,11 @@ Meteor.methods({
             gs.player.bench[0].card.type=CardType.POKEMON;
             gs.player.bench[2].card.category=PokemonCat.FIGHTING;
             gs.player.bench[2].card.type=CardType.POKEMON;
-            gs.player.bench[1].card.name="benchcardname1";
-            gs.player.bench[2].card.name="benchcardname2";
-            gs.player.bench[0].card.name="benchcardname3";
-            gs.player.active.card.name="activecardname";
+            gs.player.bench[1].card.name="benchcardname2";
+            gs.player.bench[2].card.name="benchcardname3";
+            gs.player.bench[0].card.name="evolveecardname1";
+            gs.player.active.card.name="activecardname1";
+            console.log("gs cahnged");
 
             GameStates.update({userid:Meteor.userId()},gs,{upsert:true});
         }
