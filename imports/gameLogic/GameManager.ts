@@ -13,7 +13,8 @@ export class GameManager{
     }
 
     /***
-     * Generic coin flip method, used for abilities, trainer cards, and determining turn order.
+     * Generic coin flip method, used for abilities, trainer cards, and determining turn order. Heads is true, tails
+     * is false.
      * @returns {boolean}
      */
     coinFlip() {
@@ -32,6 +33,7 @@ export class GameManager{
 
     /***
      *
+     * @param {Player} player
      * @param {number} n
      * @returns {GameState}
      */
@@ -45,46 +47,55 @@ export class GameManager{
 
     /***
      *
-     * @returns {GameState}
+     * @param {Player} player
+     * @param {Player} opponent
+     * @param {PlayableCard} target
      */
     attack(player:Player, opponent:Player, target?:PlayableCard){
-
         //TODO: Check if attack triggered a game ending condition: Drew all prize cards, knocked out all enemy pokemon
-        return this.gameState;
     }
 
     /***
      *
-     * @returns {GameState}
+     * @param {Player} player
+     * @param {PlayableCard} toEvolve
+     * @param {PlayableCard} evolution
      */
-    evolve(toEvolve:PlayableCard, evolution:PlayableCard){
+    evolve(player:Player, toEvolve:PlayableCard, evolution:PlayableCard) {
         if(toEvolve.isPokemon() && evolution.isPokemon()){
-            if(toEvolve.isBasic() && evolution.isEvolution()){
-                //TODO: Additional check to validate that the two cards are compatible for evolution
-                toEvolve.card = evolution.card;
+            if(player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
+                JSON.stringify(player.active) === JSON.stringify(toEvolve))){
+                if (toEvolve.isBasic() && evolution.isEvolution()) {
+                    //TODO: Additional check to validate that the two cards are compatible for evolution
+                    toEvolve.card = evolution.card;
+                    this.removeFromHand(player, evolution)
+                }
             }
         }
-        return this.gameState;
     }
 
     /***
      *
-     * @returns {GameState}
+     * @param {Player} player
+     * @param {PlayableCard} energy
+     * @param {PlayableCard} pokemon
      */
     addEnergy(player:Player, energy:PlayableCard, pokemon:PlayableCard){
         if(pokemon.isPokemon() && energy.isEnergy()){
-            if(!this.placedEnergy && (player.active == pokemon || player.bench.includes(pokemon))){
+            if(!this.placedEnergy &&
+                (JSON.stringify(player.active) === JSON.stringify(pokemon) || player.bench.includes(pokemon))){
                 //Pokemon must either be active or on the bench
                 pokemon.addEnergy(energy);
                 this.removeFromHand(player, energy);
                 this.placedEnergy = true;
             }
         }
-        return this.gameState;
     }
 
     /***
      *
+     * @param {Player} player
+     * @param {PlayableCard} card
      * @returns {GameState}
      */
     placeActive(player:Player, card:PlayableCard){
@@ -98,7 +109,8 @@ export class GameManager{
 
     /***
      *
-     * @returns {GameState}
+     * @param {Player} player
+     * @param {PlayableCard} card
      */
     placeBench(player:Player, card:PlayableCard){
         if(player.bench.length < 5 && card.isPokemon()){
@@ -106,7 +118,6 @@ export class GameManager{
             player.bench.push(card);
             this.removeFromHand(player, card);
         }
-        return this.gameState;
     }
 
     removeFromHand(player:Player, card:PlayableCard){
@@ -118,16 +129,15 @@ export class GameManager{
      * @returns {GameState}
      */
     playTrainer(){
-
-        return this.gameState;
+        //TODO: Implement simple (non-exceptional) trainer cards
     }
 
-    /***
-     * Client will call this when the turn ends. Update the round number and instruct the AI to play.
-     */
-    endTurn(){
+    endTurn(player:Player){
         this.placedEnergy = false;
-        //TODO: Call the AI's play turn function
+        if(JSON.stringify(player) === JSON.stringify(this.gameState.player)){
+            //The player calling this method is the human player
+            //TODO: Invoke the AI to complete its turn
+        }
     }
 
 }
