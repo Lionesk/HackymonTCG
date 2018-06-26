@@ -2,7 +2,7 @@ import {Card, CardType, PokemonCard, EnergyCard, EnergyCat, PokemonCat} from '..
 
 
 export class PlayableCard{
-    
+    id:number;
     card:Card;
     currentDamage:number;
     currentEnergy:[EnergyCard];

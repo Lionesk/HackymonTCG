@@ -32,32 +32,26 @@ Template.Hand.events({
         // console.log(playableCardName);
         let playableCard;
         this.hand.forEach((pc) => {
-            console.log(pc);
+            // console.log(pc);
+            if(!pc.card){
+                return;
+            }
             if(pc.card.name == playableCardName){
                 playableCard=pc;
-                // console.log("playableCard");
-                // console.log(playableCard);
-
                 if(playableCard.card.type== CardType.POKEMON){
-                    
-                    let ms = Session.get("move-state");
-                    if(ms.selectedPokemonCard){
-                        if(playableCard.card.name==ms.selectedPokemonCard.card.evolution||playableCard.card.evolution==ms.selectedPokemonCard.card.name){
-                            MoveStateController.setPokemon(ms,playableCard);
-                            Session.set("move-state",ms);
-                        }
-                        else{
-                            Meteor.call("benchPokemon",playableCard);
-                        }
+                    if(playableCard.card.evolution){
+                        let ms = Session.get("move-state");                        
+                        MoveStateController.setEvolutionPokemon(ms,playableCard);
+                        Session.set("move-state",ms);
+                    }else{
+                         Meteor.call("benchPokemon",playableCard);
                     }
                 }
-        
+
                 if(playableCard.card.type== CardType.ENERGY){
                     let ms = Session.get("move-state");
-                    // console.log(ms);
                     MoveStateController.setEnergy(ms,playableCard);
                     Session.set("move-state",ms);
-                    //ms.pubSetEnergy(playableCard);
                 }
             }
         });

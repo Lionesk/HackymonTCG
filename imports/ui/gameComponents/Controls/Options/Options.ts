@@ -14,10 +14,10 @@ Template.Options.helpers({
     isEvolverSelected:function(){
         if(this.moveState==undefined){
             return false
-        }else if(this.moveState.selectedPokemonCard==undefined){
+        }else if(this.moveState.selectedEvolutionPokemonCard==undefined){
             return false 
         }else{
-            return this.moveState.selectedPokemonCard.card.evolution;
+            return this.moveState.selectedEvolutionPokemonCard.card.evolution;
         }
     }
 });
