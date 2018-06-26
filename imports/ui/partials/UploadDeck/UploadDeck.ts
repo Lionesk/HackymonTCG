@@ -9,9 +9,9 @@ enum UploadTypes {
 }
 
 const UploadMap: { [key in UploadTypes]: (string) => void } = {
-    cards: data => Meteor.call("uploadCards", { cardString: data }),
-    deck: data => Meteor.call("uploadDeck", { cardString: data }),
-    abilities: data => Meteor.call("uploadAbilities", { cardString: data }),
+    cards: data => Meteor.call("uploadCards", { fileString: data }),
+    deck: data => Meteor.call("uploadDeck", { fileString: data }),
+    abilities: data => Meteor.call("uploadAbilities", { fileString: data }),
 }
 
 Template.UploadDeck.events({

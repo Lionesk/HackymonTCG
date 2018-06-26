@@ -48,6 +48,7 @@ export enum Status {
 }
 
 export interface Ability {
+  index: number;
   name: string;
   actions: AbilityAction[];
 }
@@ -57,7 +58,10 @@ export enum AbilityFunction {
 }
 
 export enum Condition {
-
+  FLIP = "flip",
+  ABILITY = "ability",
+  HEAL = "heal",
+  CHOICE = "choice",
 }
 
 export interface AbilityAction {
@@ -66,11 +70,12 @@ export interface AbilityAction {
   target?: Target;
   choice?: Choice;
   status?: Status;
-  conditionalAbility?: {
+  conditional?: {
     true?: AbilityAction;
     false?: AbilityAction;
     condition?: Condition;
     conditionAbility?: AbilityAction;
+    healTarget?: Target;
   };
   filter?: {
     category?: CardCategory;

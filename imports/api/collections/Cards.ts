@@ -11,7 +11,7 @@ export enum PokemonCat {
     BASIC = "basic",
     PSYCHIC = "psychic",
     FIGHTING = "fighting",
-    STAGE_ONE = "stage one",
+    STAGE_ONE = "stage-one",
 }
 
 export enum TrainerCat {
@@ -26,23 +26,40 @@ export enum EnergyCat {
     LIGHTNING = "lightning",
 }
 
+export type Cost = {
+    [key in EnergyCat]?: number;
+}
+
+export interface AbilityReference {
+    index: number;
+    cost?: Cost;
+}
+
 export type CardCategory = PokemonCat | EnergyCat | TrainerCat;
 
 export interface Card {
+    index: number;
     type: CardType;
     category: PokemonCat | TrainerCat | EnergyCat;
     name: string;
-    abilities?: Ability[];
+    healthPoints?: number;
+    retreatCost?: Cost;
+    evolution?: string;
+    abilities?: AbilityReference[];
 }
 
 export interface PokemonCard extends Card {
     type: CardType.POKEMON,
     category: PokemonCat,
+    retreatCost: Cost;
+    evolution?: string;
+    abilities: AbilityReference[];
 }
 
 export interface TrainerCard extends Card {
     type: CardType.TRAINER,
     category: TrainerCat,
+    abilities: AbilityReference[];
 }
 
 export interface EnergyCard extends Card {

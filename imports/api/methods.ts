@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { Cards, CardType, PokemonCat } from "./collections";
+import { parseAbilityString, parseCardString } from "../util/fileParsers";
 
 Meteor.methods({
     printToServerConsole() {
@@ -7,19 +8,19 @@ Meteor.methods({
             console.log("Printing To Server Console");
         }
     },
-    uploadCards(data: { cardString: string }) {
+    uploadCards(data: { fileString: string }) {
         if (Meteor.isServer) {
-            console.log(data.cardString);
+            parseCardString(data.fileString);
         }
     },
-    uploadAbilities(data: { cardString: string }) {
+    uploadAbilities(data: { fileString: string }) {
         if (Meteor.isServer) {
-            console.log(data.cardString);
+            parseAbilityString(data.fileString)
         }
     },
-    uploadDeck(data: { cardString: string }) {
+    uploadDeck(data: { fileString: string }) {
         if (Meteor.isServer) {
-            console.log(data.cardString);
+            console.log(data.fileString);
         }
     },
 });

@@ -1,30 +1,171 @@
-import { Card, CardCategory, CardType } from "../api/collections/Cards";
-import { Ability, AbilityAction, AbilityType, Abilities, Target, AbilityFunction, Choice, Status } from "../api/collections/abilities";
+import {
+  Card,
+  Cards,
+  CardCategory,
+  CardType,
+  PokemonCard,
+  PokemonCat,
+  Cost,
+  AbilityReference,
+  TrainerCard,
+  TrainerCat,
+  EnergyCard,
+  EnergyCat
+} from "../api/collections/Cards";
+import {
+  Ability,
+  AbilityAction,
+  AbilityType,
+  Abilities,
+  Target,
+  AbilityFunction,
+  Choice,
+  Status,
+  Condition
+} from "../api/collections/abilities";
 
 export function parseCardString(data: string): void {
+  Cards.remove({}); // drop all cards
+  
+  data.replace("#\n", "");
+  let ctr = 1;
   data.split("\n").forEach((cardStr: string) => {
-    const card: Partial<Card> = cardStr.split(":").reduce((acc: Partial<Card>, field: string) => {
-      return acc;
-    }, {});
+    const tokens: string[] = cardStr.split(':');
+    const name: string = tokens[0];
+    const type: CardType = tokens[1] as CardType;
+    let card: Card;
+    switch (type) {
+      case CardType.POKEMON:
+        card = parsePokemon(ctr++, name, type, tokens);
+        break;
+      case CardType.TRAINER:
+        card = parseTrainer(ctr++, name, type, tokens);
+        break;
+      case CardType.ENERGY:
+        card = parseEnergy(ctr++, name, type, tokens);
+        break;
+    }
+
+    console.log(card);
+    if (card) {
+      Cards.insert(card);
+    }
   });
 }
 
+function parsePokemon(index: number, name: string, type: CardType, tokens: string[]): PokemonCard {
+  if (type === CardType.POKEMON) {
+    let category: PokemonCat;
+    let healthPoints: number;
+    let evolution: string;
+    if (tokens[3] === PokemonCat.STAGE_ONE) {
+      evolution = tokens[4];
+      category = tokens[6] as PokemonCat;
+      healthPoints = parseInt(tokens[7]);
+    } else {
+      category = tokens[5] as PokemonCat;
+      healthPoints = parseInt(tokens[6]);
+    }
+
+    const retreatCost: Cost = {};
+    const retreatTokens: string[] = tokens.slice(tokens.indexOf("retreat") + 1, tokens.indexOf("attacks"));
+    for (let i = 0; i < retreatTokens.length; i += 3) {
+      retreatCost[retreatTokens[i + 1]] = retreatTokens[i + 2]
+    }
+
+    let costAcc: Cost = {};
+    
+    let abilities: AbilityReference[] = tokens.slice(tokens.indexOf("attacks") + 1).join(":").split(",").map((abilityString: string) => {
+      const abilityTokens = abilityString.split(":");
+      costAcc[abilityTokens[1]] = parseInt(abilityTokens[2]);
+      if (abilityTokens.length === 4) {
+        const ability: AbilityReference =  {
+          index: parseInt(abilityTokens[3]),
+          cost: costAcc,
+        }
+        costAcc = {};
+
+        return ability
+      }
+    });
+    // remove undefined entries
+    let abilityIndex = 0;
+    abilities = abilities.reduce((acc: AbilityReference[], val: AbilityReference | undefined) => {
+      if (val) {
+        acc[abilityIndex++] = val;
+      }
+
+      return acc;
+    }, [])
+
+    return {
+      index,
+      name,
+      type,
+      category,
+      healthPoints,
+      abilities,
+      retreatCost,
+      evolution,
+    }
+  } else {
+    throw "invalid card type"
+  }
+}
+
+function parseTrainer(index: number,name: string, type: CardType, tokens: string[]): TrainerCard {
+  if (type === CardType.TRAINER) {
+
+    return {
+      index,
+      name,
+      type,
+      category: tokens[3] as TrainerCat,
+      abilities: [{
+        index: parseInt(tokens[4]),
+      }],
+    };
+  } else {
+    throw "invalid card type";
+  }
+}
+
+function parseEnergy(index: number,name: string, type: CardType, tokens: string[]): EnergyCard {
+  if (type === CardType.ENERGY) {
+    return {
+      index,
+      name,
+      type,
+      category: tokens[3] as EnergyCat,
+    }
+  } else {
+    throw "invalid card type"
+  }
+  
+}
+
 export function parseAbilityString(data: string): void {
+  Abilities.remove({});
+  
+  let ctr = 1;
   data.split("\n").forEach((abilityStr: string) => {
-    let ctr = 0;
     const nameIndex = abilityStr.indexOf(':');
     const ability: Ability = {
+      index: ctr++,
       name: abilityStr.substr(0, nameIndex),
       actions: parseAbility(abilityStr.substr(nameIndex + 1, abilityStr.length - (nameIndex + 1))),
     };
 
-    Abilities.insert(ability); // callback??
+    // Abilities.insert(ability); // callback??
+    console.log(ability);
+    Abilities.insert(ability);
   });
 
 
 }
 
 function parseAbility(abilityStr: string) {
+  // cannot split on comma only first comma must be taken into account so use substring
   return abilityStr.split(',').map<AbilityAction>((actionStr: string) => {
     let looseAction: Partial<AbilityAction> = {};
     const typeIndex = actionStr.indexOf(':');
@@ -36,28 +177,33 @@ function parseAbility(abilityStr: string) {
     }
     switch (looseAction.type) {
       case AbilityType.DAMAGE:
-        return parseSingleTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSingleTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.HEAL:
-        return parseSingleTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSingleTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.DEENERGIZE:
-        return parseSingleTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSingleTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.REENERGIZE:
-        return parseSourceTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSourceTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.REDAMAGE:
-        return parseSourceTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSourceTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.SWAP:
-        return parseSourceTarget(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseSourceTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.DESTAT:
-        return parseTargetOnly(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseTargetOnly(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.DESTAT:
-        return parseTargetOnly(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseTargetOnly(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.APPLY_STAT:
-        return parseStatus(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseStatus(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.DRAW:
-        return parseDraw(looseAction, actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
+        return parseDraw(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.SEARCH:
-        return parseSearch(looseAction,  actionStr.substr(typeIndex, actionStr.length)) as AbilityAction;
-
+        return parseSearch(looseAction,  actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
+      case AbilityType.DECK:
+        return parseSourceTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
+      case AbilityType.SHUFFLE:
+        return parseTargetOnly(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
+      case AbilityType.CONDITIONAL:
+        return parseCondition(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
     }
     
     if (looseAction.type) {
@@ -72,11 +218,11 @@ function parseSingleTarget(action: Partial<AbilityAction>, actionData: string): 
   const tokens: string[] = actionData.split(':');
   if (tokens[1] === "choice") {
     action.choice = tokens[2] as Choice;
-    action.target = tokens[3] as Target;
-    action = parseAmount(action, tokens[4]); // append amount data
+    action.target = tokens.length === 5 ? tokens[3] as Target : tokens[2] as Target;
+    action = parseAmount(action, tokens.slice(tokens.length === 5? 4 : 3, tokens.length).join(":")); // append amount data
   } else {
     action.target = tokens[1] as Target;
-    action = parseAmount(action, tokens[2]);
+    action = parseAmount(action, tokens.slice(2, tokens.length).join(":"));
   }
 
   return action; // should be a full action at this point
@@ -158,7 +304,7 @@ function parseAmount(action: Partial<AbilityAction>, data: string): Partial<Abil
     const factors = data.split('*');
     let number: string;
     let func: string;
-    if (parseInt(factors[0]) !== NaN) {
+    if (!isNaN(parseInt(factors[0]))) {
       number = factors[0];
       func = factors[1];
     } else {
@@ -195,5 +341,47 @@ function parseFilter(action: Partial<AbilityAction>, tokens: string[]): Partial<
       }
   }
 
+  return action;
+}
+
+function parseCondition(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
+  const tokens: string[] = data.split(":");
+  action.conditional = {};
+  action.conditional.condition = tokens[0] as Condition;
+  switch (action.conditional.condition) {
+    case Condition.ABILITY:
+      action.conditional.conditionAbility = parseAbility(data.substr(data.indexOf(tokens[1]), data.indexOf(":(") - data.indexOf(tokens[2])))[0];
+      action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.length - data.indexOf("(")))[0];
+      break;
+    case Condition.FLIP:
+      if (data.indexOf("|") === -1) {
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+      } else {
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+      }
+      break;
+    case Condition.HEAL:
+      action.conditional.healTarget = tokens[2] as Target;
+      if (data.indexOf("|") === -1) {
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+      } else {
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+      }
+      break;
+    case Condition.CHOICE:
+      if (data.indexOf("|") === -1) {
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+      } else {
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+      }
+  }
+
+  return action;
+}
+
+function parseDeck(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
   return action;
 }
