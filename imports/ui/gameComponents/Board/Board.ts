@@ -11,3 +11,4 @@ Template.Board.events({
         Meteor.call('testModifyGameState');
     }
 })
+

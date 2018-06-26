@@ -2,6 +2,9 @@ import './Hand.html';
 import './Hand.css';
 import '../Card/Card.ts';
 import { Template } from 'meteor/templating'
+import { CardType } from "../../../api/collections";
+import {Session} from "meteor/session";
+import {MoveStateController} from "../../layouts/PlayLayout/MoveState"
 
 Template.Hand.helpers({
     isCardDefined:function(playableCard){
@@ -22,6 +25,32 @@ Template.Hand.helpers({
 
 Template.Hand.events({
     "click .hand-card":function(event){
-        console.log(event.currentTarget);
+        if(this.isNotInteractable){
+            return;
+        }
+        let playableCardName =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-name")
+        // console.log(playableCardName);
+        let playableCard;
+        this.hand.forEach((pc) => {
+            // console.log(pc);
+            if(pc.card.name == playableCardName){
+                playableCard=pc;
+                // console.log("playableCard");
+                // console.log(playableCard);
+
+                if(playableCard.card.type== CardType.POKEMON){
+                    //todo: if evolution if()
+                    Meteor.call("benchPokemon",playableCard);
+                }
+        
+                if(playableCard.card.type== CardType.ENERGY){
+                    let ms = Session.get("move-state");
+                    // console.log(ms);
+                    MoveStateController.setEnergy(ms,playableCard);
+                    Session.set("move-state",ms);
+                    //ms.pubSetEnergy(playableCard);
+                }
+            }
+        });
     }
 });

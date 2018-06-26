@@ -1,5 +1,5 @@
 <Template name="Card" class="container">
-    
+    <div class="playable-card" data-playable-card-name={{playableCard.card.name}} >
         {{#if hidden}}
         <div class="back-card">
             <div class="row">
@@ -28,6 +28,9 @@
                 </div>
             </div>
             {{/if}}
+
+
         </div>
         {{/if}}
+    </div>
 </Template>

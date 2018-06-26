@@ -3,6 +3,8 @@ import './PlayLayout.html';
 import '../../gameComponents/Board/Board.ts'
 import { GameStates } from "../../../api/collections";
 import { GameState } from "../../../gameLogic/GameState";
+import {MoveState} from "./MoveState";
+import {Session} from "meteor/session";
 
 declare let FlowRouter: any;
 
@@ -14,11 +16,13 @@ Template.PlayLayout.helpers({
         FlowRouter.go('/');
     },
     getGameState:function(){
-      // console.log("game berfore return "+ GameStates.find({"userid":Meteor.userId()}).fetch()[0])
-      //let gamestates = GameStates.find({"userid":Meteor.userId()}).fetch();
-      //console.log("game state size "+ gamestates.length ); 
-      
-      //todo:check if game DOES NOT exists
       return GameStates.find({"userid":Meteor.userId()}).fetch()[0];
     },
   })
+
+Template.Board.onCreated(function(){
+  let ms = new MoveState();
+
+  Session.set("move-state",ms);
+});
+

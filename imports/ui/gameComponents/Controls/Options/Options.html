@@ -5,9 +5,15 @@
                     OPTIONS
                 </div>
         </div>
-        <div class="row">
-                <div class="col-sm-12" >
+        {{#if isEnergySelected}}
+            <div class="row">
+                <div class="col-sm-6" >
+                    Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
                 </div>
-        </div>
+                <div class="col-sm-6" >
+
+                </div>
+            </div>
+        {{/if}}
     </div>
 </Template>
