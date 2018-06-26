@@ -1,4 +1,4 @@
-import {Card, CardType, PokemonCard, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
+import {Card, CardType, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
 
 
 export class PlayableCard{
@@ -7,22 +7,23 @@ export class PlayableCard{
     currentDamage:number;
     currentEnergy:[EnergyCard];
     
-    constructor(card?:Card, playable?:PlayableCard){
-        if(card!==undefined){
+    constructor(id: number, card?:Card, playable?:PlayableCard){
+        if(card !== undefined && playable !== undefined) {
+            this.currentDamage = null;
+        }
+        else if(card !== undefined) {
             if(card.type == CardType.POKEMON){
                 this.currentDamage = 0;
             }
+            this.card = card;
         }
-        if(playable!==undefined){
+        else if(playable !== undefined) {
             if(playable.card.type == CardType.POKEMON){
-                this.currentEnergy=playable.currentEnergy;
+                this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
             }
         }
-        if(card!==undefined && playable!==undefined){
-            this.currentDamage=null;
-        }
-        this.card=card; 
+        this.id = id;
     }
 
     isPokemon(){
