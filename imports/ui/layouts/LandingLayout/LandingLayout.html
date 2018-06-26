@@ -1,7 +1,8 @@
 <Template name="LandingLayout">
     <main>
         {{#if IsLoggedIn}}
-            {{> UploadDeck}}
+            {{> UploadDeck uploadType="abilities"}}
+            {{> UploadDeck uploadType="cards"}}
         {{/if}}
     </main>
 </Template>
