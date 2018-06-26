@@ -5,7 +5,7 @@ export class PlayableCard{
     id:number;
     card:Card;
     currentDamage:number;
-    currentEnergy:[EnergyCard];
+    currentEnergy:EnergyCard[];
     
     constructor(card?:Card, playable?:PlayableCard){
         if(card!==undefined){

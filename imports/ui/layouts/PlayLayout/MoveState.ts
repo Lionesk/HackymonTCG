@@ -23,7 +23,7 @@ export class MoveStateController{
             this.addEnergy(ms);
             return;
         }
-        else if(eCard.card.name === ms.selectedEnergyCard.card.name){
+        else if(eCard.id === ms.selectedEnergyCard.id){
             ms.selectedEnergyCard=null;
             return;
         }
@@ -39,19 +39,9 @@ export class MoveStateController{
             ms.selectedPokemonCard=pCard;
         }
         else if(ms.selectedPokemonCard!=null){
-            if(ms.selectedPokemonCard.card.name === pCard.card.name){
+            if(ms.selectedPokemonCard.id === pCard.id){
                 ms.selectedPokemonCard=null;
             }
-            // else if(ms.selectedPokemonCard.card.evolution=pCard.card.name){//evolve case 1
-            //     Meteor.call("evolvePokemon",ms.selectedPokemonCard,pCard);
-            //     ms.selectedPokemonCard=null;                
-            //     return;
-            // }
-            // else if(pCard.card.evolution=ms.selectedPokemonCard.card.name){ //evolve case2
-            //     Meteor.call("evolvePokemon",pCard,ms.selectedPokemonCard);
-            //     ms.selectedPokemonCard=null;
-            //     return;
-            // }
             else{
                 ms.selectedPokemonCard=pCard;
             }
@@ -79,7 +69,7 @@ export class MoveStateController{
         if(ms.selectedEvolutionPokemonCard==null){
             ms.selectedEvolutionPokemonCard = pCard;
         }
-        else if(pCard.card.name === ms.selectedEvolutionPokemonCard.card.name){
+        else if(pCard.id === ms.selectedEvolutionPokemonCard.id){
             ms.selectedEvolutionPokemonCard = null;           
             return;
         }

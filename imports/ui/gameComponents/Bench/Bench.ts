@@ -28,11 +28,11 @@ Template.Bench.events({
         if(this.isNotInteractable){
             return;
         }
-        let playableCardName =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-name")
+        let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
         let playableCard;
         this.bench.forEach((pc) => {
             if(pc!=null){
-                if(pc.card.name == playableCardName){
+                if(pc.id === parseInt(playableCardId)){
                     playableCard=pc;
 
                     if(playableCard.card.type== CardType.POKEMON){

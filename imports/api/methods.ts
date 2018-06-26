@@ -101,6 +101,16 @@ Meteor.methods({
             gs.player.bench[2].card.name="benchcardname3";
             gs.player.bench[0].card.name="evolveecardname1";
             gs.player.active.card.name="activecardname1";
+
+            gs.player.hand[0].id=0; 
+            gs.player.hand[1].id=1;
+            gs.player.hand[2].id=2;
+            gs.player.bench[0].id=3;
+            gs.player.bench[1].id=4;
+            gs.player.bench[2].id=5;
+            gs.player.active.id=6;
+
+
             console.log("gs cahnged");
 
             GameStates.update({userid:Meteor.userId()},gs,{upsert:true});

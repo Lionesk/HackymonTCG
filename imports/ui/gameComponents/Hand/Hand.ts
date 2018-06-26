@@ -28,15 +28,16 @@ Template.Hand.events({
         if(this.isNotInteractable){
             return;
         }
-        let playableCardName =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-name")
+        let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
         // console.log(playableCardName);
         let playableCard;
         this.hand.forEach((pc) => {
-            // console.log(pc);
+            console.log(pc);
+            console.log("find: "+ playableCardId);
             if(!pc.card){
                 return;
             }
-            if(pc.card.name == playableCardName){
+            if(pc.id === parseInt(playableCardId)){
                 playableCard=pc;
                 if(playableCard.card.type== CardType.POKEMON){
                     if(playableCard.card.evolution){
