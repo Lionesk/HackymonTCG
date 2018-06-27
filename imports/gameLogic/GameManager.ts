@@ -9,12 +9,21 @@ export module GameManager {
      * is false.
      * @returns {boolean}
      */
-    export function coinFlip() {
+    function coinFlip() {
         return (Math.floor(Math.random() * 2) == 0);
     }
 
     function shuffleDeck(deck: PlayableCard[]) {
-        return deck;
+        let i = deck.length, temp, random;
+        while (i !== 0) {
+            random = Math.floor(Math.random() * i);
+            i--;
+            
+            temp = deck[i];
+            deck[i] = deck[random];
+            deck[random] = temp;
+        }
+        return deck
     }
 
     export function placePrizeCards(player: Player) {
@@ -33,8 +42,16 @@ export module GameManager {
 
         draw(false, 7);
         //TODO: Check for AI Mulligan
+
+        GameStates.update({userid: Meteor.userId()}, state);
+
         draw(true, 7);
         //TODO: Check for human mulligan
+
+        GameStates.update({userid: Meteor.userId()}, state);
+
+        placePrizeCards(state.player);
+        placePrizeCards(state.ai);
 
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -142,10 +159,6 @@ export module GameManager {
         player.hand.filter(c => c !== card);
     }
 
-    /***
-     *
-     * @returns {GameState}
-     */
     export function playTrainer(){
         //TODO: Implement simple (non-exceptional) trainer cards
     }
