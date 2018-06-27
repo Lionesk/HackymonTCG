@@ -18,23 +18,23 @@ export module GameManager {
         while (i !== 0) {
             random = Math.floor(Math.random() * i);
             i--;
-            
+
             temp = deck[i];
             deck[i] = deck[random];
             deck[random] = temp;
         }
-        return deck
+        return deck;
     }
 
     export function placePrizeCards(player: Player) {
         for(let i = 0; i < 6; i++){
-            player.prize.push(player.deck.pop())
+            player.prize.push(player.deck.pop());
         }
     }
 
     export function initializeGame(deck: number[], shuffle: boolean){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-        state.humanFirst = GameManager.coinFlip(); //Human always _chooses_ heads
+        state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
         //TODO: Once the decks are uploaded to the DB (one per user) remove deck param and fetch deck from DB
         generateDeck(state.player, deck, shuffle);
