@@ -14,19 +14,26 @@
             <!-- pokemoncard -->
             {{#if true}}
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-sm-12">
                     <span>{{playableCard.card.name}}</span>
                 </div>
-                <div class="col-sm-4">
-                    HP
-                    <!-- TODO <span>{{playableCard.card.health}}</span> -->
-                </div>      
             </div>
             <div class="row">
-                <div class="col-sm-8">
-                    <span>{{playableCard.card.name}}</span>
+                <div class="col-sm-6">
+                   {{playableCard.card.healthPoints}} HP
+                </div>  
+                <div class="col-sm-6">
+                    {{playableCard.currentDamage}} Dam
+                 </div>         
+            </div>
+            {{#each abilityRef in playableCard.card.abilities}}
+            <div class="row">
+                <div class="col-sm-12 ability-option">
+                    {{> Ability ability=(getAbility abilityRef.index) }}
                 </div>
             </div>
+            {{/each}}
+
             {{/if}}
 
 

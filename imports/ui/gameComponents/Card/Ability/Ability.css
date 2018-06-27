@@ -1,0 +1,17 @@
+.ability{
+    background-color:whitesmoke;
+    border-color: rgb(104, 103, 103);
+    border-style:solid;
+    border-width:2px;
+    border-radius: 3px;
+    margin:1px;
+    padding:2px;
+    box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+}
+.ability:hover{
+    cursor:pointer;
+    background-color:rgb(199, 199, 199);
+}
+

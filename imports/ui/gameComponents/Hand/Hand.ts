@@ -32,8 +32,8 @@ Template.Hand.events({
         // console.log(playableCardName);
         let playableCard;
         this.hand.forEach((pc) => {
-            console.log(pc);
-            console.log("find: "+ playableCardId);
+            // console.log(pc);
+            // console.log("find: "+ playableCardId);
             if(!pc.card){
                 return;
             }

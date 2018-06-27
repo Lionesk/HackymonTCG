@@ -1,0 +1,44 @@
+<Template name="Ability" class="container">
+    <div class="ability">
+        <div class="row">
+            <div class="col-sm-12">{{this.ability.name}}</div>
+        </div>
+        {{#each action in this.ability.actions }}
+        <div class="row">
+            {{#if (isCond action) }}
+                {{> Conditional action=action}}
+            {{else}}
+                {{#if (isApplyStat action)}}
+                    {{> ApplyStatus action=action}}
+                {{else}}
+                    {{> Damage action=action}}                    
+                {{/if}}
+            {{/if}}
+        </div>
+        {{/each}}
+    </div>
+</Template>
+
+<Template name="Damage">
+        {{#if action.amount}}
+        <div class="col-sm-2">{{action.amount}}</div>
+        {{/if}}
+        <div class="col-sm-3">{{action.type}}</div>
+        <div class="col-sm-12"> to {{action.target}}</div>
+        {{#if action.multiplierFunction}}
+        <div class="col-sm-12">Multiply by {{action.multiplierFunction}} of {{action.multiplierTarget}}</div>
+        {{/if}}
+</Template>
+
+<Template name="Conditional" >
+        <div class="col-sm-1">{{action.conditional.condition}}</div>
+        {{#let action=action.conditional.true}}
+            {{> Damage action=action}}
+        {{/let}}
+</Template>
+
+
+<Template name="ApplyStatus" >
+        <div class="col-sm-3">Apply {{action.status}}</div>
+        <div class="col-sm-12"> to {{action.target}}</div>
+</Template>
