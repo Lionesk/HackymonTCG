@@ -9,8 +9,34 @@ export module GameManager {
      * is false.
      * @returns {boolean}
      */
-    function coinFlip() {
+    export function coinFlip() {
         return (Math.floor(Math.random() * 2) == 0);
+    }
+
+    function shuffleDeck(deck: PlayableCard[]) {
+        return deck;
+    }
+
+    export function placePrizeCards(player: Player) {
+        for(let i = 0; i < 6; i++){
+            player.prize.push(player.deck.pop())
+        }
+    }
+
+    export function initializeGame(deck: number[], shuffle: boolean){
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        state.humanFirst = GameManager.coinFlip(); //Human always _chooses_ heads
+
+        //TODO: Once the decks are uploaded to the DB (one per user) remove deck param and fetch deck from DB
+        generateDeck(state.player, deck, shuffle);
+        generateDeck(state.ai, deck, true);
+
+        draw(false, 7);
+        //TODO: Check for AI Mulligan
+        draw(true, 7);
+        //TODO: Check for human mulligan
+
+        GameStates.update({userid: Meteor.userId()}, state);
     }
 
     /***
@@ -20,12 +46,15 @@ export module GameManager {
      * @param {Player} player
      * @param {number[]} deck
      */
-    function generateDeck(player: Player, deck: number[]){
+    export function generateDeck(player: Player, deck: number[], shuffle: boolean){
         let newDeck: PlayableCard[] = new Array(50);
         let counter: number = 0;
         for(let i in deck){
             let card = Cards.find({ i }).fetch()[0];
             newDeck.push(new PlayableCard(counter++, card));
+        }
+        if(shuffle){
+            newDeck = shuffleDeck(newDeck);
         }
         player.deck = newDeck;
     }
@@ -35,9 +64,10 @@ export module GameManager {
         let player: Player = humanPlayer ? state.player : state.ai;
         let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
         for(let i = 0; i < toDraw; i++) {
-            if (player.deck && player.deck.length > 0) {
-                player.hand.push(player.deck.pop());
+            if(player.deck.length === 0){
+                //TODO: End the game here (LOSS)
             }
+            player.hand.push(player.deck.pop());
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }

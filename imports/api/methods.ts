@@ -17,6 +17,11 @@ Meteor.methods({
             GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
         }
     },
+    newGameStart:function(deck: number[], shuffle: boolean){
+        if(Meteor.isServer){
+            GameManager.initializeGame(deck, shuffle);
+        }
+    },
     createNewStateIfNotExisting:function(){
         if(Meteor.isServer){
             let gs = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
