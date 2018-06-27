@@ -5,7 +5,7 @@ export class PlayableCard{
     id:number;
     card:Card;
     currentDamage:number;
-    currentEnergy:EnergyCard[];
+    currentEnergy:Card[];
     
     constructor(card?:Card, playable?:PlayableCard){
         if(card!==undefined){
@@ -17,12 +17,14 @@ export class PlayableCard{
             if(playable.card.type == CardType.POKEMON){
                 this.currentEnergy=playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
+                if(! this.currentDamage){
+                    this.currentDamage=0;
+                }
             }
         }
-        if(card!==undefined && playable!==undefined){
-            this.currentDamage=null;
-        }
         this.card=card; 
+        this.currentDamage = 0;
+        this.currentEnergy =[];
     }
 
     isPokemon(){
@@ -51,7 +53,7 @@ export class PlayableCard{
         let energy=0;
 
         this.currentEnergy.forEach((eCard)=>{
-            if(eCard.category = energyCat){
+            if(eCard.category == energyCat){
                 energy++;
             }
         });

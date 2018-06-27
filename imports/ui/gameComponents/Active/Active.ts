@@ -27,6 +27,11 @@ Template.Active.events({
         if(this.isNotInteractable){
             return;
         }
+        //data-ability-index
+        let abilityIndex =event.currentTarget.getAttribute("data-ability-index");
+        console.log(" ability: "+abilityIndex);
+        console.log(" this: "+JSON.stringify(this));
+        // if(this.)
         console.log("abilit click");
     },
     "click .active-card":function(event){

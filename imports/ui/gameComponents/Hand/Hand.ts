@@ -24,6 +24,9 @@ Template.Hand.helpers({
 });
 
 Template.Hand.events({
+    "click .playable-card":function(event){
+        console.log("From Hand: " +JSON.stringify(this));
+    },
     "click .hand-card":function(event){
         if(this.isNotInteractable){
             return;

@@ -3,7 +3,7 @@ import './Ability.html'
 import { Template } from 'meteor/templating'
 import { Abilities } from '../../../../api/collections/abilities';
 
-Template.Ability.helpers({
+Template.Action.helpers({
     isCond:function(action){
         return action.type === "cond";
     },
@@ -11,3 +11,12 @@ Template.Ability.helpers({
         return action.type === "applystat";        
     }
 });
+
+// Template.Conditional.helpers({
+//     isCond:function(action){
+//         return action.type === "cond";
+//     },
+//     isApplyStat:function(action){
+//         return action.type === "applystat";
+//     }
+// });
