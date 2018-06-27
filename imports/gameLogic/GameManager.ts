@@ -64,7 +64,7 @@ export module GameManager {
         GameStates.update({userid: Meteor.userId()}, state);
     }
 
-    export function addEnergy(humanPlayer: boolean, pokemon:PlayableCard, energy:PlayableCard){
+    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         if(pokemon.isPokemon() && energy.isEnergy()){

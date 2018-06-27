@@ -131,7 +131,7 @@ Meteor.methods({
     },
     uploadAbilities(data: { fileString: string }) {
         if (Meteor.isServer) {
-            parseAbilityString(data.fileString)
+            parseAbilityString(data.fileString);
         }
     },
     uploadDeck(data: { fileString: string }) {
