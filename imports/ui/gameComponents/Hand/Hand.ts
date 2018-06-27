@@ -3,8 +3,8 @@ import './Hand.css';
 import '../Card/Card.ts';
 import { Template } from 'meteor/templating'
 import { CardType } from "../../../api/collections";
-import {Session} from "meteor/session";
-import {MoveStateController} from "../../layouts/PlayLayout/MoveState"
+import { Session } from "meteor/session";
+import { MoveStateController } from "../../layouts/PlayLayout/MoveState"
 
 Template.Hand.helpers({
     isCardDefined:function(playableCard){
@@ -52,7 +52,7 @@ Template.Hand.events({
                     }
                 }
 
-                if(playableCard.card.type== CardType.ENERGY){
+                if(playableCard.card.type == CardType.ENERGY){
                     let ms = Session.get("move-state");
                     MoveStateController.setEnergy(ms,playableCard);
                     Session.set("move-state",ms);

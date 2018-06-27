@@ -1,4 +1,4 @@
-import {Card, CardType, PokemonCard, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
+import {Card, CardType, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
 
 
 export class PlayableCard{
@@ -7,46 +7,27 @@ export class PlayableCard{
     currentDamage:number;
     currentEnergy:Card[];
     
-    constructor(card?:Card, playable?:PlayableCard){
-        if(card!==undefined){
+    constructor(id: number, card?:Card, playable?:PlayableCard){
+        this.id = id;
+        this.currentEnergy = new Array<Card>(0);
+        if(card !== undefined && playable !== undefined) {
+            this.currentDamage = null;
+        }
+        else if(card !== undefined) {
             if(card.type == CardType.POKEMON){
                 this.currentDamage = 0;
             }
+            this.card = card;
         }
-        if(playable!==undefined){
+        else if(playable !== undefined) {
             if(playable.card.type == CardType.POKEMON){
-                this.currentEnergy=playable.currentEnergy;
+                this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
                 if(! this.currentDamage){
                     this.currentDamage=0;
                 }
             }
         }
-        this.card=card; 
-        this.currentDamage = 0;
-        this.currentEnergy =[];
-    }
-
-    isPokemon(){
-        return this.card.type == CardType.POKEMON;
-    }
-
-    isEnergy(){
-        return this.card.type == CardType.ENERGY;
-    }
-
-    isBasic(){
-        return this.isPokemon() && this.card.category == PokemonCat.BASIC;
-    }
-
-    isEvolution(){
-        return this.isPokemon() && this.card.category == PokemonCat.STAGE_ONE;
-    }
-
-    addEnergy(energyCard:PlayableCard){
-
-        //TODO: check type is acceptable by pokemon
-        this.currentEnergy.concat(<EnergyCard>energyCard.card);
     }
 
     countEnergyOfType(energyCat:EnergyCat){

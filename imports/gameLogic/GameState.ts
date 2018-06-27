@@ -20,6 +20,5 @@ export class GameState implements GameStateInterface{
         this.ai = new Player();
         this.round = 0;
         this.userid=userid;
-
     }
 }
