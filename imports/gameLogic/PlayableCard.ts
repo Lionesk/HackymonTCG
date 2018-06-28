@@ -29,27 +29,4 @@ export class PlayableCard{
             }
         }
     }
-
-    countEnergyOfType(energyCat:EnergyCat){
-        let energy=0;
-
-        this.currentEnergy.forEach((eCard)=>{
-            if(eCard.category == energyCat){
-                energy++;
-            }
-        });
-
-        return energy;
-    }
-
-    getAllEnergyList(){
-        let eList={};
-        Object.keys(EnergyCat).filter((key)=>{
-            let eCount = this.countEnergyOfType(EnergyCat[key]);
-            eList[EnergyCat[key]]=eCount;
-        });
-        return eList;
-    }
-    
-
 }

@@ -92,7 +92,7 @@ export class MoveStateController{
             
             else{
                 let self = this;
-                await asyncCall("evolvePokemon", ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
+                await asyncCall("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
                 this.resetMoveState(ms);
             }
 

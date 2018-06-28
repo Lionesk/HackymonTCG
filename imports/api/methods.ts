@@ -45,9 +45,9 @@ Meteor.methods({
             GameManager.addEnergy(humanPlayer, pokemonPlayableCard, energyPlayableCard);
         }
     },
-    evolvePokemon:function(humanPlayer: boolean, pokemonPlayableCardEvolver:PlayableCard, pokemonPlayableCard:PlayableCard){
+    evolvePokemon:function(humanPlayer: boolean, evolution: PlayableCard, toEvolve: PlayableCard){
         if(Meteor.isServer){
-            GameManager.evolve(humanPlayer, pokemonPlayableCard, pokemonPlayableCardEvolver);
+            GameManager.evolve(humanPlayer, toEvolve, evolution);
         }
     },
     benchPokemon:function(humanPlayer: boolean, pokemonPlayableCard:PlayableCard){
