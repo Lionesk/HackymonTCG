@@ -24,5 +24,6 @@ Template.Board.onCreated(function(){
   let ms = new MoveState();
 
   Session.set("move-state",ms);
+  console.log(Session.get("shuffle-deck"));
 });
 

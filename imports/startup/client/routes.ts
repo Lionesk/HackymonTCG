@@ -14,6 +14,6 @@ FlowRouter.route('/',{
 FlowRouter.route('/play',{
     name:'play',
     action(){
-        BlazeLayout.render('MainLayout',{main:'PlayLayout'}
-    );}
+        BlazeLayout.render('MainLayout',{main:'PlayLayout'});
+    }
 });
