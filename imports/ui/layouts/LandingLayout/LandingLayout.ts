@@ -1,4 +1,5 @@
 import { Template } from 'meteor/templating';
+import { Session } from 'meteor/session';
 import './LandingLayout.html';
 import '../../partials/UploadDeck/UploadDeck.ts';
 import {Decks, Cards, Abilities} from "../../../api/collections";
@@ -20,7 +21,8 @@ Template.LandingLayout.helpers({
   })
 
   Template.LandingLayout.events({
-    'click .goToPlay':function(){
-      FlowRouter.go('/play');
+    'click .goToPlay':function(event){
+      Session.set("shuffle-deck",event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
+      FlowRouter.go("/play");
     }
   })

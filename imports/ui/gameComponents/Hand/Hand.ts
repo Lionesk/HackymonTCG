@@ -48,7 +48,7 @@ Template.Hand.events({
                         MoveStateController.setEvolutionPokemon(ms,playableCard);
                         Session.set("move-state",ms);
                     }else{
-                         Meteor.call("benchPokemon",playableCard);
+                         Meteor.call("benchPokemon",true, playableCard);
                     }
                 }
 
