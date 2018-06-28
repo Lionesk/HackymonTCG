@@ -1,6 +1,8 @@
 import {Player} from "./Player";
 import {PlayableCard} from "./PlayableCard";
-import {Cards, CardType, EnergyCard, GameStates} from "../api/collections";
+import {Cards, CardType, Decks, EnergyCard, GameStates} from "../api/collections";
+import {Deck} from "../api/collections/Deck";
+import {GameState} from "./GameState";
 
 export module GameManager {
     /***
@@ -8,11 +10,11 @@ export module GameManager {
      * is false.
      * @returns {boolean}
      */
-    function coinFlip() {
+    export function coinFlip() {
         return (Math.floor(Math.random() * 2) == 0);
     }
 
-    function shuffleDeck(deck: PlayableCard[]) {
+    export function shuffleDeck(deck: PlayableCard[]) {
         let i = deck.length, temp, random;
         while (i !== 0) {
             random = Math.floor(Math.random() * i);
@@ -31,27 +33,38 @@ export module GameManager {
         }
     }
 
-    export function initializeGame(deck: number[], shuffle: boolean){
+    export function initializeGame(shuffle: boolean){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        if(state.ai.deck && state.player.deck){
+            //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
+            return
+        }
+        state = new GameState(Meteor.userId());
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
-        //TODO: Once the decks are uploaded to the DB (one per user) remove deck param and fetch deck from DB
-        generateDeck(state.player, deck, shuffle);
-        generateDeck(state.ai, deck, true);
+        console.log('Creating new game from uploaded deck.');
 
-        draw(false, 7);
-        //TODO: Check for AI Mulligan
+        let deck: Deck = Decks.find({userid:Meteor.userId()}).fetch()[0];
+        state.player.deck = generateDeck(deck.deckcards, shuffle);
+        state.ai.deck = generateDeck(deck.deckcards, true);
 
         GameStates.update({userid: Meteor.userId()}, state);
 
-        draw(true, 7);
+        console.log('AI drawing cards.');
+        drawPlayer(state.ai, 7);
+        //TODO: Check for AI Mulligan
+
+        console.log('Player drawing cards.');
+        drawPlayer(state.player, 7);
         //TODO: Check for human mulligan
 
         GameStates.update({userid: Meteor.userId()}, state);
 
+        console.log('Placing prize cards');
         placePrizeCards(state.player);
         placePrizeCards(state.ai);
 
+        console.log('Game initialization done, updating the DB.');
         GameStates.update({userid: Meteor.userId()}, state);
     }
 
@@ -62,17 +75,19 @@ export module GameManager {
      * @param {Player} player
      * @param {number[]} deck
      */
-    export function generateDeck(player: Player, deck: number[], shuffle: boolean){
-        let newDeck: PlayableCard[] = new Array(50);
+    export function generateDeck(deck: number[], shuffle: boolean){
+        let newDeck: PlayableCard[] = [];
         let counter: number = 0;
         for(let i in deck){
-            let card = Cards.find({ i }).fetch()[0];
+            let card = Cards.find().fetch()[i];
             newDeck.push(new PlayableCard(counter++, card));
         }
         if(shuffle){
+            console.log("SHUFFLING " + shuffle);
+            console.log(shuffle);
             newDeck = shuffleDeck(newDeck);
         }
-        player.deck = newDeck;
+        return newDeck;
     }
 
     export function draw(humanPlayer: boolean, n?:number){
@@ -88,16 +103,31 @@ export module GameManager {
         GameStates.update({userid: Meteor.userId()}, state);
     }
 
+    /***
+     * Overloaded Draw function for internal GameManager calls where game state is already loaded.
+     * @param {Player} player
+     * @param {number} n
+     */
+    function drawPlayer(player: Player, n?: number){
+        let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
+        for(let i = 0; i < toDraw; i++) {
+            if(player.deck.length === 0){
+                //TODO: End the game here (LOSS)
+            }
+            player.hand.push(player.deck.pop());
+        }
+    }
+
     export function attack(player:Player, opponent:Player, target?:PlayableCard){
         //TODO: Check if attack triggered a game ending condition: Drew all prize cards, knocked out all enemy pokemon
     }
 
-    export function evolve(humanPlayer: boolean, toEvolve:PlayableCard, evolution:PlayableCard) {
+    export function evolve(humanPlayer: boolean, toEvolve: PlayableCard, evolution: PlayableCard) {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         if(isPokemon(toEvolve) && isPokemon(evolution)){
             toEvolve = mapCardCopy(player, toEvolve);
-            evolution = mapCardCopy(player, evolution);
+            evolution = mapCardCopy(player, evolution, true);
             if(player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
                 player.bench.includes(toEvolve))){
                 if (evolution.card.evolution === toEvolve.card.name) {
@@ -139,11 +169,11 @@ export module GameManager {
     export function placeBench(humanPlayer: boolean, card:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
-        card = mapCardCopy(player, card, true)
-        if(player.bench.length < 5 && isPokemon(card)){
+        let pokemonCard = mapCardCopy(player, card, true)
+        if(player.bench.length < 5 && isPokemon(pokemonCard)){
             //Only possible if player has less than 5 Pokemon on the bench
-            player.bench.push(card);
-            removeFromHand(player, card);
+            player.bench.push(pokemonCard);
+            removeFromHand(player, pokemonCard);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -155,6 +185,7 @@ export module GameManager {
      */
     function removeFromHand(player:Player, card:PlayableCard){
         player.hand = player.hand.filter(c => c !== card);
+        player.hand = cleanHand(player.hand);
     }
 
     export function playTrainer(){
@@ -170,21 +201,25 @@ export module GameManager {
      * @returns {PlayableCard}
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean){
+        let playableCard: PlayableCard;
         if(hand) {
-            let energyCard: PlayableCard = player.hand.find(function (element) {
+            playableCard = player.hand.find(function (element) {
                 return element.id === card.id
             });
-            console.log(energyCard);
-            return energyCard;
         }
         else {
-            let pokemonCard: PlayableCard = (player.active.id === card.id) ? player.active :
-                player.bench.find(function (element) {
+            if(player.active){
+                if(card.id === player.active.id){
+                    playableCard = player.active;
+                }
+            }
+            else{
+                playableCard = player.bench.find(function (element) {
                     return element.id === card.id
                 });
-            console.log(pokemonCard);
-            return pokemonCard;
+            }
         }
+        return playableCard;
     }
 
     function isPokemon(playableCard: PlayableCard){
@@ -198,6 +233,10 @@ export module GameManager {
     function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard){
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
         pokemonCard.currentEnergy.push(energyCard.card);
+    }
+
+    function cleanHand(hand:PlayableCard[]){
+        return hand.filter(playableCard => !!playableCard);
     }
 
 }

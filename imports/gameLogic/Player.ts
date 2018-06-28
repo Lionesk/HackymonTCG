@@ -9,11 +9,10 @@ export class Player{
     deck:PlayableCard[];
 
     constructor(player?:Player){
-       this.hand = [];
-       //TODO: Need to inject the card list into this deck object with getDeck function
+       this.hand = new Array<PlayableCard>();
        this.deck = null;
-       this.bench = [];
-       this.prize = [];
+       this.bench = new Array<PlayableCard>();
+       this.prize = new Array<PlayableCard>();
     }
 
 }

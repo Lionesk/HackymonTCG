@@ -25,7 +25,7 @@ export enum EnergyCat {
     WATER = "water",
     LIGHTNING = "lightning",
     PSYCHIC = "psychic",
-    FIGHTING = "fighting",
+    FIGHTING = "fight",
 }
 
 export type Cost = {

@@ -14,11 +14,7 @@ Template.Card.helpers({
     isEnergy:function(){
         return this.playableCard.card.type === CardType.ENERGY;
     },
-    // getEnergies(){
-    //     return
-    // },
     getEnergyList(){
-        // console.log(this.playableCard.currentEnergy.length)
         if(!this.playableCard.currentEnergy){
             return;
         }
@@ -38,19 +34,6 @@ Template.Card.helpers({
             };
         }
         console.log(eList);
-        // .filter((key)=>{
-        //     let eCount =0;
-        //     this.playableCard.currentEnergy.forEach((eCard)=>{
-        //         if(EnergyCat[key].category == eCard.category){
-        //             eCount++;
-        //         }
-        //     });
-        //     console.log(EnergyCat[key]+ " , "+eCount);
-        //     let eObj ={};
-        //     eObj[EnergyCat[key]]=eCount;
-        //     eList.push();
-        // });
-        // return eList;
     },
     getEnergyKey:function(energy){
       return  Object.keys(energy)[0];

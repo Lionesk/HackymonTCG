@@ -26,30 +26,10 @@ export class PlayableCard{
                 if(! this.currentDamage){
                     this.currentDamage=0;
                 }
+                if(! this.currentEnergy){
+                    this.currentEnergy=new Array<Card>(0);
+                }
             }
         }
     }
-
-    countEnergyOfType(energyCat:EnergyCat){
-        let energy=0;
-
-        this.currentEnergy.forEach((eCard)=>{
-            if(eCard.category == energyCat){
-                energy++;
-            }
-        });
-
-        return energy;
-    }
-
-    getAllEnergyList(){
-        let eList={};
-        Object.keys(EnergyCat).filter((key)=>{
-            let eCount = this.countEnergyOfType(EnergyCat[key]);
-            eList[EnergyCat[key]]=eCount;
-        });
-        return eList;
-    }
-    
-
 }
