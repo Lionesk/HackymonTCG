@@ -155,6 +155,8 @@ export module GameManager {
      */
     function removeFromHand(player:Player, card:PlayableCard){
         player.hand = player.hand.filter(c => c !== card);
+        player.hand = cleanHand(player.hand);
+        console.log(player.hand);
     }
 
     export function playTrainer(){
@@ -198,6 +200,10 @@ export module GameManager {
     function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard){
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
         pokemonCard.currentEnergy.push(energyCard.card);
+    }
+
+    function cleanHand(hand:PlayableCard[]){
+        return hand.filter(playableCard => !!playableCard);
     }
 
 }

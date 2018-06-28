@@ -13,7 +13,6 @@ export class MoveState{
         this.selectedEvolutionPokemonCard = null;
     }
 }
-
 export class MoveStateController{
 
    static async setEnergy(ms: MoveState, eCard: PlayableCard){
@@ -22,15 +21,18 @@ export class MoveStateController{
         if(ms.selectedEnergyCard==null){
             ms.selectedEnergyCard= eCard;
             await this.addEnergy(ms);
+            // console.log(ms);
             return;
         }
         else if(eCard.id === ms.selectedEnergyCard.id){
             ms.selectedEnergyCard=null;
+            // console.log(ms);
             return;
         }
         else{
             ms.selectedEnergyCard = eCard;
             await this.addEnergy(ms);
+            // console.log(ms);
             return;
         }
     }
@@ -47,17 +49,19 @@ export class MoveStateController{
                 ms.selectedPokemonCard = pCard;
             }
 
-            if(ms.selectedEnergyCard){
-                await this.addEnergy(ms);
-            }else{
-                await this.evolvePokemon(ms);
-            }
+        }
+        // console.log(ms);
+
+        if(ms.selectedEnergyCard){
+            await this.addEnergy(ms);
+        }else{
+            await this.evolvePokemon(ms);
         }
     } 
 
     private static async addEnergy(ms:MoveState){
         if(ms.selectedEnergyCard && ms.selectedPokemonCard){
-            console.log(ms);
+            // console.log(ms);
             await asyncCall("addEnergy", true, ms.selectedPokemonCard, ms.selectedEnergyCard);
             this.resetMoveState(ms);
         }
