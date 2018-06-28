@@ -194,4 +194,23 @@ let data="25\n51\n50";
 
 
 
- 
+describe('parseAbility', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({"userid":"test"});
+	});
+
+     it('ability should be parsed', function() {
+    
+
+   let result=parseAbility("dam:target:opponent-active:20");
+
+  assert.equal(result[0].type, AbilityType.DAMAGE);
+      
+      });
+ });
+
+
+
+
