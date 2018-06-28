@@ -45,15 +45,20 @@
             {{else}}
                 {{#if isEnergy}}
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <span>EnergyCard:</span>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-sm-12">
+                        <div class="col-sm-6">
                             <span>{{playableCard.card.category}}</span>
                         </div>
                     </div>
+                    <div class="row">
+                            <div class="col-sm-12 img-energy">
+                                <img height=100 width=100 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
+                            </div>
+                        </div>
                     {{else}}
                     <div class="row">
                         <div class="col-sm-12">

@@ -28,3 +28,10 @@
     -webkit-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
     -moz-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
 }
+
+.img-energy{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
