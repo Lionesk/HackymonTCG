@@ -78,8 +78,8 @@ export module GameManager {
     export function generateDeck(deck: number[], shuffle: boolean){
         let newDeck: PlayableCard[] = [];
         let counter: number = 0;
-        for(let i in deck){
-            let card = Cards.find().fetch()[i];
+        for(let i of deck){
+            let card = Cards.find({index: i}).fetch()[0];
             newDeck.push(new PlayableCard(counter++, card));
         }
         if(shuffle){
@@ -108,7 +108,7 @@ export module GameManager {
      * @param {Player} player
      * @param {number} n
      */
-    function drawPlayer(player: Player, n?: number){
+    export function drawPlayer(player: Player, n?: number){
         let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
         for(let i = 0; i < toDraw; i++) {
             if(player.deck.length === 0){
@@ -145,11 +145,9 @@ export module GameManager {
         if(isPokemon(pokemon) && isEnergy(energy)){
             pokemon = mapCardCopy(player, pokemon);
             energy = mapCardCopy(player, energy, true);
-            if(pokemon !== null && energy !== null){
-                //Pokemon must either be active or on the bench
-                addEnergyToCard(pokemon, energy);
-                removeFromHand(player, energy);
-            }
+            //Pokemon must either be active or on the bench
+            addEnergyToCard(pokemon, energy);
+            removeFromHand(player, energy);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -163,7 +161,7 @@ export module GameManager {
             player.active = card;
             removeFromHand(player, card);
         }
-        return this.gameState;
+        GameStates.update({userid: Meteor.userId()}, state);
     }
 
     export function placeBench(humanPlayer: boolean, card:PlayableCard){
@@ -202,23 +200,18 @@ export module GameManager {
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean){
         let playableCard: PlayableCard;
-        if(hand) {
-            playableCard = player.hand.find(function (element) {
-                return element.id === card.id
-            });
+        if(player.active && player.active.id === card.id){
+            return player.active;
         }
-        else {
-            if(player.active){
-                if(card.id === player.active.id){
-                    playableCard = player.active;
-                }
-            }
-            else{
-                playableCard = player.bench.find(function (element) {
-                    return element.id === card.id
-                });
-            }
+        playableCard = player.hand.find(function (element) {
+            return element.id === card.id
+        });
+        if(playableCard !== undefined){
+            return playableCard;
         }
+        playableCard = player.bench.find(function (element) {
+            return element.id === card.id
+        });
         return playableCard;
     }
 
