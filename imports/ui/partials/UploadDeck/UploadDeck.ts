@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating'
 import './UploadDeck.html'
 import { Cards, CardType, TrainerCat } from "../../../api/collections";
+import { asyncCall } from "../../helpers";
 
 enum UploadTypes {
     CARDS = "cards",
@@ -9,9 +10,9 @@ enum UploadTypes {
 }
 
 const UploadMap: { [key in UploadTypes]: (string) => void } = {
-    cards: data => Meteor.call("uploadCards", { fileString: data }),
-    deck: data => Meteor.call("uploadDeck", { fileString: data }),
-    abilities: data => Meteor.call("uploadAbilities", { fileString: data }),
+    cards: async (data) => asyncCall("uploadCards", { fileString: data }),
+    deck: async (data) => asyncCall("uploadDeck", { fileString: data }),
+    abilities: async (data) => asyncCall("uploadAbilities", { fileString: data }),
 }
 
 Template.UploadDeck.events({
@@ -27,8 +28,7 @@ Template.UploadDeck.events({
         const file: File = event.originalEvent.dataTransfer.files[0];
         if (file) {
             const fileString: string = await loadFile(file);
-            console.log(fileString);
-            UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
         } else {
             throw "invalid file";
         }
@@ -37,8 +37,7 @@ Template.UploadDeck.events({
         const file: File = event.originalEvent.target.files[0]; // only handle one file for now
         if (file) {
             const fileString: string = await loadFile(file);
-            console.log(fileString);
-            UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
         } else {
             throw "invalid file";
         }

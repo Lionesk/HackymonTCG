@@ -3,6 +3,17 @@
         {{#if IsLoggedIn}}
             {{> UploadDeck uploadType="abilities"}}
             {{> UploadDeck uploadType="cards"}}
+            {{> UploadDeck uploadType="deck"}}
+            {{#if cardsExists}}
+                {{#if abilitiesExists}}
+                    {{#if deckExists}}
+                        <input type="checkbox" text="Shuffle Deck" class="shuffle-option" />
+                        Shuffle deck
+                        <br />
+                        <span class="goToPlay">Play!</span>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
         {{/if}}
     </main>
 </Template>

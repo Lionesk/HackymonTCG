@@ -24,6 +24,10 @@ import {
   Condition
 } from "../api/collections/abilities";
 
+import{  
+  Decks
+} from "../api/collections/Deck";
+
 export function parseCardString(data: string): void {
   Cards.remove({}); // drop all cards
   
@@ -53,7 +57,7 @@ export function parseCardString(data: string): void {
   });
 }
 
-function parsePokemon(index: number, name: string, type: CardType, tokens: string[]): PokemonCard {
+export function parsePokemon(index: number, name: string, type: CardType, tokens: string[]): PokemonCard {
   if (type === CardType.POKEMON) {
     let category: PokemonCat;
     let healthPoints: number;
@@ -113,7 +117,7 @@ function parsePokemon(index: number, name: string, type: CardType, tokens: strin
   }
 }
 
-function parseTrainer(index: number,name: string, type: CardType, tokens: string[]): TrainerCard {
+export function parseTrainer(index: number,name: string, type: CardType, tokens: string[]): TrainerCard {
   if (type === CardType.TRAINER) {
 
     return {
@@ -130,7 +134,7 @@ function parseTrainer(index: number,name: string, type: CardType, tokens: string
   }
 }
 
-function parseEnergy(index: number,name: string, type: CardType, tokens: string[]): EnergyCard {
+export function parseEnergy(index: number,name: string, type: CardType, tokens: string[]): EnergyCard {
   if (type === CardType.ENERGY) {
     return {
       index,
@@ -164,7 +168,7 @@ export function parseAbilityString(data: string): void {
 
 }
 
-function parseAbility(abilityStr: string) {
+export function parseAbility(abilityStr: string) {
   // cannot split on comma only first comma must be taken into account so use substring
   return abilityStr.split(',').map<AbilityAction>((actionStr: string) => {
     let looseAction: Partial<AbilityAction> = {};
@@ -384,4 +388,20 @@ function parseCondition(action: Partial<AbilityAction>, data: string): Partial<A
 
 function parseDeck(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
   return action;
+}
+
+export function parseDeckFile(data: string, id?: string){
+  let deckcardsString = data.split("\n");
+  let deckcards = [];
+  deckcardsString.forEach((cardString)=>{
+    deckcards.push(parseInt(cardString));
+  });
+  if(id){
+    Decks.remove({"userid":id});
+    Decks.insert({"userid":id,"deckcards":deckcards})
+  }
+  else{
+    Decks.remove({"userid":Meteor.userId()});  
+    Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
+  }
 }

@@ -1,0 +1,22 @@
+<Template name="PlayerSide" class="container">
+    <span>player</span>
+        
+    <div class="row">
+        <div class="col-md-12">
+            {{>Active active = player.active isNotInteractable=false}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {{>Bench bench = player.bench isNotInteractable=false}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            {{>Hand hand = player.hand hidden=false isNotInteractable=false}}
+        </div>
+    </div>
+
+</Template>

@@ -1,8 +1,10 @@
-<Template name="UploadDeck">
-<div>
-    <div class="uploadDropper">
+<Template name="UploadDeck" class="container">
+<div class="row">
+    <div class="col-sm-2">
+    <span>Upload: {{uploadType}}</span>
+    </div>
+    <div class="uploadDropper col-sm-2">
         <input type="file" id="file" name="file" multiple>
-        <span>Drop File</span>
     </div>
 </div>
 </Template>

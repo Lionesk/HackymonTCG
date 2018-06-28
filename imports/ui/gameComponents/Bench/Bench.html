@@ -1,0 +1,11 @@
+<Template name="Bench">
+    <div class="row bench">
+        {{#each playableCard in bench}}
+            {{#if isCardDefined (playableCard)}}
+                <div class="col-sm-2 bench-card" >
+                    {{> Card playableCard=playableCard}}
+                </div>
+            {{/if}}
+        {{/each}}
+    </div>
+</Template>
