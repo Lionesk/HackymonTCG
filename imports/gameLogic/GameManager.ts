@@ -34,8 +34,12 @@ export module GameManager {
     }
 
     export function initializeGame(shuffle: boolean){
-        //TODO: Check if a state already exists and delete it
-        let state = new GameState(Meteor.userId());
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        if(state.ai.deck && state.player.deck){
+            //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
+            return
+        }
+        state = new GameState(Meteor.userId());
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
         console.log('Creating new game from uploaded deck.');
@@ -47,11 +51,11 @@ export module GameManager {
         GameStates.update({userid: Meteor.userId()}, state);
 
         console.log('AI drawing cards.');
-        drawPlayer(state.ai, 4);
+        drawPlayer(state.ai, 7);
         //TODO: Check for AI Mulligan
 
         console.log('Player drawing cards.');
-        drawPlayer(state.player, 4);
+        drawPlayer(state.player, 7);
         //TODO: Check for human mulligan
 
         GameStates.update({userid: Meteor.userId()}, state);
