@@ -21,11 +21,11 @@
         {{#if action.target}}
             <div class="col-sm-12">to {{action.target}}</div>
         {{/if}}
-        {{#if action.multiplierFunction}}
-            <div class="col-sm-12">Multiplier by {{action.multiplierFunction}}</div>
+        {{#if action.amountFunction}}
+            <div class="col-sm-12">{{action.amountOperator}} by {{action.amountFunction}}</div>
         {{/if}}
-        {{#if action.multiplierTarget}}
-            <div class="col-sm-12">of {{action.multiplierTarget}}</div>
+        {{#if action.amountFunctionTarget}}
+            <div class="col-sm-12">of {{action.amountFunctionTarget}}</div>
         {{/if}}
         {{#if action.choice}}
             <div class="col-sm-6">Based on{{action.choice}}</div>
