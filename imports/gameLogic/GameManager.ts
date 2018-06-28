@@ -10,11 +10,11 @@ export module GameManager {
      * is false.
      * @returns {boolean}
      */
-    function coinFlip() {
+    export function coinFlip() {
         return (Math.floor(Math.random() * 2) == 0);
     }
 
-    function shuffleDeck(deck: PlayableCard[]) {
+    export function shuffleDeck(deck: PlayableCard[]) {
         let i = deck.length, temp, random;
         while (i !== 0) {
             random = Math.floor(Math.random() * i);
