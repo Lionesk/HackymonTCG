@@ -17,9 +17,9 @@ Meteor.methods({
             GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
         }
     },
-    newGameStart:function(deck: number[], shuffle: boolean){
+    newGameStart:function(shuffle: boolean){
         if(Meteor.isServer){
-            GameManager.initializeGame(deck, shuffle);
+            GameManager.initializeGame(shuffle);
         }
     },
     createNewStateIfNotExisting:function(){

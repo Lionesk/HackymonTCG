@@ -1,6 +1,8 @@
 import {Player} from "./Player";
 import {PlayableCard} from "./PlayableCard";
-import {Cards, CardType, EnergyCard, GameStates} from "../api/collections";
+import {Cards, CardType, Decks, EnergyCard, GameStates} from "../api/collections";
+import {Deck} from "../api/collections/Deck";
+import {GameState} from "./GameState";
 
 export module GameManager {
     /***
@@ -31,27 +33,34 @@ export module GameManager {
         }
     }
 
-    export function initializeGame(deck: number[], shuffle: boolean){
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+    export function initializeGame(shuffle: boolean){
+        //TODO: Check if a state already exists and delete it
+        let state = new GameState(Meteor.userId());
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
-        //TODO: Once the decks are uploaded to the DB (one per user) remove deck param and fetch deck from DB
-        generateDeck(state.player, deck, shuffle);
-        generateDeck(state.ai, deck, true);
+        console.log('Creating new game from uploaded deck.');
 
-        draw(false, 7);
-        //TODO: Check for AI Mulligan
+        let deck: Deck = Decks.find({userid:Meteor.userId()}).fetch()[0];
+        state.player.deck = generateDeck(deck.deckcards, shuffle);
+        state.ai.deck = generateDeck(deck.deckcards, true);
 
         GameStates.update({userid: Meteor.userId()}, state);
 
-        draw(true, 7);
+        console.log('AI drawing cards.');
+        drawPlayer(state.ai, 4);
+        //TODO: Check for AI Mulligan
+
+        console.log('Player drawing cards.');
+        drawPlayer(state.player, 4);
         //TODO: Check for human mulligan
 
         GameStates.update({userid: Meteor.userId()}, state);
 
+        console.log('Placing prize cards');
         placePrizeCards(state.player);
         placePrizeCards(state.ai);
 
+        console.log('Game initialization done, updating the DB.');
         GameStates.update({userid: Meteor.userId()}, state);
     }
 
@@ -62,17 +71,17 @@ export module GameManager {
      * @param {Player} player
      * @param {number[]} deck
      */
-    export function generateDeck(player: Player, deck: number[], shuffle: boolean){
-        let newDeck: PlayableCard[] = new Array(50);
+    export function generateDeck(deck: number[], shuffle: boolean){
+        let newDeck: PlayableCard[] = [];
         let counter: number = 0;
         for(let i in deck){
-            let card = Cards.find({ i }).fetch()[0];
+            let card = Cards.find().fetch()[i];
             newDeck.push(new PlayableCard(counter++, card));
         }
         if(shuffle){
             newDeck = shuffleDeck(newDeck);
         }
-        player.deck = newDeck;
+        return newDeck;
     }
 
     export function draw(humanPlayer: boolean, n?:number){
@@ -86,6 +95,21 @@ export module GameManager {
             player.hand.push(player.deck.pop());
         }
         GameStates.update({userid: Meteor.userId()}, state);
+    }
+
+    /***
+     * Overloaded Draw function for internal GameManager calls where game state is already loaded.
+     * @param {Player} player
+     * @param {number} n
+     */
+    function drawPlayer(player: Player, n?: number){
+        let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
+        for(let i = 0; i < toDraw; i++) {
+            if(player.deck.length === 0){
+                //TODO: End the game here (LOSS)
+            }
+            player.hand.push(player.deck.pop());
+        }
     }
 
     export function attack(player:Player, opponent:Player, target?:PlayableCard){
