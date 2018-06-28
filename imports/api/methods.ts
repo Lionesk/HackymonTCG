@@ -5,6 +5,7 @@ import { GameManager } from "../gameLogic/GameManager";
 import { GameState } from "../gameLogic/GameState";
 import { PlayableCard } from "../gameLogic/PlayableCard";
 import { parseAbilityString, parseCardString, parseDeckFile } from "../util/fileParsers";
+import {AI} from "../AI/AI";
 
 Meteor.methods({
     printToServerConsole() {
@@ -58,6 +59,11 @@ Meteor.methods({
     placeActive:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
         if(Meteor.isServer) {
             GameManager.placeActive(humanPlayer, pokemonPlayableCard);
+        }
+    },
+    AIturn:function(){
+        if(Meteor.isServer){
+            AI.playTurn();
         }
     },
     testModifyGameState:function(){
@@ -163,7 +169,6 @@ Meteor.methods({
     },
     uploadDeck(data: { fileString: string }) {
         if (Meteor.isServer) {
-            console.log(data.fileString);
             parseDeckFile(data.fileString);
         }
     },

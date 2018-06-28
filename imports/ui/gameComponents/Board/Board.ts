@@ -13,5 +13,5 @@ Template.Board.events({
     'click .initializeGame':function () {
         Meteor.call('newGameStart', {shuffle: false});
     }
-})
+});
 
