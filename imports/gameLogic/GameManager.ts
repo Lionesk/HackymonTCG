@@ -83,6 +83,8 @@ export module GameManager {
             newDeck.push(new PlayableCard(counter++, card));
         }
         if(shuffle){
+            console.log("SHUFFLING " + shuffle);
+            console.log(shuffle);
             newDeck = shuffleDeck(newDeck);
         }
         return newDeck;

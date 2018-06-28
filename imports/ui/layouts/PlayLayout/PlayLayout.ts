@@ -21,6 +21,7 @@ Template.PlayLayout.helpers({
   })
 
 Template.Board.onCreated(function(){
-
+  let ms = new MoveState();
+  Session.set("move-state",ms);
 });
 
