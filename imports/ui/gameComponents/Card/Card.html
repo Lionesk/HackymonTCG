@@ -1,5 +1,5 @@
 <Template name="Card" class="container">
-    <div class="playable-card" data-playable-card-name={{playableCard.card.name}} >
+    <div class="playable-card" data-playable-card-id={{playableCard.id}} >
         {{#if hidden}}
         <div class="back-card">
             <div class="row">
@@ -12,22 +12,67 @@
         {{else}}
         <div  class="card"> 
             <!-- pokemoncard -->
-            {{#if true}}
-            <div class="row">
-                <div class="col-sm-8">
-                    <span>{{playableCard.card.name}}</span>
+            {{#if isPokemon}}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>Pokemon</span>
+                    </div>
                 </div>
-                <div class="col-sm-4">
-                    HP
-                    <!-- TODO <span>{{playableCard.card.health}}</span> -->
-                </div>      
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    <span>{{playableCard.card.name}}</span>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <span>{{playableCard.card.name}}</span>
+                    </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {{ getCurrentHealth}} HP
+                    </div>
+                    <div class="col-sm-4">
+                        {{playableCard.currentDamage}} Dam
+                    </div>
+                    <div class="col-sm-4">
+                        {{playableCard.card.healthPoints}} Max HP
+                    </div>
+                </div>
+                <div class="row">
+                    {{#each energy in playableCard.currentEnergy}}
+                        <div class="col-sm-1">
+                            <img height=20 width=20 src="energy/{{energy.category}}.png" alt="{{energy.category}}" />
+                        </div>
+                    {{/each}}
+                </div>
+                
+            {{else}}
+                {{#if isEnergy}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>EnergyCard:</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>{{playableCard.card.category}}</span>
+                        </div>
+                    </div>
+                    {{else}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>{{playableCard.card.name}}</span>
+                        </div>
+                    </div>
+                {{/if}}
+
+
             {{/if}}
+            {{#each abilityRef in playableCard.card.abilities}}
+            <div class="row">
+                <div class="col-sm-12 ability-option">
+                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost }}
+                </div>
+            </div>
+            {{/each}}
+
+
 
 
         </div>

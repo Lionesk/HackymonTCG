@@ -23,10 +23,22 @@ Template.Active.helpers({
 });
 
 Template.Active.events({
+    "click .ability":function(event){
+        if(this.isNotInteractable){
+            return;
+        }
+        //data-ability-index
+        let abilityIndex =event.currentTarget.getAttribute("data-ability-index");
+        console.log(" ability: "+abilityIndex);
+        console.log(" this: "+JSON.stringify(this));
+        // if(this.)
+        console.log("abilit click");
+    },
     "click .active-card":function(event){
         if(this.isNotInteractable){
             return;
         }
+        console.log("active click");
         let ms = Session.get("move-state");
         MoveStateController.setPokemon(ms,this.active);
         Session.set("move-state",ms);

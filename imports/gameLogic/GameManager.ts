@@ -1,7 +1,6 @@
-import {GameState} from './GameState';
 import {Player} from "./Player";
 import {PlayableCard} from "./PlayableCard";
-import {Cards, GameStates} from "../api/collections";
+import {Cards, CardType, EnergyCard, GameStates} from "../api/collections";
 
 export module GameManager {
     /***
@@ -96,15 +95,14 @@ export module GameManager {
     export function evolve(humanPlayer: boolean, toEvolve:PlayableCard, evolution:PlayableCard) {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
-        if(toEvolve.isPokemon() && evolution.isPokemon()){
+        if(isPokemon(toEvolve) && isPokemon(evolution)){
             toEvolve = mapCardCopy(player, toEvolve);
             evolution = mapCardCopy(player, evolution);
             if(player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
                 player.bench.includes(toEvolve))){
-                if (toEvolve.isBasic() && evolution.isEvolution()) {
-                    //TODO: Additional check to validate that the two cards are compatible for evolution
+                if (evolution.card.evolution === toEvolve.card.name) {
                     toEvolve.card = evolution.card;
-                    this.removeFromHand(player, evolution)
+                    removeFromHand(player, evolution)
                 }
             }
         }
@@ -114,13 +112,13 @@ export module GameManager {
     export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
-        if(pokemon.isPokemon() && energy.isEnergy()){
+        if(isPokemon(pokemon) && isEnergy(energy)){
             pokemon = mapCardCopy(player, pokemon);
             energy = mapCardCopy(player, energy, true);
             if(pokemon !== null && energy !== null){
                 //Pokemon must either be active or on the bench
-                pokemon.addEnergy(energy);
-                this.removeFromHand(player, energy);
+                addEnergyToCard(pokemon, energy);
+                removeFromHand(player, energy);
             }
         }
         GameStates.update({userid: Meteor.userId()}, state);
@@ -130,10 +128,10 @@ export module GameManager {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         card = mapCardCopy(player, card, true)
-        if(!player.active && card.isPokemon()){
+        if(!player.active && isPokemon(card)){
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
-            this.removeFromHand(player, card);
+            removeFromHand(player, card);
         }
         return this.gameState;
     }
@@ -142,10 +140,10 @@ export module GameManager {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         card = mapCardCopy(player, card, true)
-        if(player.bench.length < 5 && card.isPokemon()){
+        if(player.bench.length < 5 && isPokemon(card)){
             //Only possible if player has less than 5 Pokemon on the bench
             player.bench.push(card);
-            this.removeFromHand(player, card);
+            removeFromHand(player, card);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -156,7 +154,9 @@ export module GameManager {
      * @param {PlayableCard} card
      */
     function removeFromHand(player:Player, card:PlayableCard){
-        player.hand.filter(c => c !== card);
+        player.hand = player.hand.filter(c => c !== card);
+        player.hand = cleanHand(player.hand);
+        console.log(player.hand);
     }
 
     export function playTrainer(){
@@ -173,15 +173,37 @@ export module GameManager {
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean){
         if(hand) {
-            let card: PlayableCard = player.bench.find(function (element) { return element.id === card.id });
-            return card;
+            let energyCard: PlayableCard = player.hand.find(function (element) {
+                return element.id === card.id
+            });
+            console.log(energyCard);
+            return energyCard;
         }
         else {
             let pokemonCard: PlayableCard = (player.active.id === card.id) ? player.active :
                 player.bench.find(function (element) {
                     return element.id === card.id
                 });
+            console.log(pokemonCard);
             return pokemonCard;
         }
     }
+
+    function isPokemon(playableCard: PlayableCard){
+        return playableCard.card.type === CardType.POKEMON;
+    }
+
+    function isEnergy(playableCard: PlayableCard){
+        return playableCard.card.type === CardType.ENERGY;
+    }
+
+    function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard){
+        console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
+        pokemonCard.currentEnergy.push(energyCard.card);
+    }
+
+    function cleanHand(hand:PlayableCard[]){
+        return hand.filter(playableCard => !!playableCard);
+    }
+
 }

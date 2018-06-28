@@ -1,0 +1,118 @@
+<Template name="Ability" class="container">
+    <div class="ability" data-ability-index={{abilityIndex}} data-ability-cost={{abilityCost}}>
+        <div class="row">
+            <div class="col-sm-12">{{this.ability.name}}</div>
+        </div>
+        {{#each action in this.ability.actions }}
+        <div class="row">
+            {{>Action action=action}}
+        </div>
+        {{/each}}
+    </div>
+</Template>
+
+<Template name="Action">
+    <!--{{#if (isCond action) }}-->
+        <!--{{> Conditional action=action}}-->
+    <!--{{else}}-->
+        <!--{{#if (isApplyStat action)}}-->
+            <!--{{> ApplyStatus action=action}}-->
+        <!--{{else}}-->
+            <!--{{> Damage action=action}}-->
+        <!--{{/if}}-->
+    <!--{{/if}}  -->
+
+        {{#if action.amount}}
+            <div class="col-sm-6">Apply {{action.amount}}</div>
+        {{/if}}
+        {{#if action.type}}
+            <div class="col-sm-6">{{action.type}}</div>
+        {{/if}}
+        {{#if action.target}}
+            <div class="col-sm-12">to {{action.target}}</div>
+        {{/if}}
+        {{#if action.multiplierFunction}}
+            <div class="col-sm-12">Multiplier by {{action.multiplierFunction}}</div>
+        {{/if}}
+        {{#if action.multiplierTarget}}
+            <div class="col-sm-12">of {{action.multiplierTarget}}</div>
+        {{/if}}
+        {{#if action.choice}}
+            <div class="col-sm-6">Based on{{action.choice}}</div>
+        {{/if}}
+        {{#if action.source}}
+            <div class="col-sm-6">Source: {{action.source}}</div>
+        {{/if}}
+        {{#if action.status}}
+            <div class="col-sm-6">Applies {{action.status}}</div>
+        {{/if}}
+        {{#if action.specification}}
+            <div class="col-sm-12">Specs {{action.specification}}</div>
+        {{/if}}
+
+        {{#if action.conditional}}
+            {{#if action.conditional.condition}}
+                <div class="col-sm-6">{{action.conditional.condition}}</div>
+                <div class="col-sm-12">{{> Action action=action.conditional.conditionAbility}}</div>
+            {{/if}}
+            {{#if action.conditional.healTarget}}
+                <div class="col-sm-6">Target: {{> Action action=action.healTarget}} :</div>
+            {{/if}}
+            {{#if action.conditional.true}}
+                <div class="col-sm-12">Success: {{> Action action=action.conditional.true}}</div>
+            {{/if}}
+            {{#if action.conditional.false}}
+                <div class="col-sm-12">Fail: {{> Action action=action.conditional.false}}</div>
+            {{/if}}
+        {{/if}}
+
+        {{#if action.filter}}
+            {{#if action.filter.category}}
+                <div class="col-sm-6">{{action.filter.category}}</div>
+            {{/if}}
+            {{#if action.filter.type}}
+                <div class="col-sm-6">{{action.filter.type}}</div>
+            {{/if}}
+            {{#if action.filter.top}}
+                <div class="col-sm-6">
+                    {{#if action.filter.top}}
+                        Top of Deck
+                    {{/if}}
+                </div>
+            {{/if}}
+            {{#if action.filter.count}}
+                <div class="col-sm-6">{{action.filter.count}}</div>
+            {{/if}}
+        {{/if}}
+
+</Template>
+
+
+<!--<Template name="Damage">-->
+        <!--{{#if action.amount}}-->
+        <!--<div class="col-sm-2">{{action.amount}}</div>-->
+        <!--{{/if}}-->
+        <!--<div class="col-sm-3">{{action.type}}</div>-->
+        <!--<div class="col-sm-12"> to {{action.target}}</div>-->
+        <!--{{#if action.multiplierFunction}}-->
+        <!--<div class="col-sm-12">Multiply by {{action.multiplierFunction}} of {{action.multiplierTarget}}</div>-->
+        <!--{{/if}}-->
+<!--</Template>-->
+
+<!--<Template name="Conditional" >-->
+        <!--<div class="col-sm-1">{{action.conditional.condition}}</div>-->
+        <!--{{#let action=action.conditional.true}}-->
+            <!--{{> Action action = action}}-->
+        <!--{{/let}}-->
+<!--</Template>-->
+
+
+<!--<Template name="ApplyStatus" >-->
+        <!--<div class="col-sm-3">Apply {{action.status}}</div>-->
+        <!--<div class="col-sm-12"> to {{action.target}}</div>-->
+<!--</Template>-->
+
+<!--<Template name="Deck" >-->
+    <!--<div class="col-sm-3">Apply {{action.status}}</div>-->
+    <!--<div class="col-sm-12"> to {{action.target}}</div>-->
+<!--</Template>-->

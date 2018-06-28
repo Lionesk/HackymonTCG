@@ -5,9 +5,11 @@ export class PlayableCard{
     id:number;
     card:Card;
     currentDamage:number;
-    currentEnergy:[EnergyCard];
+    currentEnergy:Card[];
     
     constructor(id: number, card?:Card, playable?:PlayableCard){
+        this.id = id;
+        this.currentEnergy = new Array<Card>(0);
         if(card !== undefined && playable !== undefined) {
             this.currentDamage = null;
         }
@@ -21,38 +23,18 @@ export class PlayableCard{
             if(playable.card.type == CardType.POKEMON){
                 this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
+                if(! this.currentDamage){
+                    this.currentDamage=0;
+                }
             }
         }
-        this.id = id;
-    }
-
-    isPokemon(){
-        return this.card.type == CardType.POKEMON;
-    }
-
-    isEnergy(){
-        return this.card.type == CardType.ENERGY;
-    }
-
-    isBasic(){
-        return this.isPokemon() && this.card.category == PokemonCat.BASIC;
-    }
-
-    isEvolution(){
-        return this.isPokemon() && this.card.category == PokemonCat.STAGE_ONE;
-    }
-
-    addEnergy(energyCard:PlayableCard){
-
-        //TODO: check type is acceptable by pokemon
-        this.currentEnergy.concat(<EnergyCard>energyCard.card);
     }
 
     countEnergyOfType(energyCat:EnergyCat){
         let energy=0;
 
         this.currentEnergy.forEach((eCard)=>{
-            if(eCard.category = energyCat){
+            if(eCard.category == energyCat){
                 energy++;
             }
         });

@@ -29,13 +29,13 @@ Template.Bench.events({
         if(this.isNotInteractable){
             return;
         }
-        let playableCardName = event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-name")
+        let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
         let playableCard;
         console.log(this);
         await Promise.all(this.bench.map(async (pc: PlayableCard) => {
             if(pc!=null){
-                if(pc.card.name == playableCardName){
-                    playableCard = pc;
+                if(pc.id === parseInt(playableCardId)){
+                    playableCard=pc;
 
                     if(playableCard.card.type == CardType.POKEMON){
                         let ms = Session.get("move-state");
