@@ -167,11 +167,11 @@ export module GameManager {
     export function placeBench(humanPlayer: boolean, card:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
-        card = mapCardCopy(player, card, true)
-        if(player.bench.length < 5 && isPokemon(card)){
+        let pokemonCard = mapCardCopy(player, card, true)
+        if(player.bench.length < 5 && isPokemon(pokemonCard)){
             //Only possible if player has less than 5 Pokemon on the bench
-            player.bench.push(card);
-            removeFromHand(player, card);
+            player.bench.push(pokemonCard);
+            removeFromHand(player, pokemonCard);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
