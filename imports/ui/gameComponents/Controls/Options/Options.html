@@ -1,0 +1,33 @@
+<Template name="Options" class="container">
+    <div class="options">
+        <div class="row">
+                <div class="col-sm-5" >
+                    OPTIONS
+                </div>
+                <div class="col-sm-3 col-sm-offset-2 end-game" >
+                    Click to End Game
+                </div>
+                <div class="col-sm-1 " ></div>
+        </div>
+        {{#if isEnergySelected}}
+            <div class="row">
+                <div class="col-sm-6" >
+                    Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
+                </div>
+                <div class="col-sm-6" >
+
+                </div>
+            </div>
+        {{/if}}
+        {{#if isEvolverSelected}} 
+            <div class="row">
+                <div class="col-sm-6" >
+                    Pick a {{moveState.selectedEvolutionPokemonCard.card.evolution}} Pokemon to evolve to {{moveState.selectedEvolutionPokemonCard.card.name}}
+                </div>
+                <div class="col-sm-6" >
+
+                </div>
+            </div>
+        {{/if}}
+    </div>
+</Template>
