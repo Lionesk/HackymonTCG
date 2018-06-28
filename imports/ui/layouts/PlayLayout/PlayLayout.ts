@@ -21,10 +21,6 @@ Template.PlayLayout.helpers({
   })
 
 Template.Board.onCreated(function(){
-  let ms = new MoveState();
 
-  Session.set("move-state",ms);
-  console.log(Session.get("shuffle-deck"));
-  Meteor.call('newGameStart', {shuffle: Session.get("shuffle-deck")});
 });
 
