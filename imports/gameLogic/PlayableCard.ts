@@ -26,6 +26,9 @@ export class PlayableCard{
                 if(! this.currentDamage){
                     this.currentDamage=0;
                 }
+                if(! this.currentEnergy){
+                    this.currentEnergy=new Array<Card>(0);
+                }
             }
         }
     }

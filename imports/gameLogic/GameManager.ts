@@ -206,8 +206,10 @@ export module GameManager {
             });
         }
         else {
-            if(card.id === player.active.id){
-                playableCard = player.active;
+            if(player.active){
+                if(card.id === player.active.id){
+                    playableCard = player.active;
+                }
             }
             else{
                 playableCard = player.bench.find(function (element) {
