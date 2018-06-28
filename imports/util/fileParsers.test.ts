@@ -175,7 +175,7 @@ describe('parseDeckFile', function () {
 	beforeEach(() => {
 		Cards.remove({});
 		Abilities.remove({});
-		Decks.remove({});
+		Decks.remove({"userid":"test"});
 	});
 
      it('deck should be inserted into the db', function() {

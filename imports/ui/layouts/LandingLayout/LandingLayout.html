@@ -4,8 +4,12 @@
             {{> UploadDeck uploadType="abilities"}}
             {{> UploadDeck uploadType="cards"}}
             {{> UploadDeck uploadType="deck"}}
-            {{#if deckExists}}
-                <span class="goToPlay">Play!</span>
+            {{#if cardsExists}}
+                {{#if abilitiesExists}}
+                    {{#if deckExists}}
+                        <span class="goToPlay">Play!</span>
+                    {{/if}}
+                {{/if}}
             {{/if}}
         {{/if}}
     </main>

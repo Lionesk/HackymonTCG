@@ -396,11 +396,12 @@ export function parseDeckFile(data: string, id?: string){
   deckcardsString.forEach((cardString)=>{
     deckcards.push(parseInt(cardString));
   });
-  Decks.remove({});
-  if(id.length>0){
+  if(id){
+    Decks.remove({"userid":id});
     Decks.insert({"userid":id,"deckcards":deckcards})
   }
-else{
-  Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
-}
+  else{
+    Decks.remove({"userid":Meteor.userId()});  
+    Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
+  }
 }
