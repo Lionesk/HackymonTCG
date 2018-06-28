@@ -9,6 +9,9 @@ import { Template } from 'meteor/templating'
 Template.Board.events({
     'click .changeTestGameState':function(){
         Meteor.call('testModifyGameState');
+    },
+    'click .initializeGame':function () {
+        Meteor.call('newGameStart', {shuffle: false});
     }
 })
 
