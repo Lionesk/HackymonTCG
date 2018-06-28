@@ -58,7 +58,12 @@ export class MoveStateController{
     private static async addEnergy(ms:MoveState){
         if(ms.selectedEnergyCard && ms.selectedPokemonCard){
             console.log(ms);
-            await asyncCall("addEnergy", true, ms.selectedPokemonCard, ms.selectedEnergyCard);
+            try {
+                await asyncCall("addEnergy", true, ms.selectedPokemonCard, ms.selectedEnergyCard);
+            } catch (e) {
+                this.resetMoveState(ms);
+                throw e;
+            }
             this.resetMoveState(ms);
         }
     }
@@ -88,7 +93,12 @@ export class MoveStateController{
             
             else{
                 let self = this;
-                await asyncCall("evolvePokemon", ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
+                try {
+                    await asyncCall("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
+                } catch (e) {
+                    this.resetMoveState(ms);
+                    throw e;
+                }
                 this.resetMoveState(ms);
             }
 

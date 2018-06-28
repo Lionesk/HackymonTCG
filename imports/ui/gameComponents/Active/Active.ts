@@ -15,8 +15,7 @@ Template.Active.helpers({
         }
         if(Object.keys(playableCard.card).length === 0){
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
@@ -34,13 +33,13 @@ Template.Active.events({
         // if(this.)
         console.log("abilit click");
     },
-    "click .active-card":function(event){
+    "click .active-card":async function(event){
         if(this.isNotInteractable){
             return;
         }
         console.log("active click");
         let ms = Session.get("move-state");
-        MoveStateController.setPokemon(ms,this.active);
+        await MoveStateController.setPokemon(ms,this.active);
         Session.set("move-state",ms);
     }
 });
