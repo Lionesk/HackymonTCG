@@ -92,12 +92,12 @@ export module GameManager {
         //TODO: Check if attack triggered a game ending condition: Drew all prize cards, knocked out all enemy pokemon
     }
 
-    export function evolve(humanPlayer: boolean, toEvolve:PlayableCard, evolution:PlayableCard) {
+    export function evolve(humanPlayer: boolean, toEvolve: PlayableCard, evolution: PlayableCard) {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         if(isPokemon(toEvolve) && isPokemon(evolution)){
             toEvolve = mapCardCopy(player, toEvolve);
-            evolution = mapCardCopy(player, evolution);
+            evolution = mapCardCopy(player, evolution, true);
             if(player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
                 player.bench.includes(toEvolve))){
                 if (evolution.card.evolution === toEvolve.card.name) {
@@ -156,7 +156,6 @@ export module GameManager {
     function removeFromHand(player:Player, card:PlayableCard){
         player.hand = player.hand.filter(c => c !== card);
         player.hand = cleanHand(player.hand);
-        console.log(player.hand);
     }
 
     export function playTrainer(){
@@ -172,21 +171,23 @@ export module GameManager {
      * @returns {PlayableCard}
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean){
+        let playableCard: PlayableCard;
         if(hand) {
-            let energyCard: PlayableCard = player.hand.find(function (element) {
+            playableCard = player.hand.find(function (element) {
                 return element.id === card.id
             });
-            console.log(energyCard);
-            return energyCard;
         }
         else {
-            let pokemonCard: PlayableCard = (player.active.id === card.id) ? player.active :
-                player.bench.find(function (element) {
+            if(card.id === player.active.id){
+                playableCard = player.active;
+            }
+            else{
+                playableCard = player.bench.find(function (element) {
                     return element.id === card.id
                 });
-            console.log(pokemonCard);
-            return pokemonCard;
+            }
         }
+        return playableCard;
     }
 
     function isPokemon(playableCard: PlayableCard){
