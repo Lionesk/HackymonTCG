@@ -31,28 +31,32 @@ import{
 export function parseCardString(data: string): void {
   Cards.remove({}); // drop all cards
   
-  data.replace("#\n", "");
+  // data.replace("#\n", "");
   let ctr = 1;
   data.split("\n").forEach((cardStr: string) => {
-    const tokens: string[] = cardStr.split(':');
-    const name: string = tokens[0];
-    const type: CardType = tokens[1] as CardType;
-    let card: Card;
-    switch (type) {
-      case CardType.POKEMON:
-        card = parsePokemon(ctr++, name, type, tokens);
-        break;
-      case CardType.TRAINER:
-        card = parseTrainer(ctr++, name, type, tokens);
-        break;
-      case CardType.ENERGY:
-        card = parseEnergy(ctr++, name, type, tokens);
-        break;
-    }
-
-    console.log(card);
-    if (card) {
-      Cards.insert(card);
+    if (cardStr === "#") {
+      ++ctr;
+    } else {
+      const tokens: string[] = cardStr.split(':');
+      const name: string = tokens[0];
+      const type: CardType = tokens[1] as CardType;
+      let card: Card;
+      switch (type) {
+        case CardType.POKEMON:
+          card = parsePokemon(ctr++, name, type, tokens);
+          break;
+        case CardType.TRAINER:
+          card = parseTrainer(ctr++, name, type, tokens);
+          break;
+        case CardType.ENERGY:
+          card = parseEnergy(ctr++, name, type, tokens);
+          break;
+      }
+  
+      console.log(card);
+      if (card) {
+        Cards.insert(card);
+      }
     }
   });
 }
@@ -203,7 +207,7 @@ export function parseAbility(abilityStr: string) {
       case AbilityType.SEARCH:
         return parseSearch(looseAction,  actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.DECK:
-        return parseSourceTarget(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
+        return parseDeck(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.SHUFFLE:
         return parseTargetOnly(looseAction, actionStr.substr(typeIndex + 1, actionStr.length)) as AbilityAction;
       case AbilityType.CONDITIONAL:
@@ -301,26 +305,63 @@ function parseSearch(action: Partial<AbilityAction>, actionData: string): Partia
 }
 
 function parseAmount(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
-  const multiplierIndex = data.indexOf('*');
-  if (multiplierIndex === -1) {
+  // check if amount is function or number
+  const functionIndex = data.indexOf('count'); // only function is count
+  if (functionIndex === -1) {
     action.amount = parseInt(data);
   } else {
-    const factors = data.split('*');
+    // there is always only one operator so all non present operators will be -1 which is always less than 0
+    const operatorIndex = Math.max(data.indexOf("*"), data.indexOf(">"), data.indexOf("<"));
     let number: string;
     let func: string;
-    if (!isNaN(parseInt(factors[0]))) {
-      number = factors[0];
-      func = factors[1];
+    if (operatorIndex !== -1) {
+      const operator = data.charAt(operatorIndex);
+      const factors = data.split(operator);
+      if (!isNaN(parseInt(factors[0]))) {
+        number = factors[0];
+        func = factors[1];
+      } else {
+        number = factors[1];
+        func = factors[0];
+      }
+      action.amount = parseInt(number);
+      action.amountOperator = operator;
     } else {
-      number = factors[1];
-      func = factors[0];
+      func = data;
     }
-    action.amount = parseInt(number);
     const multiplierInfo = func.split("(");
-    action.multiplierFunction = multiplierInfo[0] as AbilityFunction;
-    action.multiplierTarget = multiplierInfo[1].substr(0, multiplierInfo[1].length - 1) as Target;
+    action.amountFunction = multiplierInfo[0] as AbilityFunction;
+    let functionTargetTokens: string[] = multiplierInfo[1].replace(')', '').split(":");
+    if (functionTargetTokens.length === 1) {
+      action.amountFunctionTarget = functionTargetTokens[0] as Target;
+    } else {
+      action.amountFunctionTarget = functionTargetTokens[1] as Target;
+      if (functionTargetTokens.length > 2) {
+        action.amountFunctionSpecification = functionTargetTokens.slice(2).join(":");
+      }
+    }
   }
 
+  return action;
+}
+
+function parseDeck(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
+  const tokens: string[] = data.split(':');
+  action.source = tokens[1] as Target;
+
+  let destinationIndex = tokens.indexOf("destination");
+  action.target = tokens[destinationIndex + 1] as Target;
+  if (tokens[destinationIndex+2] === "bottom" || tokens[destinationIndex+2] === "top") {
+    action.specification = tokens[destinationIndex+2];
+  }
+
+  let choiceIndex = tokens.indexOf("choice");
+  if (choiceIndex != -1) {
+    action.choice = tokens[choiceIndex + 1] as Choice;
+  }
+
+  action = parseAmount(action, tokens.pop());
+  
   return action;
 }
 
@@ -383,10 +424,6 @@ function parseCondition(action: Partial<AbilityAction>, data: string): Partial<A
       }
   }
 
-  return action;
-}
-
-function parseDeck(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
   return action;
 }
 
