@@ -24,6 +24,10 @@ import {
   Condition
 } from "../api/collections/abilities";
 
+import{  
+  Decks
+} from "../api/collections/Deck";
+
 export function parseCardString(data: string): void {
   Cards.remove({}); // drop all cards
   
@@ -384,4 +388,14 @@ function parseCondition(action: Partial<AbilityAction>, data: string): Partial<A
 
 function parseDeck(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
   return action;
+}
+
+export function parseDeckFile(data: string){
+  let deckcardsString = data.split("\n");
+  let deckcards = [];
+  deckcardsString.forEach((cardString)=>{
+    deckcards.push(parseInt(cardString));
+  });
+  Decks.remove({});
+  Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards})
 }

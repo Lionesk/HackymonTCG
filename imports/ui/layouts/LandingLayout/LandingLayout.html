@@ -3,7 +3,10 @@
         {{#if IsLoggedIn}}
             {{> UploadDeck uploadType="abilities"}}
             {{> UploadDeck uploadType="cards"}}
-            <span class="goToPlay">Play!</span>
+            {{> UploadDeck uploadType="deck"}}
+            {{#if deckExists}}
+                <span class="goToPlay">Play!</span>
+            {{/if}}
         {{/if}}
     </main>
 </Template>

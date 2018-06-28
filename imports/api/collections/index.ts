@@ -23,3 +23,7 @@ export {
 export{
   GameStates
 } from './GamesStateCollection'
+
+export{
+  Decks
+} from './Deck'

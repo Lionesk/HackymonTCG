@@ -4,7 +4,7 @@ import { GameStates } from "./collections";
 import { GameManager } from "../gameLogic/GameManager";
 import { GameState } from "../gameLogic/GameState";
 import { PlayableCard } from "../gameLogic/PlayableCard";
-import { parseAbilityString, parseCardString } from "../util/fileParsers";
+import { parseAbilityString, parseCardString, parseDeckFile } from "../util/fileParsers";
 
 Meteor.methods({
     printToServerConsole() {
@@ -164,6 +164,7 @@ Meteor.methods({
     uploadDeck(data: { fileString: string }) {
         if (Meteor.isServer) {
             console.log(data.fileString);
+            parseDeckFile(data.fileString);
         }
     },
 });
