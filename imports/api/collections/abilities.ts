@@ -86,9 +86,11 @@ export interface AbilityAction {
     evolutionTarget?: Target;
   }
   amount?: number;
-  multiplierTarget?: Target;
-  multiplierFunction?: AbilityFunction;
-  specification?: string; // any additional data required for the action
+  amountFunction?: AbilityFunction;
+  amountFunctionTarget?: Target;
+  amountFunctionSpecification?: string;
+  amountOperator?: string;
+  specification?: string; // any additional data required for the action to be parsed at runtime
 }
 
 let Abilities: Mongo.Collection<Ability>;
