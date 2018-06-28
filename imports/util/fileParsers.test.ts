@@ -1,6 +1,6 @@
 
 import { assert } from "chai";
-import { parseCardString, parseAbilityString, parsePokemon, parseTrainer, parseEnergy, parseAbility } from './fileParsers';
+import { parseCardString, parseAbilityString, parsePokemon, parseTrainer, parseEnergy, parseAbility, parseDeckFile } from './fileParsers';
 
 
 
@@ -30,6 +30,10 @@ import {
   Status,
   Condition
 } from "../api/collections/abilities";
+
+import{  
+  Decks
+} from "../api/collections/Deck";
 
 describe('parseCardString', function () {
 	beforeEach(() => {
@@ -167,6 +171,26 @@ let actions=ability.actions.length;
 
 
  
+describe('parseDeckFile', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({});
+	});
+
+     it('deck should be inserted into the db', function() {
+    
+let data="25\n51\n50";
+
+   parseDeckFile(data, "test");
+
+   let deck=Decks.find().fetch()[0];
+
+  assert.equal(deck.deckcards[0], 25);
+  
+    
+      });
+ });
 
 
 

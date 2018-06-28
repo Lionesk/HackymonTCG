@@ -390,12 +390,17 @@ function parseDeck(action: Partial<AbilityAction>, data: string): Partial<Abilit
   return action;
 }
 
-export function parseDeckFile(data: string){
+export function parseDeckFile(data: string, id?: string){
   let deckcardsString = data.split("\n");
   let deckcards = [];
   deckcardsString.forEach((cardString)=>{
     deckcards.push(parseInt(cardString));
   });
   Decks.remove({});
-  Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards})
+  if(id.length>0){
+    Decks.insert({"userid":id,"deckcards":deckcards})
+  }
+else{
+  Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
+}
 }
