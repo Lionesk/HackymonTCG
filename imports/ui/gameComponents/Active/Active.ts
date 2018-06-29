@@ -42,8 +42,10 @@ Template.Active.events({
         }
         let ms = Session.get("move-state");
             if(MoveStateController.isEmpty(ms)){
-                console.log(" ability: called");
-                //call ability
+                console.log(" ability: called "+ this.abilityIndex);    
+                console.log("COST")
+                console.log(this.abilityCost)
+                Meteor.call("executeAbility",true, this.playableCard,this.abilityIndex)
             }
         console.log("active click");
 

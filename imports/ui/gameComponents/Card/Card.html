@@ -80,7 +80,7 @@
             {{#each abilityRef in playableCard.card.abilities}}
             <div class="row">
                 <div class="col-sm-12 ability-option">
-                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost }}
+                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard }}
                 </div>
             </div>
             {{/each}}
