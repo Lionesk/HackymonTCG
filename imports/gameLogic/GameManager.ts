@@ -289,25 +289,23 @@ export module GameManager {
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
         const AvailableEnergy = cardEnergy.reduce<Cost>((acc, element) => {
-            if (acc[element.type]) {
+            if (acc[element.category]) {
                 acc.colorless += 1;
-                acc[element.type] += 1
+                acc[element.category] += 1
             } else {
                 acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
-                acc[element.type] = 1;
+                acc[element.category] = 1;
             }
 
             return acc;
         }, {});
 
-        Object.keys(abilityCost).reduce<boolean>((isCastable, index) => {
+        return Object.keys(abilityCost).reduce<boolean>((isCastable, index) => {
             if (isCastable && abilityCost[index] > AvailableEnergy) {
                 return false;
             }
             return isCastable;
         }, true);
-
-        return false;
     }
 
     function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
