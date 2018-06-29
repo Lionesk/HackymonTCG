@@ -26,7 +26,7 @@ Template.Bench.helpers({
 
 Template.Bench.events({
     "click .bench-card": async function(event){
-        if(this.isNotInteractable){
+        if(this.isNotInteractable && this.isFirstRound){
             return;
         }
         let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
@@ -39,8 +39,12 @@ Template.Bench.events({
 
                     if(playableCard.card.type == CardType.POKEMON){
                         let ms = Session.get("move-state");
-                        await MoveStateController.setPokemon(ms, playableCard);
-                        Session.set("move-state", ms);
+                        if(MoveStateController.isEmpty(ms) && !this.active){
+                            Meteor.call("placeActive",true,playableCard);
+                        }else{
+                            await MoveStateController.setPokemon(ms, playableCard);
+                            Session.set("move-state", ms);
+                        }
                     }
                 }
                 

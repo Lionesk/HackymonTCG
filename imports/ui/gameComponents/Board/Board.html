@@ -15,12 +15,12 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                {{> PlayerSide player=gamestate.player}}
+                {{> PlayerSide player=gamestate.player energyPlayed=gamestate.energyPlayed isFirstRound=gamestate.isFirstRound active=gamestate.player.active }}
             </div>
         </div>
         <div class="row">
             <div class="col-sm-12">
-                {{> Controls}}
+                {{> Controls deck= gamestate.player.deck}}
             </div>
         </div>
     </div>

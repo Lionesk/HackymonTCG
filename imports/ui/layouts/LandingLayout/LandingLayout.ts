@@ -21,12 +21,15 @@ Template.LandingLayout.helpers({
     }
   })
 
+
+
   Template.LandingLayout.events({
     'click .goToPlay':function(event){
-      // Session.set("shuffle-deck",);
+      // Session.set("shuffle-deck",event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
+      // console.log( event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
       let ms = new MoveState();
       Session.set("move-state",ms);
-      Meteor.call('newGameStart', {shuffle: event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked},()=>{
+      Meteor.call('newGameStart', event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked,()=>{
         FlowRouter.go('/play');
       });
     }

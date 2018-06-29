@@ -1,5 +1,6 @@
 import { Mongo } from "meteor/mongo";
 import { CardType, CardCategory } from "./Cards";
+import { PlayableCard } from "../../gameLogic/PlayableCard";
 
 export enum AbilityType {
   DECK = "deck",

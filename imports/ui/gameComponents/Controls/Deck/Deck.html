@@ -1,5 +1,11 @@
-<Template name="Deck">
-
-    {{> Card playcard=createPlaceholderCard hidden=true}}
+<Template name="Deck" class="container">
+    <div>
+        <div class="col-sm-6">
+            Deck Size: {{deck.length}} card(s) left
+        </div>
+        <div class="col-sm-6">
+            {{> Card playcard=createPlaceholderCard hidden=true}}
+        </div>
+    </div>
 
 </Template>

@@ -15,32 +15,39 @@ Template.Active.helpers({
         }
         if(Object.keys(playableCard.card).length === 0){
             return false;
-        }
-        else{
+        } else {
             return true;
         }
     }
 });
 
 Template.Active.events({
-    // "click .ability":function(event){
-    //     if(this.isNotInteractable){
-    //         return;
-    //     }
-    //     //data-ability-index
-    //     let abilityIndex =event.currentTarget.getAttribute("data-ability-index");
-    //     console.log(" ability: "+abilityIndex);
-    //     console.log(" this: "+JSON.stringify(this));
-    //     // if(this.)
-    //     console.log("abilit click");
-    // },
-    "click .active-card .ability":function(event){
+    "click .active-card":function(event){
         if(this.isNotInteractable){
             return;
         }
+        // let abilityIndex =event.currentTarget.getAttribute("data-ability-index");
+        // console.log(" ability: "+abilityIndex);
+        console.log(" this: "+JSON.stringify(this));
+        let ms = Session.get("move-state");
+        if(!MoveStateController.isEmpty(ms)){
+            console.log("abilit click");
+            MoveStateController.setPokemon(ms,this.active);
+            Session.set("move-state",ms);
+        }
+    },
+    "click .active-card .ability":function(event){
+        if(this.isNotInteractable&& this.isFirstRound){
+            return;
+        }
+        let ms = Session.get("move-state");
+            if(MoveStateController.isEmpty(ms)){
+                console.log(" ability: called "+ this.abilityIndex);    
+                console.log("COST")
+                console.log(this.abilityCost)
+                Meteor.call("executeAbility",true, this.playableCard,this.abilityIndex)
+            }
         console.log("active click");
-        // let ms = Session.get("move-state");
-        // MoveStateController.setPokemon(ms,this.active);
-        // Session.set("move-state",ms);
+
     }
 });

@@ -201,7 +201,7 @@ describe('parseAbility', function () {
 		Decks.remove({"userid":"test"});
 	});
 
-     it('ability should be parsed', function() {
+     it('ability should be parsed (Damage type)', function() {
     
 
    let result=parseAbility("dam:target:opponent-active:20");
@@ -211,6 +211,71 @@ describe('parseAbility', function () {
       });
  });
 
+describe('parseAbility', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({"userid":"test"});
+	});
 
+     it('ability should be parsed (heal type)', function() {
+    
 
+   let result=parseAbility("heal:target:choice:your:30");
+
+  assert.equal(result[0].type, AbilityType.HEAL);
+      
+      });
+ });
+
+describe('parseAbility', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({"userid":"test"});
+	});
+
+     it('ability should be parsed (redamage type)', function() {
+    
+
+  let result=parseAbility("redamage:source:choice:opponent:destination:opponent:count(target:last:source:damage");
+
+  assert.equal(result[0].type, AbilityType.REDAMAGE);
+      
+      });
+ });
+
+ describe('parseAbility', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({"userid":"test"});
+	});
+
+     it('ability should be parsed (reenergize type)', function() {
+    
+
+  let result=parseAbility("reenergize:target:choice:your:1:target:choice:your:1");
+
+  assert.equal(result[0].type, AbilityType.REENERGIZE);
+      
+      });
+ });
+
+ describe('parseAbility', function () {
+	beforeEach(() => {
+		Cards.remove({});
+		Abilities.remove({});
+		Decks.remove({"userid":"test"});
+	});
+
+     it('ability should be parsed (applystat type)', function() {
+    
+
+  let result=parseAbility("applystat:status:asleep:opponent-active");
+
+  assert.equal(result[0].type, AbilityType.APPLY_STAT);
+      
+      });
+ });
 

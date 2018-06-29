@@ -10,14 +10,22 @@
         </div>
 
         {{else}}
-        <div  class="card"> 
+        <div  class="card {{fadedClass}}"> 
             <!-- pokemoncard -->
             {{#if isPokemon}}
-                <div class="row">
-                    <div class="col-sm-12">
-                        <span>Pokemon</span>
+                {{#if isEvolution}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>Evolution</span>
+                        </div>
                     </div>
-                </div>
+                {{else}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <span>Pokemon</span>
+                        </div>
+                    </div>
+                {{/if}}
                 <div class="row">
                     <div class="col-sm-12">
                         <span>{{playableCard.card.name}}</span>
@@ -44,19 +52,19 @@
                 
             {{else}}
                 {{#if isEnergy}}
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <span>EnergyCard:</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <span>{{playableCard.card.category}}</span>
-                        </div>
-                    </div>
-                    <div class="row">
-                            <div class="col-sm-12 img-energy">
-                                <img height=100 width=100 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
+                        <div>
+                            <div class="row">
+                                <div class="col-sm-5">
+                                    <span>EnergyCard:</span>
+                                </div>
+                                <div class="col-sm-7">
+                                    <span>{{playableCard.card.category}}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 img-energy">
+                                    <img height=100 width=100 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
+                                </div>
                             </div>
                         </div>
                     {{else}}
@@ -72,7 +80,7 @@
             {{#each abilityRef in playableCard.card.abilities}}
             <div class="row">
                 <div class="col-sm-12 ability-option">
-                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost }}
+                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard }}
                 </div>
             </div>
             {{/each}}
