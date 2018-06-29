@@ -52,7 +52,7 @@ export class MoveStateController{
             }
 
         }
-        // console.log(ms);
+        console.log(ms);
 
         if(ms.selectedEnergyCard){
             await this.addEnergy(ms);
@@ -85,7 +85,7 @@ export class MoveStateController{
     }
 
     private static async evolvePokemon(ms:MoveState){
-        
+        console.log("EVOL: "+ms.selectedEvolutionPokemonCard +"   " +ms.selectedPokemonCard)
         if(ms.selectedEvolutionPokemonCard && ms.selectedPokemonCard){
             
             if(ms.selectedEvolutionPokemonCard.card.evolution !==  ms.selectedPokemonCard.card.name){
@@ -93,7 +93,6 @@ export class MoveStateController{
             }
             
             else{
-                let self = this;
                 await asyncCall("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
                 this.resetMoveState(ms);
             }
@@ -109,6 +108,6 @@ export class MoveStateController{
     }
 
     static isEmpty(ms){
-        return         ms.selectedEnergyCard === null&&ms.selectedPokemonCard === null&& ms.selectedEvolutionPokemonCard === null;
+        return (ms.selectedEnergyCard === null&&ms.selectedPokemonCard === null&& ms.selectedEvolutionPokemonCard === null);
     }
 }
