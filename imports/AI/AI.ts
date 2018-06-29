@@ -40,7 +40,7 @@ export module AI {
         state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let energyCard = findEnergy(state.ai.hand);
         if(energyCard !== undefined){
-            if(state.ai.active.currentEnergy.length < 3){
+            if(state.ai.active.currentEnergy.length < 4){
                 GameManager.addEnergy(false, state.ai.active, energyCard);
             }
             else{
@@ -51,6 +51,9 @@ export module AI {
                     }
                 }
             }
+        }
+        if(state.ai.active){
+            GameManager.executeAbility(false,state.ai.active,state.ai.active.card.abilities[0].index)
         }
         //TODO: Try to attack and/or use a trainer card
         console.log('Ending turn');

@@ -253,6 +253,14 @@ export module GameManager {
 
     function applyDamage(target: PlayableCard, damage: number) {
         target.currentDamage += damage;
+        console.log( target.currentDamage)
+        console.log( target.card.healthPoints)
+        
+        if(target.currentDamage>target.card.healthPoints){
+            // target=undefined;
+            console.log("DIE")
+            //TODO: send to discard
+        }
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
