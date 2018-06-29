@@ -80,13 +80,8 @@ export module GameManager {
     export function generateDeck(deck: number[], shuffle: boolean) {
         let newDeck: PlayableCard[] = [];
         let counter: number = 0;
-<<<<<<< HEAD
-        for (let i in deck) {
-            let card = Cards.find().fetch()[i];
-=======
         for(let i of deck){
             let card = Cards.find({index: i}).fetch()[0];
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
             newDeck.push(new PlayableCard(counter++, card));
         }
         if (shuffle) {
@@ -120,11 +115,7 @@ export module GameManager {
      * @param {Player} player
      * @param {number} n
      */
-<<<<<<< HEAD
-    function drawPlayer(player: Player, n?: number) {
-=======
     export function drawPlayer(player: Player, n?: number){
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
         let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
         for (let i = 0; i < toDraw; i++) {
             if (player.deck.length === 0) {
@@ -155,26 +146,15 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-<<<<<<< HEAD
-    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy: PlayableCard) {
-        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
-=======
     export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         if(humanPlayer && state.energyPlayed){
             return;
         }
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
         let player: Player = humanPlayer ? state.player : state.ai;
         if (isPokemon(pokemon) && isEnergy(energy)) {
             pokemon = mapCardCopy(player, pokemon);
             energy = mapCardCopy(player, energy, true);
-<<<<<<< HEAD
-            if (pokemon !== null && energy !== null) {
-                //Pokemon must either be active or on the bench
-                addEnergyToCard(pokemon, energy);
-                removeFromHand(player, energy);
-=======
             //Pokemon must either be active or on the bench
             addEnergyToCard(pokemon, energy);
             removeFromHand(player, energy);
@@ -182,7 +162,6 @@ export module GameManager {
                 state.energyPlayed=true;
             }else{
                 state.energyPlayed=false;
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -240,24 +219,6 @@ export module GameManager {
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean) {
         let playableCard: PlayableCard;
-<<<<<<< HEAD
-        if (hand) {
-            playableCard = player.hand.find(function (element) {
-                return element.id === card.id
-            });
-        }
-        else {
-            if (player.active) {
-                if (card.id === player.active.id) {
-                    playableCard = player.active;
-                }
-            }
-            else {
-                playableCard = player.bench.find(function (element) {
-                    return element.id === card.id
-                });
-            }
-=======
         if(player.active && player.active.id === card.id){
             return player.active;
         }
@@ -266,7 +227,6 @@ export module GameManager {
         });
         if(playableCard !== undefined){
             return playableCard;
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
         }
         playableCard = player.bench.find(function (element) {
             return element.id === card.id

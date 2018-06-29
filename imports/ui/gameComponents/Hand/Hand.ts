@@ -44,15 +44,6 @@ Template.Hand.events({
             }
             if(pc.id === parseInt(playableCardId)){
                 playableCard=pc;
-<<<<<<< HEAD
-                if(playableCard.card.type== CardType.POKEMON){
-                    if(playableCard.card.evolution){
-                        let ms = Session.get("move-state");                        
-                        MoveStateController.setEvolutionPokemon(ms,playableCard);
-                        Session.set("move-state",ms);
-                    }else{
-                         Meteor.call("benchPokemon", true, playableCard);
-=======
                 console.log( "is active?: "+ this.active + " this.isFirstRound: "+this.isFirstRound)
                 if((!this.active&&this.isFirstRound)|| !this.isFirstRound){
                     if(playableCard.card.type== CardType.POKEMON){
@@ -66,7 +57,6 @@ Template.Hand.events({
                             MoveStateController.resetMoveState(ms);
                             Session.set("move-state",ms);
                         }
->>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
                     }
                 }
                 if(this.isFirstRound){
