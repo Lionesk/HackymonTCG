@@ -442,19 +442,3 @@ export function parseDeckFile(data: string, id?: string){
     Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
   }
 }
-
-export function parseDeckFile(data: string, id?: string){
-  let deckcardsString = data.split("\n");
-  let deckcards = [];
-  deckcardsString.forEach((cardString)=>{
-    deckcards.push(parseInt(cardString));
-  });
-  if(id){
-    Decks.remove({"userid":id});
-    Decks.insert({"userid":id,"deckcards":deckcards})
-  }
-  else{
-    Decks.remove({"userid":Meteor.userId()});  
-    Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
-  }
-}

@@ -40,6 +40,11 @@ Meteor.methods({
             }
         }
     },
+    executeAbility:function(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, target?: PlayableCard) {
+        if(Meteor.isServer){
+            GameManager.executeAbility(humanPlayer, source, abilityIndex, target);
+        }
+    },
     addEnergy:function(humanPlayer: boolean, pokemonPlayableCard:PlayableCard, energyPlayableCard:PlayableCard){
         if(Meteor.isServer){
             GameManager.addEnergy(humanPlayer, pokemonPlayableCard, energyPlayableCard);
