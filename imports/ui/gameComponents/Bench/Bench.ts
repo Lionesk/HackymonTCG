@@ -39,8 +39,15 @@ Template.Bench.events({
 
                     if(playableCard.card.type == CardType.POKEMON){
                         let ms = Session.get("move-state");
-                        if(MoveStateController.isEmpty(ms) && !this.active){
+                        console.log("ms from bench");
+                        // console.log(ms);
+                        // console.log(this.active);
+                        // console.log(!this.active);
+                        if(!ms.selectedEnergyCard&& !ms.selectedEvolutionPokemonCard && !this.active){
+                            console.log("place ui active")
                             Meteor.call("placeActive",true,playableCard);
+                            // MoveStateController.resetMoveState(ms);
+                            // Session.set("move-state", ms);                            
                         }else{
                             await MoveStateController.setPokemon(ms, playableCard);
                             Session.set("move-state", ms);

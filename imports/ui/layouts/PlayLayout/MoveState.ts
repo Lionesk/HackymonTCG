@@ -108,6 +108,6 @@ export class MoveStateController{
     }
 
     static isEmpty(ms){
-        return (ms.selectedEnergyCard === null&&ms.selectedPokemonCard === null&& ms.selectedEvolutionPokemonCard === null);
+        return ms.selectedEnergyCard === null&&ms.selectedPokemonCard === null&& ms.selectedEvolutionPokemonCard === null;
     }
 }

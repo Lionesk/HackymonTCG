@@ -1,0 +1,74 @@
+{
+  "id": "65c3859c-fe30-4e54-9db8-fd23f93aa048",
+  "name": "UseCase3.2",
+  "url": "http://dumblev4.encs.concordia.ca",
+  "tests": [{
+    "id": "fa631628-fe49-4c51-a285-853ed6cf6770",
+    "name": "UseCase3.2",
+    "commands": [{
+      "id": "dae6a6ef-bd00-4742-bd88-afaf31a5d57c",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "value": ""
+    }, {
+      "id": "daa9e4bb-5b8f-4543-91b8-7a39cd7ca514",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-sign-in-link",
+      "value": "62,15"
+    }, {
+      "id": "52063d20-9959-4fd1-aa27-f8e0fe241874",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-username",
+      "value": "65,12"
+    }, {
+      "id": "4c3d3db2-66b3-4057-a994-c01ac7761d3d",
+      "comment": "",
+      "command": "type",
+      "target": "id=login-username",
+      "value": "123"
+    }, {
+      "id": "e4ba2d65-4313-46a6-a45a-90ae39cb238d",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-password",
+      "value": "78,11"
+    }, {
+      "id": "ce0d356d-2d88-4769-908a-1e517d0769d7",
+      "comment": "",
+      "command": "type",
+      "target": "id=login-password",
+      "value": "123456"
+    }, {
+      "id": "8f88c6e4-4902-40cc-ad52-2617e78c1591",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-buttons-password",
+      "value": "160,9"
+    }, {
+      "id": "c37d7cd1-967b-4455-9a99-b7f8e37e73f8",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-name-link",
+      "value": "46,9"
+    }, {
+      "id": "44b90465-7c08-43bf-864a-c225564f8a01",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-buttons-logout",
+      "value": "53,17"
+    }]
+  }],
+  "suites": [{
+    "id": "8473504b-7bf0-4e3b-9ac7-f16f1f77eaec",
+    "name": "Default Suite",
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["fa631628-fe49-4c51-a285-853ed6cf6770"]
+  }],
+  "urls": ["http://dumblev4.encs.concordia.ca/"],
+  "plugins": [],
+  "version": "1.0"
+}

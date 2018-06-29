@@ -168,13 +168,17 @@ export module GameManager {
     }
 
     export function placeActive(humanPlayer: boolean, card: PlayableCard) {
+        console.log("placing to active called")
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         card = mapCardCopy(player, card, true)
         if (!player.active && isPokemon(card)) {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
+            console.log("placing to active")
+            
             removeFromHand(player, card);
+            removeFromBench(player,player.active);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -203,6 +207,10 @@ export module GameManager {
     function removeFromHand(player: Player, card: PlayableCard) {
         player.hand = player.hand.filter(c => c !== card);
         player.hand = cleanHand(player.hand);
+    }
+    function removeFromBench(player: Player, card: PlayableCard){
+        player.bench = player.bench.filter(c => c !== card);
+        
     }
 
     export function playTrainer() {
@@ -252,12 +260,18 @@ export module GameManager {
     }
 
     function applyDamage(target: PlayableCard, damage: number) {
+        if(!target){
+            return;
+        }
+        if(!target.card){
+            return;
+        }
         target.currentDamage += damage;
-        console.log( target.currentDamage)
-        console.log( target.card.healthPoints)
-        
+        // console.log( target.currentDamage)
+        // console.log( target.card.healthPoints)
+
         if(target.currentDamage>target.card.healthPoints){
-            // target=undefined;
+            // target=null;
             console.log("DIE")
             //TODO: send to discard
         }
@@ -326,6 +340,7 @@ export module GameManager {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
+                // console.log("t"+parseInt(ability.amount));
                     applyDamage(target, ability.amount);
                     break;
                 default:

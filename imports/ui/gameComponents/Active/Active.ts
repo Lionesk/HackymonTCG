@@ -41,7 +41,7 @@ Template.Active.events({
             return;
         }
         let ms = Session.get("move-state");
-            if(MoveStateController.isEmpty(ms)){
+            if(!ms.selectedEnergyCard&& !ms.selectedEvolutionPokemonCard){
                 console.log(" ability: called "+ this.abilityIndex);    
                 console.log("COST")
                 console.log(this.abilityCost)
