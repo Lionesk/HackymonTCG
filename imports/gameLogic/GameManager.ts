@@ -80,8 +80,13 @@ export module GameManager {
     export function generateDeck(deck: number[], shuffle: boolean) {
         let newDeck: PlayableCard[] = [];
         let counter: number = 0;
+<<<<<<< HEAD
         for (let i in deck) {
             let card = Cards.find().fetch()[i];
+=======
+        for(let i of deck){
+            let card = Cards.find({index: i}).fetch()[0];
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
             newDeck.push(new PlayableCard(counter++, card));
         }
         if (shuffle) {
@@ -105,12 +110,21 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
+    export function finishFirstRound(){
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        state.isFirstRound=false;
+        GameStates.update({userid: Meteor.userId()}, state);
+    }
     /***
      * Overloaded Draw function for internal GameManager calls where game state is already loaded.
      * @param {Player} player
      * @param {number} n
      */
+<<<<<<< HEAD
     function drawPlayer(player: Player, n?: number) {
+=======
+    export function drawPlayer(player: Player, n?: number){
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
         let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
         for (let i = 0; i < toDraw; i++) {
             if (player.deck.length === 0) {
@@ -141,16 +155,34 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
+<<<<<<< HEAD
     export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+=======
+    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        if(humanPlayer && state.energyPlayed){
+            return;
+        }
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
         let player: Player = humanPlayer ? state.player : state.ai;
         if (isPokemon(pokemon) && isEnergy(energy)) {
             pokemon = mapCardCopy(player, pokemon);
             energy = mapCardCopy(player, energy, true);
+<<<<<<< HEAD
             if (pokemon !== null && energy !== null) {
                 //Pokemon must either be active or on the bench
                 addEnergyToCard(pokemon, energy);
                 removeFromHand(player, energy);
+=======
+            //Pokemon must either be active or on the bench
+            addEnergyToCard(pokemon, energy);
+            removeFromHand(player, energy);
+            if(humanPlayer){
+                state.energyPlayed=true;
+            }else{
+                state.energyPlayed=false;
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -165,12 +197,16 @@ export module GameManager {
             player.active = card;
             removeFromHand(player, card);
         }
-        return this.gameState;
+        GameStates.update({userid: Meteor.userId()}, state);
     }
 
     export function placeBench(humanPlayer: boolean, card: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
+        if(!player.active){
+            placeActive(true,card);
+            return;
+        }
         let pokemonCard = mapCardCopy(player, card, true)
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
@@ -204,6 +240,7 @@ export module GameManager {
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean) {
         let playableCard: PlayableCard;
+<<<<<<< HEAD
         if (hand) {
             playableCard = player.hand.find(function (element) {
                 return element.id === card.id
@@ -220,7 +257,20 @@ export module GameManager {
                     return element.id === card.id
                 });
             }
+=======
+        if(player.active && player.active.id === card.id){
+            return player.active;
         }
+        playableCard = player.hand.find(function (element) {
+            return element.id === card.id
+        });
+        if(playableCard !== undefined){
+            return playableCard;
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
+        }
+        playableCard = player.bench.find(function (element) {
+            return element.id === card.id
+        });
         return playableCard;
     }
 

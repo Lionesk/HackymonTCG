@@ -29,7 +29,8 @@ Template.Hand.events({
         console.log("From Hand: " +JSON.stringify(this));
     },
     "click .hand-card":function(event){
-        if(this.isNotInteractable){
+        console.log("energy: "+this.energyPlayed);
+        if(this.isNotInteractable && this.energyPlayed ){
             return;
         }
         let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
@@ -43,6 +44,7 @@ Template.Hand.events({
             }
             if(pc.id === parseInt(playableCardId)){
                 playableCard=pc;
+<<<<<<< HEAD
                 if(playableCard.card.type== CardType.POKEMON){
                     if(playableCard.card.evolution){
                         let ms = Session.get("move-state");                        
@@ -50,12 +52,29 @@ Template.Hand.events({
                         Session.set("move-state",ms);
                     }else{
                          Meteor.call("benchPokemon", true, playableCard);
+=======
+                console.log( "is active?: "+ this.active + " this.isFirstRound: "+this.isFirstRound)
+                if((!this.active&&this.isFirstRound)|| !this.isFirstRound){
+                    if(playableCard.card.type== CardType.POKEMON){
+                        if(playableCard.card.evolution){
+                            let ms = Session.get("move-state");                        
+                            MoveStateController.setEvolutionPokemon(ms,playableCard);
+                            Session.set("move-state",ms);
+                        }else{
+                            Meteor.call("benchPokemon",true, playableCard);
+                            let ms = Session.get("move-state");                        
+                            MoveStateController.resetMoveState(ms);
+                            Session.set("move-state",ms);
+                        }
+>>>>>>> a56fdea3b3e8aafff718cfe7763fe577f4e038a1
                     }
                 }
-
+                if(this.isFirstRound){
+                    return;
+                }
                 if(playableCard.card.type == CardType.ENERGY){
                     let ms = Session.get("move-state");
-                    MoveStateController.setEnergy(ms,playableCard);
+                    MoveStateController.setEnergy(ms,playableCard, this.energyPlayed);
                     Session.set("move-state",ms);
                 }
             }

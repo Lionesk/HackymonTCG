@@ -35,3 +35,12 @@
     align-items:center;
     padding:20px;
 }
+
+
+.faded{
+    background-color:rgb(168, 167, 167);
+}
+
+.faded:hover{
+    background-color:rgb(168, 167, 167);
+}

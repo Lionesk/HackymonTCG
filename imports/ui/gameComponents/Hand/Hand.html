@@ -3,7 +3,7 @@
         {{#each playableCard in hand}}
             {{#if isCardDefined (playableCard)}}
                 <div class="col-sm-2 hand-card" >
-                    {{> Card playableCard=playableCard hidden = hidden}}
+                    {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
                 </div>
             {{/if}}
         {{/each}}

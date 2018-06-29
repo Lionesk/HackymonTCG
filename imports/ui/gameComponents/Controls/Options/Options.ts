@@ -1,6 +1,7 @@
 import './Options.html'
 import './Options.css'
 import {Template} from 'meteor/templating'
+import { MoveStateController } from "../../../layouts/PlayLayout/MoveState"
 
 declare let FlowRouter: any;
 
@@ -26,7 +27,17 @@ Template.Options.helpers({
 
 Template.Options.events({
     "click .end-game":function(){
-        Meteor.call('upsertNewGameState');
-        FlowRouter.go('/');
+        Meteor.call('upsertNewGameState',function(){
+            let ms = Session.get("move-state");
+            MoveStateController.resetMoveState(ms);
+            Session.set("move-state",ms);
+            FlowRouter.go('/');
+        });
+    },
+    "click .end-turn":function(){
+        Meteor.call('endTurn');
+        let ms = Session.get("move-state");
+        MoveStateController.resetMoveState(ms);
+        Session.set("move-state",ms);
     }
 });
