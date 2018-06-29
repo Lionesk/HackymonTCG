@@ -258,6 +258,7 @@ export module GameManager {
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
+        let opponent: Player = humanPlayer ? state.ai : state.player;
         
         source = mapCardCopy(player, source);
         
@@ -269,12 +270,12 @@ export module GameManager {
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    castAbility(ability, player, selectedTarget);
+                    castAbility(ability, player, opponent, selectedTarget);
                 }
                 break;
             // run ability
             case CardType.TRAINER:
-                castAbility(ability, player, selectedTarget);
+                castAbility(ability, player, opponent, selectedTarget);
                 break;
             default:
                 console.log("Invalid card");
@@ -309,12 +310,12 @@ export module GameManager {
         return false;
     }
 
-    function castAbility(abilRef: AbilityReference, player: Player, selectedTarget?: PlayableCard) {
+    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
         let target: PlayableCard;
         if (selectedTarget) {
             target = selectedTarget;
         } else  {
-            target = player.active;
+            target = opponent.active;
         }
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             switch (ability.type) {
