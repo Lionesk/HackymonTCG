@@ -11,8 +11,16 @@ Template.Card.helpers({
     isPokemon:function(){
         return this.playableCard.card.type === CardType.POKEMON;
     },
+    isEvolution:function(){
+        return this.playableCard.card.evolution !==null&&this.playableCard.card.evolution !==undefined;
+    },
     isEnergy:function(){
         return this.playableCard.card.type === CardType.ENERGY;
+    },
+    fadedClass:function(){
+        if(this.energyPlayed&&this.playableCard.card.type === CardType.ENERGY){
+            return "faded"
+        }
     },
     getEnergyList(){
         if(!this.playableCard.currentEnergy){

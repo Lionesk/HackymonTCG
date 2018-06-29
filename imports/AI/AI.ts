@@ -23,6 +23,9 @@ export module AI {
             else {
                 //TODO: Look for card in the bench to place in active
             }
+            if(state.isFirstRound){
+                return;
+            }
         }
         else if(state.ai.bench.length < 5){
             state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
@@ -57,7 +60,7 @@ export module AI {
         for(let card of array){
             if(card.card.type === CardType.POKEMON){
                 if(basic){
-                    if(card.card.evolution !== null){
+                    if(card.card.evolution){
                         continue
                     }
                 }

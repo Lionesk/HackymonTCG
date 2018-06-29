@@ -6,12 +6,22 @@ import '../Controls/Controls.ts';
 
 import { Template } from 'meteor/templating'
 
+declare let FlowRouter:any
+
 Template.Board.events({
     'click .changeTestGameState':function(){
-        Meteor.call('testModifyGameState');
+        Meteor.call('testModifyGameState',function(){
+            FlowRouter.go('/play');
+        });
     },
     'click .initializeGame':function () {
         Meteor.call('newGameStart', {shuffle: false});
     }
 });
+
+Template.Bench.helpers({
+    isActivePlaced:function(){
+        return this.gamestate.player.active !==null&& this.gamestate.player.active !==undefined;
+    }
+})
 

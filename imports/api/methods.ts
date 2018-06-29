@@ -61,9 +61,11 @@ Meteor.methods({
             GameManager.placeActive(humanPlayer, pokemonPlayableCard);
         }
     },
-    AIturn:function(){
+    endTurn:function(){
         if(Meteor.isServer){
             AI.playTurn();
+            GameManager.draw(true,1);
+            GameManager.finishFirstRound();
         }
     },
     testModifyGameState:function(){
@@ -82,7 +84,7 @@ Meteor.methods({
             gs.ai.bench[2] = (new PlayableCard(counter++));
             gs.ai.active = (new PlayableCard(counter++));
             gs.ai.hand[0].card = Cards.find().fetch()[0];
-            gs.ai.hand[1].card = Cards.find().fetch()[24];
+            gs.ai.hand[1].card = Cards.find().fetch()[2];
             gs.ai.hand[2].card = Cards.find().fetch()[24];
             gs.ai.hand[3].card = Cards.find().fetch()[25];
             gs.ai.hand[4].card = Cards.find().fetch()[25];
@@ -126,12 +128,12 @@ Meteor.methods({
             gs.player.bench[2].currentEnergy.push(Cards.find().fetch()[55]);
             gs.player.bench[2].currentEnergy.push(Cards.find().fetch()[24]);
             gs.player.bench[2].currentEnergy.push(Cards.find().fetch()[25]);
-            console.log(Cards.find().fetch()[55]);
-            gs.player.hand[0].card.name="evolvercardname1";
+            // console.log(Cards.find().fetch()[55]);
+            // gs.player.hand[0].card.name="evolvercardname1";
             // gs.player.hand[2].card.name="handcardname3";
             //gs.player.hand[1].card.name="handcardname2";
             // gs.player.hand[0].card.type=CardType.POKEMON;
-            gs.player.hand[0].card.evolution="evolveecardname1";
+            // gs.player.hand[0].card.evolution="evolveecardname1";
             // gs.player.hand[1].card.type=CardType.ENERGY;
             // gs.player.hand[2].card.type=CardType.ENERGY;
             // gs.player.bench[0].card.category=PokemonCat.FIGHTING;
@@ -140,7 +142,7 @@ Meteor.methods({
             // gs.player.bench[2].card.type=CardType.POKEMON;
             // gs.player.bench[1].card.name="benchcardname2";
             // gs.player.bench[2].card.name="benchcardname3";
-            gs.player.bench[0].card.name="evolveecardname1";
+            // gs.player.bench[0].card.name="evolveecardname1";
             // gs.player.active.card.name="activecardname1";
 
             gs.player.hand[0].id=0; 
@@ -155,6 +157,8 @@ Meteor.methods({
             console.log("gs cahnged");
 
             GameStates.update({userid:Meteor.userId()},gs,{upsert:true});
+
+            Meteor.call("endTurn");
         }
     },
     uploadCards(data: { fileString: string }) {

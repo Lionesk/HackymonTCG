@@ -103,6 +103,11 @@ export module GameManager {
         GameStates.update({userid: Meteor.userId()}, state);
     }
 
+    export function finishFirstRound(){
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        state.isFirstRound=false;
+        GameStates.update({userid: Meteor.userId()}, state);
+    }
     /***
      * Overloaded Draw function for internal GameManager calls where game state is already loaded.
      * @param {Player} player
@@ -141,6 +146,9 @@ export module GameManager {
 
     export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        if(humanPlayer && state.energyPlayed){
+            return;
+        }
         let player: Player = humanPlayer ? state.player : state.ai;
         if(isPokemon(pokemon) && isEnergy(energy)){
             pokemon = mapCardCopy(player, pokemon);
@@ -148,6 +156,11 @@ export module GameManager {
             //Pokemon must either be active or on the bench
             addEnergyToCard(pokemon, energy);
             removeFromHand(player, energy);
+            if(humanPlayer){
+                state.energyPlayed=true;
+            }else{
+                state.energyPlayed=false;
+            }
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
