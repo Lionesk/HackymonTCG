@@ -114,8 +114,13 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-    export function resetRoundParams(){
+    export function resetRoundParams() {
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        state.isFirstRound=false;
         state.energyPlayed=false;
+        GameStates.update({userid: Meteor.userId()}, state);
+    }
+
     /***
      * Overloaded Draw function for internal GameManager calls where game state is already loaded.
      * @param {Player} player
@@ -290,7 +295,7 @@ export module GameManager {
                 toDiscard.push(card);
                 //Playable cards need (unique) IDs and since we get rid of the IDs these cards previously had, we
                 //are making them new ones with this counter
-                let discardIDCounter = card * 10;
+                let discardIDCounter: number = card.id * 10;
                 for(let energy of card.currentEnergy){
                     toDiscard.push(new PlayableCard(discardIDCounter++, energy))
                 }
@@ -383,7 +388,7 @@ export module GameManager {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    applyDamage(target, opponent, ability.amount);
+                    appliedDamage= applyDamage(target, opponent, ability.amount);
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
