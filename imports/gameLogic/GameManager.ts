@@ -105,9 +105,11 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-    export function finishFirstRound(){
+    export function resetRoundParams(){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         state.isFirstRound=false;
+        state.energyPlayed=false;
+        state.playerAttacked=false;
         GameStates.update({userid: Meteor.userId()}, state);
     }
     /***
@@ -160,8 +162,6 @@ export module GameManager {
             removeFromHand(player, energy);
             if(humanPlayer){
                 state.energyPlayed=true;
-            }else{
-                state.energyPlayed=false;
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -292,7 +292,10 @@ export module GameManager {
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    castAbility(ability, player, opponent, selectedTarget);
+                    if(!state.playerAttacked){
+                        castAbility(ability, player, opponent, selectedTarget);
+                        state.playerAttacked=true;
+                    }
                 }
                 break;
             // run ability

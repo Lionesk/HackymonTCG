@@ -71,7 +71,7 @@ Meteor.methods({
         if(Meteor.isServer){
             AI.playTurn();
             GameManager.draw(true,1);
-            GameManager.finishFirstRound();
+            GameManager.resetRoundParams();
         }
     },
     testModifyGameState:function(){
