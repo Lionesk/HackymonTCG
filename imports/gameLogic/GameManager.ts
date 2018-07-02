@@ -109,7 +109,6 @@ export module GameManager {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         state.isFirstRound=false;
         state.energyPlayed=false;
-        state.playerAttacked=false;
         GameStates.update({userid: Meteor.userId()}, state);
     }
     /***
@@ -261,10 +260,10 @@ export module GameManager {
 
     function applyDamage(target: PlayableCard, damage: number) {
         if(!target){
-            return;
+            return false;
         }
         if(!target.card){
-            return;
+            return false;
         }
         target.currentDamage += damage;
         // console.log( target.currentDamage)
@@ -275,6 +274,7 @@ export module GameManager {
             console.log("DIE")
             //TODO: send to discard
         }
+        return true;
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
@@ -289,13 +289,11 @@ export module GameManager {
             console.log("ability not found on card");
             return;
         }
+        let didPokemonAttack=false;
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    if(!state.playerAttacked){
-                        castAbility(ability, player, opponent, selectedTarget);
-                        state.playerAttacked=true;
-                    }
+                    didPokemonAttack= castAbility(ability, player, opponent, selectedTarget);
                 }
                 break;
             // run ability
@@ -310,6 +308,9 @@ export module GameManager {
 
         // update model
         GameStates.update({ userid: Meteor.userId() }, state);
+        if(didPokemonAttack && humanPlayer){
+            Meteor.call("endTurn");
+        }
     }
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
@@ -333,22 +334,25 @@ export module GameManager {
         }, true);
     }
 
-    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
+    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard): boolean {
         let target: PlayableCard;
         if (selectedTarget) {
             target = selectedTarget;
         } else  {
             target = opponent.active;
         }
+        let appliedDamage=false;
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    applyDamage(target, ability.amount);
+                    appliedDamage= applyDamage(target, ability.amount);
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
+                    appliedDamage = false;
             }
         });
+        return appliedDamage
     }
 }
