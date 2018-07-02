@@ -8,6 +8,11 @@
     </div>
 
     <div class="board">
+        <div class="row">
+                <div class="col-sm-12">
+                    {{> Controls deck= gamestate.ai.deck prize=gamestate.ai.prize discard=gamestate.ai.discard isAI=true}}
+            </div>
+        </div>
         <div class="row" >
             <div class="col-sm-12">
                 {{> AISide ai=gamestate.ai}}
@@ -20,7 +25,7 @@
         </div>
         <div class="row">
             <div class="col-sm-12">
-                {{> Controls deck= gamestate.player.deck}}
+                {{> Controls deck= gamestate.player.deck prize=gamestate.player.prize discard=gamestate.player.discard}}
             </div>
         </div>
     </div>
