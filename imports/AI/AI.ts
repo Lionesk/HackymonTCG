@@ -1,7 +1,5 @@
-import {Player} from "../gameLogic/Player";
 import {PlayableCard} from "../gameLogic/PlayableCard";
 import {Cards, CardType, Decks, EnergyCard, GameStates} from "../api/collections";
-import {Deck} from "../api/collections/Deck";
 import {GameState} from "../gameLogic/GameState";
 import {GameManager} from "../gameLogic/GameManager";
 
