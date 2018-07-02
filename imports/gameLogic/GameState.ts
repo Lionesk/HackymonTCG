@@ -18,6 +18,7 @@ export class GameState implements GameStateInterface{
     humanFirst:boolean;
     energyPlayed:boolean;
     isFirstRound:boolean;
+    
 
     constructor(userid:string){
         this.player = new Player();
