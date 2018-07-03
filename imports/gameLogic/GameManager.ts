@@ -35,20 +35,27 @@ export module GameManager {
         }
     }
 
-    export function initializeGame(shuffle: boolean) {
+    export function initializeGame(shuffle: boolean,playerDeckId?:string,aiDeckId?:string) {
+        if(playerDeckId&&aiDeckId){
+            GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});            
+        }
+
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
-        if (state.ai.deck && state.player.deck) {
+
+        if ((state.ai.deck && state.player.deck)) {
             //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
             return
         }
+
         state = new GameState(Meteor.userId());
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
         console.log('Creating new game from uploaded deck.');
 
-        let deck: Deck = Decks.find({ userid: Meteor.userId() }).fetch()[0];
-        state.player.deck = generateDeck(deck.deckcards, shuffle);
-        state.ai.deck = generateDeck(deck.deckcards, true);
+        let playerDeck: Deck = Decks.find({"_id":playerDeckId}).fetch()[0];
+        let aiDeck: Deck = Decks.find({"_id":aiDeckId}).fetch()[0];
+        state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
+        state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
 
         GameStates.update({ userid: Meteor.userId() }, state);
 

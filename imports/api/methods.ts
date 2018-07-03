@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Cards, CardType, PokemonCat, EnergyCat } from "./collections";
+import { Cards, CardType, PokemonCat, EnergyCat , Decks } from "./collections";
 import { GameStates } from "./collections";
 import { GameManager } from "../gameLogic/GameManager";
 import { GameState } from "../gameLogic/GameState";
@@ -18,9 +18,9 @@ Meteor.methods({
             GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
         }
     },
-    newGameStart:function(shuffle: boolean){
+    newGameStart:function(shuffle: boolean, playerDeckId?:string, aiDeckId?:string){
         if(Meteor.isServer){
-            GameManager.initializeGame(shuffle);
+            GameManager.initializeGame(shuffle,playerDeckId,aiDeckId);
         }
     },
     createNewStateIfNotExisting:function(){
@@ -72,6 +72,11 @@ Meteor.methods({
             AI.playTurn();
             GameManager.draw(true,1);
             GameManager.resetRoundParams();
+        }
+    },
+    dropDecksForUser:function(){
+        if(Meteor.isServer){
+            Decks.remove({userid:Meteor.userId()});
         }
     },
     testModifyGameState:function(){
@@ -180,9 +185,9 @@ Meteor.methods({
             parseAbilityString(data.fileString);
         }
     },
-    uploadDeck(data: { fileString: string }) {
+    uploadDeck(data: { fileString: string, name:string }) {
         if (Meteor.isServer) {
-            parseDeckFile(data.fileString);
+            parseDeckFile(data.fileString, data.name);
         }
     },
 });

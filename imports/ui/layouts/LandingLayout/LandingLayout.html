@@ -10,7 +10,26 @@
                         <span>Shuffle deck</span>
                         <input type="checkbox" text="Shuffle Deck" class="shuffle-option" />
                         <br />
-                        <span class="goToPlay">Play!</span>
+                        <span class="resumeGame">Resume Last Game</span>
+                        <div class="dropDecksForUser">Drop all decks</div>
+                        <br />
+                        <span>Choose AI Deck for New Game:</span>
+                        <br />
+                        <select id="airDeck">
+                            {{#each deck in getDecks}}
+                                <option data-deck-id={{deck._id}}>{{deck.name}}</option>
+                            {{/each}}
+                        </select>
+                        <br />
+                        <span>Choose your Deck for New Game:</span>
+                        <br />
+                        <select id="playerDeck">
+                            {{#each deck in getDecks}}
+                                <option data-deck-id={{deck._id}}>{{deck.name}}</option>
+                            {{/each}}
+                        </select>
+                        <br />
+                        <span class="newGame">New Game</span>
                     {{/if}}
                 {{/if}}
             {{/if}}

@@ -8,7 +8,7 @@ import { MoveStateController } from "../../layouts/PlayLayout/MoveState"
 
 Template.Hand.helpers({
     isCardDefined:function(playableCard){
-        console.log(playableCard)
+        //console.log(playableCard)
         if(playableCard==undefined){
             return false;
         }
