@@ -334,7 +334,7 @@ export module GameManager {
         }, {});
 
         return Object.keys(abilityCost).reduce<boolean>((isCastable, index) => {
-            if (isCastable && abilityCost[index] > AvailableEnergy) {
+            if (isCastable && abilityCost[index] > (AvailableEnergy[index] ? AvailableEnergy[index] : 0)) {
                 return false;
             }
             return isCastable;
