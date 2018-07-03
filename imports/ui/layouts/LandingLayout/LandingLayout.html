@@ -1,38 +1,77 @@
-<Template name="LandingLayout">
+<Template name="LandingLayout" class="container">
     <main>
+        <div >
         {{#if IsLoggedIn}}
-            {{> UploadDeck uploadType="abilities"}}
-            {{> UploadDeck uploadType="cards"}}
-            {{> UploadDeck uploadType="deck"}}
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 landing-box">
+                    <br />
+
+                {{> UploadDeck uploadType="abilities"}}
+                {{> UploadDeck uploadType="cards"}}
+                {{> UploadDeck uploadType="deck"}}
+                <br />
+
+            </div>
+        </div>
+        <br />
+        <br />
             {{#if cardsExists}}
                 {{#if abilitiesExists}}
                     {{#if deckExists}}
-                        <span>Shuffle deck</span>
-                        <input type="checkbox" text="Shuffle Deck" class="shuffle-option" />
+                    <div class="row ">
+                            <div class="col-sm-6 col-sm-offset-3 landing-box">
+                                <br />
+                                <br />
+                        <div class="resumeGame btn btn-primary">Resume Last Game</div>
                         <br />
-                        <span class="resumeGame">Resume Last Game</span>
-                        <div class="dropDecksForUser">Drop all decks</div>
+                        <br />
+                       <label class="btn btn-primary"> 
+                           <span>Shuffle deck</span>
+                            <input type="checkbox" text="Shuffle Deck" class="shuffle-option"  />
+                        </label>
+                        <br />
+                        <br />
+                        <div class="dropDecksForUser btn btn-warning">Drop all decks</div>
+                        <br />
                         <br />
                         <span>Choose AI Deck for New Game:</span>
-                        <br />
                         <select id="airDeck">
                             {{#each deck in getDecks}}
                                 <option data-deck-id={{deck._id}}>{{deck.name}}</option>
                             {{/each}}
                         </select>
                         <br />
-                        <span>Choose your Deck for New Game:</span>
                         <br />
+                        <span >Choose your Deck for New Game:</span>
                         <select id="playerDeck">
                             {{#each deck in getDecks}}
                                 <option data-deck-id={{deck._id}}>{{deck.name}}</option>
-                            {{/each}}
+                               {{/each}}
                         </select>
                         <br />
-                        <span class="newGame">New Game</span>
+                        <br />
+                        
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="newGame btn btn-success">New Game</div >
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+                        
+                        </div>
+                    </div>
+                    {{else}}
+                    <div class="row ">
+                        <div class="col-sm-6 col-sm-offset-3 landing-box">
+                            <div class="alert">Please Upload a Deck</div>
+                        </div>
+                    </div>
+
                     {{/if}}
                 {{/if}}
             {{/if}}
         {{/if}}
+    </div>
     </main>
 </Template>
