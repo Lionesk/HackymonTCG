@@ -149,7 +149,7 @@ export module GameManager {
             toEvolve = mapCardCopy(player, toEvolve);
             evolution = mapCardCopy(player, evolution);
             if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
-                player.bench.includes(toEvolve))) {
+                player.active == toEvolve)) {
                 if (evolution.card.evolution === toEvolve.card.name) {
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
@@ -189,7 +189,7 @@ export module GameManager {
             console.log("placing to active");
             
             removeFromHand(player, card);
-            removeFromBench(player,player.active);
+            removeFromBench(player, player.active);
         }
         GameStates.update({userid: Meteor.userId()}, state);
     }
@@ -277,7 +277,7 @@ export module GameManager {
         }
         target.currentDamage += damage;
 
-        if(target.currentDamage > target.card.healthPoints){
+        if(target.currentDamage >= target.card.healthPoints){
             discard(opponent, target);
         }
     }
@@ -288,6 +288,7 @@ export module GameManager {
      * @param {PlayableCard} card -- MUST CALL MapCardCopy before invoking this method.
      */
     function discard(player: Player, card: PlayableCard){
+        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         //Making an array of cards to discard based on number of energy cards and evolutions on card
         let toDiscard: PlayableCard[] = [];
         switch (card.card.type) {
@@ -318,6 +319,7 @@ export module GameManager {
                 return;
         }
         player.discard.concat(toDiscard);
+        GameStates.update({ userid: Meteor.userId() }, state);
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
@@ -336,7 +338,7 @@ export module GameManager {
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    didPokemonAttack= castAbility(ability, player, opponent, selectedTarget);
+                    didPokemonAttack = castAbility(ability, player, opponent, selectedTarget);
                 }
                 break;
             case CardType.TRAINER:
@@ -388,7 +390,7 @@ export module GameManager {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    appliedDamage= applyDamage(target, opponent, ability.amount);
+                    appliedDamage = applyDamage(target, opponent, ability.amount);
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
