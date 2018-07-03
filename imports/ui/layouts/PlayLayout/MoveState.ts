@@ -15,14 +15,14 @@ export class MoveState{
 }
 export class MoveStateController{
 
-   static async setEnergy(ms: MoveState, eCard: PlayableCard,energyPlayed:boolean){
+   static setEnergy(ms: MoveState, eCard: PlayableCard,energyPlayed:boolean){
         ms.selectedEvolutionPokemonCard=null;
         if(energyPlayed){
             return;
         }
         if(ms.selectedEnergyCard==null){
             ms.selectedEnergyCard= eCard;
-            await this.addEnergy(ms);
+            this.addEnergy(ms);
             // console.log(ms);
             return;
         }
@@ -33,13 +33,13 @@ export class MoveStateController{
         }
         else{
             ms.selectedEnergyCard = eCard;
-            await this.addEnergy(ms);
+            this.addEnergy(ms);
             // console.log(ms);
             return;
         }
     }
 
-    static async setPokemon(ms: MoveState, pCard: PlayableCard){
+    static setPokemon(ms: MoveState, pCard: PlayableCard){
         if(ms.selectedPokemonCard === null){
             ms.selectedPokemonCard = pCard;
         }
@@ -55,21 +55,21 @@ export class MoveStateController{
         console.log(ms);
 
         if(ms.selectedEnergyCard){
-            await this.addEnergy(ms);
+            this.addEnergy(ms);
         }else{
-            await this.evolvePokemon(ms);
+            this.evolvePokemon(ms);
         }
     } 
 
-    private static async addEnergy(ms:MoveState){
+    private static  addEnergy(ms:MoveState){
         if(ms.selectedEnergyCard && ms.selectedPokemonCard){
             // console.log(ms);
-            await asyncCall("addEnergy", true, ms.selectedPokemonCard, ms.selectedEnergyCard);
+            Meteor.call("addEnergy", true, ms.selectedPokemonCard, ms.selectedEnergyCard);
             this.resetMoveState(ms);
         }
     }
 
-    static async setEvolutionPokemon(ms:MoveState,pCard:PlayableCard){
+    static setEvolutionPokemon(ms:MoveState,pCard:PlayableCard){
         ms.selectedEnergyCard=null;
         if(ms.selectedEvolutionPokemonCard === null){
             ms.selectedEvolutionPokemonCard = pCard;
@@ -80,11 +80,11 @@ export class MoveStateController{
         }
         console.log("set evolve: "+JSON.stringify(ms.selectedEvolutionPokemonCard))
 
-        await this.evolvePokemon(ms);
+        this.evolvePokemon(ms);
 
     }
 
-    private static async evolvePokemon(ms:MoveState){
+    private static evolvePokemon(ms:MoveState){
         console.log("EVOL: "+ms.selectedEvolutionPokemonCard +"   " +ms.selectedPokemonCard)
         if(ms.selectedEvolutionPokemonCard && ms.selectedPokemonCard){
             
@@ -93,7 +93,7 @@ export class MoveStateController{
             }
             
             else{
-                await asyncCall("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
+                Meteor.call("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
                 this.resetMoveState(ms);
             }
 

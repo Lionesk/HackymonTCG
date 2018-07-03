@@ -105,9 +105,10 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-    export function finishFirstRound(){
+    export function resetRoundParams(){
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         state.isFirstRound=false;
+        state.energyPlayed=false;
         GameStates.update({userid: Meteor.userId()}, state);
     }
     /***
@@ -160,8 +161,6 @@ export module GameManager {
             removeFromHand(player, energy);
             if(humanPlayer){
                 state.energyPlayed=true;
-            }else{
-                state.energyPlayed=false;
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -261,10 +260,10 @@ export module GameManager {
 
     function applyDamage(target: PlayableCard, damage: number) {
         if(!target){
-            return;
+            return false;
         }
         if(!target.card){
-            return;
+            return false;
         }
         target.currentDamage += damage;
         // console.log( target.currentDamage)
@@ -275,6 +274,7 @@ export module GameManager {
             console.log("DIE")
             //TODO: send to discard
         }
+        return true;
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
@@ -289,10 +289,11 @@ export module GameManager {
             console.log("ability not found on card");
             return;
         }
+        let didPokemonAttack=false;
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    castAbility(ability, player, opponent, selectedTarget);
+                    didPokemonAttack= castAbility(ability, player, opponent, selectedTarget);
                 }
                 break;
             // run ability
@@ -307,6 +308,9 @@ export module GameManager {
 
         // update model
         GameStates.update({ userid: Meteor.userId() }, state);
+        if(didPokemonAttack && humanPlayer){
+            Meteor.call("endTurn");
+        }
     }
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
@@ -323,29 +327,32 @@ export module GameManager {
         }, {});
 
         return Object.keys(abilityCost).reduce<boolean>((isCastable, index) => {
-            if (isCastable && abilityCost[index] > AvailableEnergy) {
+            if (isCastable && abilityCost[index] > (AvailableEnergy[index] ? AvailableEnergy[index] : 0)) {
                 return false;
             }
             return isCastable;
         }, true);
     }
 
-    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
+    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard): boolean {
         let target: PlayableCard;
         if (selectedTarget) {
             target = selectedTarget;
         } else  {
             target = opponent.active;
         }
+        let appliedDamage=false;
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    applyDamage(target, ability.amount);
+                    appliedDamage= applyDamage(target, ability.amount);
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
+                    appliedDamage = false;
             }
         });
+        return appliedDamage
     }
 }
