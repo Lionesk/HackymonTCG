@@ -3,7 +3,7 @@ import { Session } from 'meteor/session';
 import './LandingLayout.html';
 import './LandingLayout.css';
 import '../../partials/UploadDeck/UploadDeck.ts';
-import {Decks, Cards, Abilities} from "../../../api/collections";
+import {Decks, Cards, Abilities, GameStates} from "../../../api/collections";
 import {MoveState} from "../PlayLayout/MoveState";
 declare let FlowRouter: any;
 
@@ -23,15 +23,26 @@ Template.LandingLayout.helpers({
     getDecks:function(){
       return Decks.find({"userid":Meteor.userId()}).fetch();
     },
+    canResumeGame:function(){
+      let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
 
+      if ((state.ai.deck && state.player.deck)) {
+          //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
+          return false;
+      }else{
+        return true;
+      }
+    }
   })
 
 
 
   Template.LandingLayout.events({
     'click .resumeGame':function(event){
-      // Session.set("shuffle-deck",event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
-      // console.log( event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
+
+      if(event.currentTarget.getAttribute("disabled")){
+        return;
+      }
       let ms = new MoveState();
       Session.set("move-state",ms);
       Meteor.call('newGameStart', event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked,()=>{
@@ -39,8 +50,6 @@ Template.LandingLayout.helpers({
       });
     },
       'click .newGame':function(event){
-        // Session.set("shuffle-deck",event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
-        // console.log( event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
         let playerDeckElement = document.getElementById("playerDeck");
         let playerDeckId = playerDeckElement.options[playerDeckElement.selectedIndex].getAttribute("data-deck-id");
         let aiDeckElement = document.getElementById("airDeck");

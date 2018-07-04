@@ -51,6 +51,8 @@ export module GameManager {
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
         console.log('Creating new game from uploaded deck.');
+        console.log('playerdeckid: '+playerDeckId);
+        console.log('aiDeckId: '+aiDeckId);
 
         let playerDeck: Deck = Decks.find({"_id":playerDeckId}).fetch()[0];
         let aiDeck: Deck = Decks.find({"_id":aiDeckId}).fetch()[0];
