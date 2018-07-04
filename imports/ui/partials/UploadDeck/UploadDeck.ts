@@ -11,7 +11,7 @@ enum UploadTypes {
 
 const UploadMap: { [key in UploadTypes]: (string) => void } = {
     cards: async (data) => asyncCall("uploadCards", { fileString: data }),
-    deck: async (data) => asyncCall("uploadDeck", { fileString: data }),
+    deck: async (data) => asyncCall("uploadDeck", { fileString: data.fileString, name:data.name }),
     abilities: async (data) => asyncCall("uploadAbilities", { fileString: data }),
 }
 
@@ -28,7 +28,12 @@ Template.UploadDeck.events({
         const file: File = event.originalEvent.dataTransfer.files[0];
         if (file) {
             const fileString: string = await loadFile(file);
-            await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            if(this.uploadType===UploadTypes.DECK){
+                await UploadMap[this.uploadType]({fileString:fileString, name:file.name}); // use target instead of this for better typing
+
+            }else{
+                await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            }
         } else {
             throw "invalid file";
         }
@@ -37,7 +42,12 @@ Template.UploadDeck.events({
         const file: File = event.originalEvent.target.files[0]; // only handle one file for now
         if (file) {
             const fileString: string = await loadFile(file);
-            await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            if(this.uploadType===UploadTypes.DECK){
+                await UploadMap[this.uploadType]({fileString:fileString, name:file.name}); // use target instead of this for better typing
+
+            }else{
+                await UploadMap[this.uploadType](fileString); // use target instead of this for better typing
+            }
         } else {
             throw "invalid file";
         }
