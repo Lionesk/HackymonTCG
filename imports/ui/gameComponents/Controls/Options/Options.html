@@ -1,39 +1,68 @@
 <Template name="Options" class="container">
     <div class="options">
             <div class="row">
+                    {{#if isAI}}
+                        <div class="col-sm-5" >
+                           AI Status
+                        </div>
+                    {{else}}
                     <div class="col-sm-5" >
-                        OPTIONS
+                        Status:
                     </div>
+                    
                     <div class="col-sm-3 col-sm-offset-2 end-turn" >
                         Click to End Turn
                     </div>
                     <div class="col-sm-1 " ></div>
+                    <div class="col-sm-3 col-sm-offset-7 end-game" >
+                        Click to Forfeit Game
+                    </div>
+                {{/if}}
             </div>
+            <div class="row">
+                <div class="col-sm-12">
+                        Deck Size: {{getSize deck}} card(s) left
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-12">
+                                Prize Size: {{ getSize prize}} card(s)
+                        </div>
+                </div>
+            <div class="row">
+                <div class="col-sm-12">
+                            Discard Size: {{ getSize discard}} card(s)
+                    </div>
+            </div>
+
+        {{#if isAI}}
+        {{else}}
+        <br />       
         <div class="row">
-                <div class="col-sm-3 col-sm-offset-7 end-game" >
-                    Click to Forfeit Game
-                </div>
-                <div class="col-sm-1 " ></div>
-        </div>
-        {{#if isEnergySelected}}
-            <div class="row">
-                <div class="col-sm-6" >
-                    Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
-                </div>
-                <div class="col-sm-6" >
-
-                </div>
+                <div class="col-sm-12">
+                           Action:
+                    </div>
             </div>
-        {{/if}}
-        {{#if isEvolverSelected}} 
-            <div class="row">
-                <div class="col-sm-6" >
-                    Pick a {{moveState.selectedEvolutionPokemonCard.card.evolution}} Pokemon to evolve to {{moveState.selectedEvolutionPokemonCard.card.name}}
-                </div>
-                <div class="col-sm-6" >
+            {{#if isEnergySelected}}
+                <div class="row">
+                    <div class="col-sm-6" >
+                        Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
+                    </div>
+                    <div class="col-sm-6" >
 
+                    </div>
                 </div>
-            </div>
+            {{/if}}
+            {{#if isEvolverSelected}} 
+                <div class="row">
+                    <div class="col-sm-6" >
+                        Pick a {{moveState.selectedEvolutionPokemonCard.card.evolution}} Pokemon to evolve to {{moveState.selectedEvolutionPokemonCard.card.name}}
+                    </div>
+                    <div class="col-sm-6" >
+
+                    </div>
+                </div>
+            {{/if}}
         {{/if}}
     </div>
 </Template>

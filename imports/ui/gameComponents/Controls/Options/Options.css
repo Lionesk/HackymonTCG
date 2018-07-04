@@ -1,17 +1,24 @@
 .options{
-    background-color:white;
-    border-color: black;
+    background-color:rgba(0, 0, 0, 0.534);
+    color:rgba(19, 218, 19, 0.932);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    border-color: rgba(0, 0, 0, 0);
     border-style:solid;
     border-width:3px;
-    border-radius: 10px;
+    border-radius: 5px;
     margin:3px;
     padding:2px;
-    box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
-    -webkit-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
-    -moz-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
+    -webkit-box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
+    -moz-box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
+}
+
+.options:hover{
+    background-color:rgb(0, 0, 0);
+    color:rgba(25, 223, 25, 1);
 }
 .end-game{
-    background-color:rgb(243, 86, 86);
+    background-color:rgba(94, 7, 7, 0.671);
     border-color: black;
     border-style:solid;
     border-width:3px;
@@ -26,12 +33,12 @@
     -moz-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
 }
 .end-game:hover{
-    background-color:rgb(175, 68, 68);
+    background-color:rgb(168, 50, 50);
     cursor:pointer;
 }
 
 .end-turn{
-    background-color:rgb(74, 197, 74);
+    background-color:rgba(34, 88, 34, 0.521);
     border-color: black;
     border-style:solid;
     border-width:3px;
@@ -47,6 +54,6 @@
 }
 
 .end-turn:hover{
-    background-color:rgb(111, 175, 68);
+    background-color:rgb(115, 185, 64);
     cursor:pointer;
 }
