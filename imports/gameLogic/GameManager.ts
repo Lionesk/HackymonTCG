@@ -149,7 +149,7 @@ export module GameManager {
             toEvolve = mapCardCopy(player, toEvolve);
             evolution = mapCardCopy(player, evolution);
             if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
-                player.active == toEvolve)) {
+                player.active === toEvolve)) {
                 if (evolution.card.evolution === toEvolve.card.name) {
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
