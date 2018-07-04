@@ -280,6 +280,7 @@ export module GameManager {
         if(target.currentDamage >= target.card.healthPoints){
             discard(opponent, target);
         }
+        return true;
     }
 
     /***
@@ -352,6 +353,7 @@ export module GameManager {
         }
         // update model
         GameStates.update({ userid: Meteor.userId() }, state);
+
         if(didPokemonAttack && humanPlayer){
             Meteor.call("endTurn");
         }
