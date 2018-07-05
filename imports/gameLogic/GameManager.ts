@@ -305,6 +305,7 @@ export module GameManager {
                     //TODO: Find the evolution card(s) in the DB and add them to the toDiscard array
                 }
                 if(card === player.active){
+                    toDiscard.push(new PlayableCard(discardIDCounter++,player.active.card))
                     player.active = undefined;
                 }
                 else if(player.bench.find(function (element) { return element.id === card.id })){
@@ -319,7 +320,7 @@ export module GameManager {
                 console.log("Invalid card");
                 return;
         }
-        player.discard.concat(toDiscard);
+        player.discard=player.discard.concat(toDiscard);
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
