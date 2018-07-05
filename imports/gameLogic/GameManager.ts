@@ -1,5 +1,5 @@
 import { Player } from "./Player";
-import { PlayableCard } from "./PlayableCard";
+import { PlayableCard, CardPosition } from "./PlayableCard";
 import { Cards, CardType, Decks, EnergyCard, GameStates, AbilityType } from "../api/collections";
 import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
@@ -16,10 +16,12 @@ export module GameManager {
         return (Math.floor(Math.random() * 2) == 0);
     }
 
-    export function shuffleDeck(deck: PlayableCard[]) {
-        let i = deck.length, temp, random;
-        while (i !== 0) {
-            random = Math.floor(Math.random() * i);
+    export function shuffleDeck(deck: PlayableCard[], deckIndex: number = 0) {
+        let i = deck.length - deckIndex;
+        let temp: PlayableCard;
+        let random: number;
+        while (i !== deckIndex) {
+            random = Math.floor(Math.random() * i) + deckIndex;
             i--;
 
             temp = deck[i];
@@ -32,6 +34,7 @@ export module GameManager {
     export function placePrizeCards(player: Player) {
         for (let i = 0; i < 6; i++) {
             player.prize.push(player.deck.pop());
+            player.inPlay[player.deckIndex++].currentPosition = CardPosition.PRIZE;
         }
     }
 
@@ -48,7 +51,10 @@ export module GameManager {
 
         let deck: Deck = Decks.find({ userid: Meteor.userId() }).fetch()[0];
         state.player.deck = generateDeck(deck.deckcards, shuffle);
+        state.player.inPlay = state.player.deck.slice(); // copy actual deck
+
         state.ai.deck = generateDeck(deck.deckcards, true);
+        state.ai.inPlay = state.ai.deck.slice(); // copy actual deck
 
         GameStates.update({ userid: Meteor.userId() }, state);
 
@@ -116,12 +122,12 @@ export module GameManager {
      * @param {Player} player
      * @param {number} n
      */
-    export function drawPlayer(player: Player, n?: number){
-        let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
-        for (let i = 0; i < toDraw; i++) {
+    export function drawPlayer(player: Player, n: number = 1){
+        for (let i = 0; i < n; i++) {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
+            player.inPlay[player.deckIndex++].currentPosition = CardPosition.HAND;
             player.hand.push(player.deck.pop());
         }
     }
@@ -175,7 +181,7 @@ export module GameManager {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
             console.log("placing to active")
-            
+            card.currentPosition = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player,player.active);
         }
@@ -192,6 +198,7 @@ export module GameManager {
         let pokemonCard = mapCardCopy(player, card, true)
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
+            card.currentPosition = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
         }

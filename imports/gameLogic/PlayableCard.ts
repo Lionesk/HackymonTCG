@@ -1,15 +1,27 @@
 import {Card, CardType, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
 
+export enum CardPosition {
+    DECK = "deck",
+    ACTIVE = "active",
+    BENCH = "bench",
+    HAND = "hand",
+    PRIZE = "prize",
+    DISCARD = "discard",
+    DRAG = "drag",
+}
 
 export class PlayableCard{
     id:number;
     card:Card;
     currentDamage:number;
     currentEnergy:Card[];
+    currentPosition: CardPosition;
+    previousPosition?: CardPosition; // used for drag and drop
     
     constructor(id: number, card?:Card, playable?:PlayableCard){
         this.id = id;
         this.currentEnergy = new Array<Card>(0);
+        this.currentPosition = CardPosition.DECK;
         if(card !== undefined && playable !== undefined) {
             this.currentDamage = null;
         }
@@ -23,6 +35,8 @@ export class PlayableCard{
             if(playable.card.type == CardType.POKEMON){
                 this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
+                this.currentPosition = playable.currentPosition;
+                this.previousPosition = playable.previousPosition;
                 if(! this.currentDamage){
                     this.currentDamage=0;
                 }
