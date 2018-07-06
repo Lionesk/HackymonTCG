@@ -1,4 +1,5 @@
 .card{
+    min-height:350px;
     background-color:white;
     border-color: rgb(6, 8, 155);
     border-style:solid;
@@ -43,4 +44,8 @@
 
 .faded:hover{
     background-color:rgb(168, 167, 167);
+}
+
+.vertical-offset{
+    margin-top:70px;
 }
