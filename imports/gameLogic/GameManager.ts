@@ -268,7 +268,7 @@ export module GameManager {
         return hand.filter(playableCard => !!playableCard);
     }
 
-    function applyDamage(target: PlayableCard, opponent: Player, damage: number) {
+    function applyDamage(target: PlayableCard, opponent: Player, damage: number,player: Player) {
         if(!target){
             return false;
         }
@@ -279,6 +279,7 @@ export module GameManager {
 
         if(target.currentDamage >= target.card.healthPoints){
             discard(opponent, target);
+            collectPrizeCard(player)
         }
         return true;
     }
@@ -393,7 +394,7 @@ export module GameManager {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    appliedDamage = applyDamage(target, opponent, ability.amount);
+                    appliedDamage = applyDamage(target, opponent, ability.amount,player);
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
@@ -401,5 +402,13 @@ export module GameManager {
             }
         });
         return appliedDamage
+    }
+
+    function collectPrizeCard(player:Player){
+        player.hand.push(player.prize.pop());
+        if(player.prize.length){
+            //TODO:WIN
+        }
+        
     }
 }
