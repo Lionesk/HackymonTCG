@@ -14,12 +14,12 @@ export module AI {
         GameManager.draw(false);
         if(state.ai.active === undefined) {
             state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-            let card = findPokemon(state.ai.hand);
+            let card = findPokemon(state.ai.bench) ? findPokemon(state.ai.bench) : findPokemon(state.ai.hand);
             if (card !== undefined) {
                 GameManager.placeActive(false, card);
             }
             else {
-                //TODO: Look for card in the bench to place in active
+                //TODO: End game here, player wins since AI cannot play a pokemon in active
             }
             if(state.isFirstRound){
                 return;
