@@ -18,12 +18,20 @@ export class PlayableCard{
     currentPosition: CardPosition;
     previousPosition?: CardPosition; // used for drag and drop
     
+    get position(): CardPosition {
+        return this.currentPosition;
+    }
+    set position(pos: CardPosition) {
+        this.previousPosition = this.currentPosition;
+        this.currentPosition = pos;
+    }
+    
     constructor(id: number, card?:Card, playable?:PlayableCard){
         this.id = id;
         this.currentEnergy = new Array<Card>(0);
         this.currentPosition = CardPosition.DECK;
         if(card !== undefined && playable !== undefined) {
-            this.currentDamage = null;
+            this.currentDamage = 0;
         }
         else if(card !== undefined) {
             if(card.type == CardType.POKEMON){

@@ -94,9 +94,7 @@ export interface AbilityAction {
   specification?: string; // any additional data required for the action to be parsed at runtime
 }
 
-let Abilities: Mongo.Collection<Ability>;
-if(!Abilities) {
-  Abilities = new Mongo.Collection<Ability>("abilities");
-}
+const Abilities: Mongo.Collection<Ability> = new Mongo.Collection<Ability>("abilities");
+
 
 export { Abilities };

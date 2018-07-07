@@ -5,9 +5,6 @@ export interface Deck{
     deckcards:number[];
 }
 
-let Decks: Mongo.Collection<Deck>;
-if(!Decks) {
-    Decks = new Mongo.Collection<Deck>('decks');
-}
+let Decks: Mongo.Collection<Deck> = new Mongo.Collection<Deck>('decks');
 
 export { Decks };

@@ -1,3 +1,4 @@
+import "jquery"
 import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import './LandingLayout.html';
@@ -24,12 +25,12 @@ Template.LandingLayout.helpers({
 
 
   Template.LandingLayout.events({
-    'click .goToPlay':function(event){
+    'click .goToPlay':function(event: JQuery.Event){
       // Session.set("shuffle-deck",event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
       // console.log( event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked);
       let ms = new MoveState();
       Session.set("move-state",ms);
-      Meteor.call('newGameStart', event.currentTarget.parentNode.getElementsByClassName("shuffle-option")[0].checked,()=>{
+      Meteor.call('newGameStart', (document.getElementById("shuffle-option") as HTMLInputElement).checked, () => {
         FlowRouter.go('/play');
       });
     }

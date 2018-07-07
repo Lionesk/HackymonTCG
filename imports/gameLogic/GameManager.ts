@@ -33,15 +33,14 @@ export module GameManager {
 
     export function placePrizeCards(player: Player) {
         for (let i = 0; i < 6; i++) {
-            player.prize.push(player.deck.pop());
-            player.inPlay[player.deckIndex++].currentPosition = CardPosition.PRIZE;
+            player.prize.push(player.deck.pop() as PlayableCard);
+            player.inPlay[player.deckIndex++].position = CardPosition.PRIZE;
         }
     }
 
     export function initializeGame(shuffle: boolean) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
-        if (state.ai.deck && state.player.deck) {
-            //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
+        if (state.playing) {
             return
         }
         state = new GameState(Meteor.userId());
@@ -73,6 +72,7 @@ export module GameManager {
         placePrizeCards(state.ai);
 
         console.log('Game initialization done, updating the DB.');
+        state.playing = true;
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -83,18 +83,19 @@ export module GameManager {
      * @param {Player} player
      * @param {number[]} deck
      */
-    export function generateDeck(deck: number[], shuffle: boolean) {
-        let newDeck: PlayableCard[] = [];
+    export function generateDeck(deck: number[], shuffle: boolean): PlayableCard[] {
         let counter: number = 0;
-        for(let i of deck){
-            let card = Cards.find({index: i}).fetch()[0];
-            newDeck.push(new PlayableCard(counter++, card));
-        }
+        let newDeck: PlayableCard[] =  deck.map(((index: number) => new PlayableCard(counter++, Cards.find({ index }).fetch()[0])));
+        // for(let i of deck){
+        //     let card = Cards.find({index: i}).fetch()[0];
+        //     newDeck.push(new PlayableCard(counter++, card));
+        // }
         if (shuffle) {
             console.log("SHUFFLING " + shuffle);
             console.log(shuffle);
             newDeck = shuffleDeck(newDeck);
         }
+
         return newDeck;
     }
 
@@ -106,7 +107,7 @@ export module GameManager {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
-            player.hand.push(player.deck.pop());
+            player.hand.push(player.deck.pop() as PlayableCard);
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -119,6 +120,9 @@ export module GameManager {
     }
     /***
      * Overloaded Draw function for internal GameManager calls where game state is already loaded.
+     * 
+     * TODO move to player
+     * 
      * @param {Player} player
      * @param {number} n
      */
@@ -127,8 +131,8 @@ export module GameManager {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
-            player.inPlay[player.deckIndex++].currentPosition = CardPosition.HAND;
-            player.hand.push(player.deck.pop());
+            player.inPlay[player.deckIndex++].position = CardPosition.HAND;
+            player.hand.push(player.deck.pop() as PlayableCard);
         }
     }
 
@@ -181,7 +185,7 @@ export module GameManager {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
             console.log("placing to active")
-            card.currentPosition = CardPosition.ACTIVE;
+            card.position = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player,player.active);
         }
@@ -198,7 +202,7 @@ export module GameManager {
         let pokemonCard = mapCardCopy(player, card, true)
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
-            card.currentPosition = CardPosition.BENCH;
+            card.position = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
         }
@@ -232,7 +236,7 @@ export module GameManager {
      * @returns {PlayableCard}
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean) {
-        let playableCard: PlayableCard;
+        let playableCard: PlayableCard | undefined;
         if(player.active && player.active.id === card.id){
             return player.active;
         }
@@ -245,6 +249,9 @@ export module GameManager {
         playableCard = player.bench.find(function (element) {
             return element.id === card.id
         });
+        if (!playableCard) {
+            throw new Error(`Card #${card.id} does not exist in DB`);
+        }
         return playableCard;
     }
 
@@ -266,20 +273,19 @@ export module GameManager {
     }
 
     function applyDamage(target: PlayableCard, damage: number) {
-        if(!target){
+        if(!target || !target.card || !target.card.healthPoints){
             return false;
         }
-        if(!target.card){
-            return false;
-        }
+
         target.currentDamage += damage;
         // console.log( target.currentDamage)
         // console.log( target.card.healthPoints)
 
-        if(target.currentDamage>target.card.healthPoints){
+        if(target.currentDamage > target.card.healthPoints){
             // target=null;
             console.log("DIE")
             //TODO: send to discard
+            target.position = CardPosition.DISCARD;
         }
         return true;
     }
@@ -290,8 +296,12 @@ export module GameManager {
         let opponent: Player = humanPlayer ? state.ai : state.player;
         
         source = mapCardCopy(player, source);
+
+        if (!source.card.abilities) {
+            throw new Error("Card has no abilities to execute");
+        }
         
-        const ability: AbilityReference = source.card.abilities.find((ability) => ability.index === abilityIndex);
+        const ability = source.card.abilities.find((ability) => ability.index === abilityIndex);
         if (!ability) {
             console.log("ability not found on card");
             return;
@@ -299,7 +309,7 @@ export module GameManager {
         let didPokemonAttack=false;
         switch (source.card.type) {
             case CardType.POKEMON:
-                if (checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
+                if (ability.cost && checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
                     didPokemonAttack= castAbility(ability, player, opponent, selectedTarget);
                 }
                 break;
@@ -321,20 +331,16 @@ export module GameManager {
     }
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
-        const AvailableEnergy = cardEnergy.reduce<Cost>((acc, element) => {
-            if (acc[element.category]) {
-                acc.colorless += 1;
-                acc[element.category] += 1
-            } else {
-                acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
-                acc[element.category] = 1;
-            }
+        const AvailableEnergy: Cost = cardEnergy.reduce<Cost>((acc, element) => {
+            acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
+            acc[element.category] = (acc[element.category] || 0) + 1;
 
             return acc;
         }, {});
 
-        return Object.keys(abilityCost).reduce<boolean>((isCastable, index) => {
-            if (isCastable && abilityCost[index] > AvailableEnergy) {
+        return Object.keys(abilityCost).reduce<boolean>((isCastable, index: keyof Cost) => {
+            //  abilityCost[index] will always be defined
+            if (isCastable && abilityCost[index] as number > AvailableEnergy) {
                 return false;
             }
             return isCastable;
@@ -353,7 +359,11 @@ export module GameManager {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
                 // console.log("t"+parseInt(ability.amount));
-                    appliedDamage= applyDamage(target, ability.amount);
+                    if (ability.amount) {
+                        appliedDamage = applyDamage(target, ability.amount);
+                    } else {
+                        throw new Error("Damage ability must have amount");
+                    }
                     break;
                 default:
                     console.log(`${ability.type} is not implemented yet`)
