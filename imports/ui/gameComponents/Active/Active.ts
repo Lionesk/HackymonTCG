@@ -37,7 +37,7 @@ Template.Active.events({
         }
     },
     "click .active-card .ability":function(event){
-        if(this.isNotInteractable&& this.isFirstRound){
+        if(this.isNotInteractable&& this.isFirstRound&& this.isSecondRound){
             return;
         }
         let ms = Session.get("move-state");

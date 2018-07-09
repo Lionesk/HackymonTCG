@@ -3,19 +3,19 @@
         
     <div class="row">
         <div class="col-md-12">
-            {{>Active active = player.active isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound}}
+            {{>Active active = player.active isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound isSecondRound=isSecondRound}}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {{>Bench bench = player.bench isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound active=active}}
+            {{>Bench bench = player.bench isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound isSecondRound=isSecondRound active=active}}
         </div>
     </div>
 
     <div class="row">
         <div class="col-md-12">
-            {{>Hand hand = player.hand hidden=false isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound active=active}}
+            {{>Hand hand = player.hand hidden=false isNotInteractable=false energyPlayed=energyPlayed isFirstRound=isFirstRound isSecondRound=isSecondRound active=active}}
         </div>
     </div>
 

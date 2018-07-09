@@ -59,7 +59,7 @@ Template.Hand.events({
                         }
                     }
                 }
-                if(this.isFirstRound){
+                if(this.isFirstRound||this.isSecondRound){
                     return;
                 }
                 if(playableCard.card.type == CardType.ENERGY){
