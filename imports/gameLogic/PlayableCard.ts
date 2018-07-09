@@ -3,6 +3,7 @@ import {Card, CardType, EnergyCard, EnergyCat, PokemonCat} from '../api/collecti
 export enum CardPosition {
     DECK = "deck",
     ACTIVE = "active",
+    ATTATCHED = "attatched",
     BENCH = "bench",
     HAND = "hand",
     PRIZE = "prize",
@@ -10,7 +11,7 @@ export enum CardPosition {
     DRAG = "drag",
 }
 
-export class PlayableCard{
+export class PlayableCard {
     id:number;
     card:Card;
     currentDamage:number;
@@ -53,7 +54,7 @@ export class PlayableCard{
                 }
             }
             else if(playable.card.type === CardType.ENERGY){
-                this.card=card;
+                this.card = playable.card;
             }
         }
     }

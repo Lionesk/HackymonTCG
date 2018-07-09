@@ -38,7 +38,7 @@ export module AI {
         }
         state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let energyCard = findEnergy(state.ai.hand);
-        if(energyCard !== undefined){
+        if(state.ai.active && energyCard !== undefined) {
             if(state.ai.active.currentEnergy.length < 4){
                 GameManager.addEnergy(false, state.ai.active, energyCard);
             }
