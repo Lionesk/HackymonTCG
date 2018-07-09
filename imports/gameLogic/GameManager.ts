@@ -121,6 +121,9 @@ export module GameManager {
 
     export function resetRoundParams() {
         let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        if(!state.isFirstRound){
+            state.isSecondRound=false;
+        }
         state.isFirstRound=false;
         state.energyPlayed=false;
         GameStates.update({userid: Meteor.userId()}, state);
@@ -143,13 +146,6 @@ export module GameManager {
             player.hand.push(player.deck.pop() as PlayableCard);
         }
     }
-
-    export function finishFirstRound(){
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-        state.isFirstRound=false;
-        GameStates.update({userid: Meteor.userId()}, state);
-    }
-
     export function evolve(humanPlayer: boolean, toEvolve: PlayableCard, evolution: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
