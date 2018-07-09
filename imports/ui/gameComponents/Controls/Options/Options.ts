@@ -23,6 +23,15 @@ Template.Options.helpers({
         }else{
             return this.moveState.selectedEvolutionPokemonCard.card.evolution;
         }
+    },
+    getSize:function(array){
+        if(!array){
+            return "0";
+        }else if(array.length ===0){
+            return "0";
+        }else{
+            return array.length;
+        }
     }
 });
 

@@ -1,0 +1,25 @@
+.landing-buttons{
+    width:auto;
+    border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    border: 0px solid #000000;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+}
+
+.landing-buttons:hover{
+    cursor:pointer;
+    background-color:rgb(194, 224, 111);
+}
+
+.landing-box{
+    text-align:center;
+    background-color:whitesmoke;
+    border-radius: 8px 8px 8px 8px;
+    -moz-border-radius: 8px 8px 8px 8px;
+    -webkit-border-radius: 8px 8px 8px 8px;
+    border: 3px solid #0a144d;
+    box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+}

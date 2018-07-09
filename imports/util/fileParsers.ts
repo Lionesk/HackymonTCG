@@ -429,18 +429,19 @@ function parseCondition(action: Partial<AbilityAction>, data: string): Partial<A
   return action;
 }
 
-export function parseDeckFile(data: string, id?: string){
-  let deckcardsString = data.split("\n");
+export function parseDeckFile(fileString: string, name:string, id?: string) {
+  let deckcardsString = fileString.split("\n");
   let deckcards: number[] = [];
   deckcardsString.forEach((cardString)=>{
     deckcards.push(parseInt(cardString));
   });
   if(id){
     Decks.remove({"userid":id});
-    Decks.insert({"userid":id,"deckcards":deckcards})
+    Decks.insert({"userid":id,"name":name, "deckcards":deckcards})
   }
   else{
-    Decks.remove({"userid":Meteor.userId()});  
-    Decks.insert({"userid":Meteor.userId(),"deckcards":deckcards});
+    // Decks.remove({"userid":Meteor.userId()});  
+    // GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
+    Decks.insert({"userid":Meteor.userId(),"name":name,"deckcards":deckcards});
   }
 }

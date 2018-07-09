@@ -10,9 +10,9 @@ enum UploadType {
     ABIL = "abilities"
 }
 
-const UploadMap: { [key in UploadType]: (s: string) => void } = {
+const UploadMap: { [key in UploadType]: (s: any) => void } = { // change this any
     cards: async (data) => asyncCall("uploadCards", { fileString: data }),
-    deck: async (data) => asyncCall("uploadDeck", { fileString: data }),
+    deck: async (data) => asyncCall("uploadDeck", { fileString: data.fileString, name: data.name }),
     abilities: async (data) => asyncCall("uploadAbilities", { fileString: data }),
 }
 
@@ -29,7 +29,12 @@ Template.UploadDeck.events({
         const file: File = (event.originalEvent as DragEvent).dataTransfer.files[0];
         if (file) {
             const fileString: string = await loadFile(file);
-            await UploadMap[this.uploadType as UploadType](fileString); // use target instead of this for better typing
+            if(this.uploadType === UploadType.DECK){
+                await UploadMap[this.uploadType as UploadType]({fileString: fileString, name: file.name}); // use target instead of this for better typing
+
+            }else{
+                await UploadMap[this.uploadType as UploadType](fileString); // use target instead of this for better typing
+            }
         } else {
             throw "invalid file";
         }
@@ -39,7 +44,12 @@ Template.UploadDeck.events({
         const file: File = (event.originalEvent as any).target.files[0]; // only handle one file for now
         if (file) {
             const fileString: string = await loadFile(file);
-            await UploadMap[this.uploadType as UploadType](fileString); // use target instead of this for better typing
+            if(this.uploadType === UploadType.DECK){
+                await UploadMap[this.uploadType as UploadType]({fileString:fileString, name:file.name}); // use target instead of this for better typing
+
+            }else{
+                await UploadMap[this.uploadType as UploadType](fileString); // use target instead of this for better typing
+            }
         } else {
             throw "invalid file";
         }

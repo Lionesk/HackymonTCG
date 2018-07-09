@@ -181,10 +181,12 @@ describe('parseDeckFile', function () {
      it('deck should be inserted into the db', function() {
     
 let data="25\n51\n50";
+let name="testDeck";
+let id="test";
 
-   parseDeckFile(data, "test");
+   parseDeckFile(data, name ,id);
 
-   let deck=Decks.find().fetch()[0];
+   let deck=Decks.find({"userid":id, "name":name}).fetch()[0];
 
   assert.equal(deck.deckcards[0], 25);
   

@@ -40,7 +40,7 @@ export class PlayableCard{
             this.card = card;
         }
         else if(playable !== undefined) {
-            if(playable.card.type == CardType.POKEMON){
+            if(playable.card.type === CardType.POKEMON){
                 this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
                 this.currentPosition = playable.currentPosition;
@@ -51,6 +51,9 @@ export class PlayableCard{
                 if(! this.currentEnergy){
                     this.currentEnergy=new Array<Card>(0);
                 }
+            }
+            else if(playable.card.type === CardType.ENERGY){
+                this.card=card;
             }
         }
     }

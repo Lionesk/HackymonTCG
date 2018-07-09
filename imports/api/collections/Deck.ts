@@ -2,6 +2,7 @@ import { Mongo } from "meteor/mongo";
 
 export interface Deck{
     userid:string;
+    name:string;
     deckcards:number[];
 }
 

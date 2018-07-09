@@ -13,7 +13,8 @@
       "node_modules/@types"
     ],
     "types": [
-      "mocha"
+      "mocha",
+      "meteor-typings"
     ]
   },
   "include": [

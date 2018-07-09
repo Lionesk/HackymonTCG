@@ -1,11 +1,27 @@
 <Template name="Controls" class="container">
         <div class="row">
+            {{#if isAI}}
             <div class="col-sm-6" >
-                {{> Options moveState=getMoveState }}
+                    {{> Options moveState=getMoveState deck=deck prize=prize discard=discard isAI=isAI}}
+                </div>
+                <div class="col-sm-3" >
+                    {{> Deck deck = deck }}
+                </div>
+                <div class="col-sm-3">
+                    {{> Discard discard = discard }}
+                </div>
+            {{else}}
+            <div class="col-sm-6 col-sm-offset-6 pos-fix" >
+                {{> Options moveState=getMoveState deck=deck prize=prize discard=discard isAI=isAI}}
+            </div>            
+            <div class="col-sm-6" >
+                {{> Deck deck = deck }}
+            </div>
+            <div class="col-sm-6">
+                {{> Discard discard = discard }}
             </div>
 
-            <div class="col-sm-4 col-sm-offset-2" >
-                {{> Deck deck=deck}}
-            </div>
+            {{/if}}
+
         </div>
 </Template>
