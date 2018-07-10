@@ -29,11 +29,16 @@ export module AI {
             state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
             let card = findPokemon(state.ai.hand);
             if(card){
-                GameManager.placeBench(false, card);
+                if(!card.card.evolution){
+                    GameManager.placeBench(false, card);
+                }
             }
             else {
                 console.log('AI player has no cards to place on the bench.');
             }
+        }
+        if(state.isSecondRound){
+            return;
         }
         state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let energyCard = findEnergy(state.ai.hand);
