@@ -165,13 +165,21 @@ export module GameManager {
             state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
         } else {
             state.combatLog.push("AI have drawn a card");
+                return player === state.player ? endGame(false, state) : endGame(true, state);
         }
         console.log('Updating the game state');
         updateGameState(state);
     }
 
-    export function endGame(state: GameState, victory: boolean) {
+    export function endGame(victory: boolean, gs?: GameState) {
+        let state: GameState = gs === undefined ? getGameState() : gs;
         state.winner = victory ? state.player : state.ai;
+        updateGameState(state);
+    }
+
+    export function setWinner(winner: Player, gs?: GameState) {
+        let state: GameState = gs === undefined ? getGameState() : gs;
+        state.winner = winner;
         updateGameState(state);
     }
 
@@ -542,7 +550,7 @@ export module GameManager {
     function collectPrizeCard(player: Player) {
         player.hand.push(player.prize.pop() as PlayableCard);
         if (player.prize.length) {
-            //TODO:WIN
+            setWinner(player);
         }
 
     }

@@ -3,10 +3,13 @@
         {{#unless IsLoggedIn}}
             {{RedirectToLandingLayout}}
          {{/unless}}
-         <span>welcome to the play screen</span>
          <!-- {{> ChoiceModal aiHand=getGameState.ai.hand aiBench=getGameState.ai.bench aiActive=getGameState.ai.active
             active=getGameState.player.active  bench=getGameState.player.bench hand=getGameState.player.hand
         }} -->
-         {{> Board  gamestate = getGameState}}
+        {{> Board gamestate = getGameState}}
+        {{#if isGameOver}}
+            <h1>GAME OVER BITCH</h1>
+            <!-- TODO: ADD THE MODAL FOR WINNING OR LOSING -->
+        {{/if}}
     </main>
 </Template>

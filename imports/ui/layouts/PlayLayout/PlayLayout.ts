@@ -18,7 +18,11 @@ Template.PlayLayout.helpers({
     getGameState:function(){
       return GameStates.find({"userid":Meteor.userId()}).fetch()[0];
     },
-  })
+    isGameOver: function () {
+        let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+        return state.winner == undefined ? false : true;
+    }
+  });
 
 Template.Board.onCreated(function(){
   let ms = new MoveState();
