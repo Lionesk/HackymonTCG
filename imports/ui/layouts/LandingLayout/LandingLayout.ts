@@ -23,6 +23,10 @@ Template.LandingLayout.helpers({
     getDecks:function(){
       return Decks.find({"userid":Meteor.userId()}).fetch();
     },
+    isAdmin:function(){
+      //return Meteor.users.find({"userid":Meteor.userId()}).fetch()[0].isAdmin;
+      return Meteor.user().username === "admin";
+    },
     canResumeGame:function(){
       let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
 
