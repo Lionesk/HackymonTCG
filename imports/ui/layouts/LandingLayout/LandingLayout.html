@@ -5,9 +5,11 @@
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 landing-box">
                     <br />
+                {{#if isAdmin}}
+                    {{> UploadDeck uploadType="abilities"}}
+                    {{> UploadDeck uploadType="cards"}}
+                {{/if}}
 
-                {{> UploadDeck uploadType="abilities"}}
-                {{> UploadDeck uploadType="cards"}}
                 {{> UploadDeck uploadType="deck"}}
                 <br />
 
