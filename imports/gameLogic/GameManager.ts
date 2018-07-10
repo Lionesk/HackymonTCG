@@ -61,13 +61,72 @@ export module GameManager {
 
         GameStates.update({ userid: Meteor.userId() }, state);
 
+//Mulligan logic starts here
+
+       //if a deck contains no pokemon game should not start
+    // TODO: in frontend player has to stay at initial screen 
+    if(noPokemonInDeck(state.player) || noPokemonInDeck(state.ai) ) {
+        console.log("You must have at least 1 pokemon in a deck to play!");
+      return; 
+        };
+
         console.log('AI drawing cards.');
         drawPlayer(state.ai, 7);
-        //TODO: Check for AI Mulligan
 
         console.log('Player drawing cards.');
-        drawPlayer(state.player, 7);
-        //TODO: Check for human mulligan
+        drawPlayer(state.player, 7); 
+           
+        GameStates.update({ userid: Meteor.userId() }, state);
+
+        //mulligan variables
+        let human=state.player;
+        let ai=state.ai;
+        let humanHandLength=human.hand.length;
+        let aiHandLength=ai.hand.length;
+        let humanMulliganCounter=0;
+        let aiMulliganCounter=0;
+        let humanMulligan=(mulligan(humanHandLength, human, "human"));
+        let aiMulligan=(mulligan(aiHandLength, ai, "ai"));
+        
+        
+        while( !( !humanMulligan && !aiMulligan )) {         
+
+        //case 1:both have mulligans
+        if( humanMulligan && aiMulligan ){
+
+                console.log("Both players have mulliguns.");
+       
+                resolveMulligan(human, "human");
+                resolveMulligan(ai, "ai");
+            }
+        
+            //case 2: only human has mulligan
+        else if( humanMulligan && !aiMulligan ) {
+            humanMulliganCounter++; 
+            resolveMulligan(human, "human");
+        }
+
+        //case 3: only ai has mulligan
+        else{
+            aiMulliganCounter++; 
+            resolveMulligan(ai, "ai");
+        };
+
+        GameStates.update({ userid: Meteor.userId() }, state);
+
+        humanMulligan=(mulligan(humanHandLength, human, "human"));
+        aiMulligan=(mulligan(aiHandLength, ai, "ai"));
+       }//end of while loop
+              
+      
+
+       if(humanMulliganCounter !== aiMulliganCounter){
+        // deal extra cards to non-muligan player (or player with less
+       //  number of mulligans)
+       dealAdditionalCards(humanMulliganCounter,aiMulliganCounter, human, ai);
+       }
+
+       //end of mulligan logic
 
         GameStates.update({ userid: Meteor.userId() }, state);
 
@@ -248,7 +307,8 @@ export module GameManager {
     }
 
     function isPokemon(playableCard: PlayableCard) {
-        return playableCard.card.type === CardType.POKEMON;
+        if(playableCard.card !== undefined){
+            return playableCard.card.type === CardType.POKEMON;}
     }
 
     function isEnergy(playableCard: PlayableCard) {
@@ -407,4 +467,106 @@ export module GameManager {
         }
         
     }
+
+    function returnHandToDeck(player: Player){
+
+        
+        for(let i=0; i<7;i++){
+            let card =player.hand.pop();
+            
+            player.deck.push(card);
+
+        }
+        
+        if(player.hand.length !== 0){
+            console.log("There is a problem with returnHandToDeck method,"+ 
+            " hand must be 0");
+        }
+    }
+
+    function resolveMulligan(player: Player, name: string){
+        console.log(name + " has a mulligan");
+         
+        returnHandToDeck(player);
+        
+        player.deck = shuffleDeck(player.deck);
+         
+         console.log(name + ' drawing cards.');
+         drawPlayer(player, 7);
+    }
+//mulligan logic functions from here
+    function dealAdditionalCards(humanMulliganCounter: number,
+        aiMulliganCounter: number, human: Player, ai: Player){
+        
+            //no additional cards to draw
+            if(humanMulliganCounter === aiMulliganCounter){
+            return;
+        }
+
+            let extraCardNum=0;
+
+        if(humanMulliganCounter < aiMulliganCounter){
+            extraCardNum=aiMulliganCounter-humanMulliganCounter;
+
+            console.log("Human draws " + extraCardNum + " additional cards" + 
+            "due to ai mulligans");
+
+            drawPlayer(human, extraCardNum);
+        }
+
+        else{
+            extraCardNum=humanMulliganCounter-aiMulliganCounter;
+
+            console.log("Ai draws " + extraCardNum + " additional cards" + 
+            "due to human mulligans");
+
+            drawPlayer(ai, extraCardNum);
+        }
+    }
+	
+	
+	function noPokemonInDeck(state: Player){
+
+        let noPokemonInDeck=true;
+
+        for (let i = 0; i < state.deck.length; i++) {
+
+       if(isPokemon(state.deck[i])){
+
+        noPokemonInDeck=false;
+         break;
+        }
+                                    }
+
+        return noPokemonInDeck;
+    }
+
+    function mulligan(numOfCards: number, state: Player, type?: string){
+
+    let noPokemon=true;
+
+
+        for (let i = 0; i < numOfCards; i++) {
+
+      console.log(i);
+       console.log(state.hand[i]);
+
+       if(isPokemon(state.hand[i])){
+
+        //console.log("No mulligun for " + type);
+        noPokemon=false;
+         break;
+        }
+                                    }
+
+        if(noPokemon){
+        //console.log("Mulligun for " + type);
+        }
+
+return (noPokemon);
+
+    }
+
+    //end of mulligan logic functions
+
 }
