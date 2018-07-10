@@ -207,6 +207,7 @@ export module GameManager {
         let state = getGameState();
         updateGameState(state);
     }
+
     export function evolve(humanPlayer: boolean, toEvolve: PlayableCard, evolution: PlayableCard) {
         let state = getGameState();
         let player: Player = humanPlayer ? state.player : state.ai;
