@@ -1,6 +1,7 @@
 <Template name="LandingLayout" class="container">
     <main>
         <div >
+        {{>Header}}
         {{#if IsLoggedIn}}
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 landing-box">
@@ -73,7 +74,9 @@
                     {{/if}}
                 {{/if}}
             {{/if}}
-        {{/if}}
+        {{else}}
+            {{>loader}}
+    {{/if}}
     </div>
     </main>
 </Template>
