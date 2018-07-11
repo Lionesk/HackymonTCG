@@ -3,13 +3,38 @@
         {{#unless IsLoggedIn}}
             {{RedirectToLandingLayout}}
          {{/unless}}
+        {{>GameOverModal}}
          <!-- {{> ChoiceModal aiHand=getGameState.ai.hand aiBench=getGameState.ai.bench aiActive=getGameState.ai.active
             active=getGameState.player.active  bench=getGameState.player.bench hand=getGameState.player.hand
         }} -->
-        {{> Board gamestate = getGameState}}
         {{#if isGameOver}}
-            <h1>GAME OVER BITCH</h1>
-            <!-- TODO: ADD THE MODAL FOR WINNING OR LOSING -->
+            {{displayModal}}
         {{/if}}
+        {{>Board gamestate = getGameState}}
     </main>
+</Template>
+
+<Template name="GameOverModal">
+    <div class="modal-fade" id="GameOverModal" tabindex="-1" role="alertdialog" aria-labelledby="GameOverModal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{#if playerVictory}}
+                        <h2 class="modal-title" align="center">You win!</h2>
+                        <div class="modal-body">
+                            <img src="victory.png" height="60%" width="60%">
+                        </div>
+                    {{else}}
+                        <h2 class="modal-title" align="center">You lose...</h2>
+                        <div class="modal-body">
+                            <img src="defeat.png">
+                        </div>
+                    {{/if}}
+                </div>
+                <div class="modal-body" align="right">
+                    <button type="button" id="endGame" class="btn btn-primary">End Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </Template>
