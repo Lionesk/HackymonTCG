@@ -131,6 +131,7 @@ export module GameManager {
      */
     export function drawPlayer(player: Player, n?: number){
         let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
+        
         for (let i = 0; i < toDraw; i++) {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
@@ -264,7 +265,7 @@ export module GameManager {
         return hand.filter(playableCard => !!playableCard);
     }
 
-    function applyDamage(target: PlayableCard, opponent: Player, damage: number,player: Player) {
+    export function applyDamage(target: PlayableCard, opponent: Player, damage: number,player: Player) {
         if(!target){
             return false;
         }
