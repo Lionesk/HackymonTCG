@@ -8,14 +8,14 @@ declare let FlowRouter: any;
 
 
 Template.Options.helpers({
-    isEnergySelected:function(){
+    isEnergySelected() {
         if(this.moveState==undefined){
             return false
         }else{
             return this.moveState.selectedEnergyCard != null;
         }
     },
-    isEvolverSelected:function(){
+    isEvolverSelected() {
         if(this.moveState==undefined){
             return false
         }else if(this.moveState.selectedEvolutionPokemonCard==undefined){
@@ -24,10 +24,10 @@ Template.Options.helpers({
             return this.moveState.selectedEvolutionPokemonCard.card.evolution;
         }
     },
-    getSize:function(array){
+    getSize(array?: any[]){
         if(!array){
             return "0";
-        }else if(array.length ===0){
+        }else if(array.length === 0){
             return "0";
         }else{
             return array.length;
@@ -36,14 +36,14 @@ Template.Options.helpers({
 });
 
 Template.Options.events({
-    "click .end-game":function(){
+    "click .end-game"() {
         Meteor.call('upsertNewGameState')
         let ms = Session.get("move-state");
         MoveStateController.resetMoveState(ms);
         Session.set("move-state",ms);
         FlowRouter.go('/');
     },
-    "click .end-turn":function(){
+    "click .end-turn"() {
         Meteor.call('endTurn');
         let ms = Session.get("move-state");
         MoveStateController.resetMoveState(ms);

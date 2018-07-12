@@ -7,6 +7,7 @@ export interface GameStateInterface{
     humanFirst:boolean;
     energyPlayed:boolean;
     isFirstRound:boolean;
+    playing: boolean;
     isSecondRound:boolean;
 }
 
@@ -17,6 +18,8 @@ export class GameState implements GameStateInterface{
     humanFirst:boolean;
     energyPlayed:boolean;
     isFirstRound:boolean;
+    playing: boolean;
+    
     isSecondRound:boolean;
 
     constructor(userid:string){
@@ -25,6 +28,7 @@ export class GameState implements GameStateInterface{
         this.userid=userid;
         this.energyPlayed=false;
         this.isFirstRound=true;
-        this.isSecondRound=true;
+        this.playing = false;
+        this.isSecondRound = true;
     }
 }

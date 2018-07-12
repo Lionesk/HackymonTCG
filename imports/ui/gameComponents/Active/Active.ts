@@ -1,12 +1,14 @@
+import "jquery";
 import './Active.html';
 import './Active.css';
 import '../Card/Card.ts';
 import {MoveStateController} from "../../layouts/PlayLayout/MoveState"
 import { Template } from 'meteor/templating'
 import { Session } from 'meteor/session'
+import { PlayableCard } from "../../../gameLogic/PlayableCard";
 
 Template.Active.helpers({
-    isCardDefined:function(playableCard){
+    isCardDefined:function(playableCard: PlayableCard){
         if(playableCard==undefined){
             return false;
         }
@@ -22,7 +24,7 @@ Template.Active.helpers({
 });
 
 Template.Active.events({
-    "click .active-card":function(event){
+    "click .active-card":function(event: JQuery.Event){
         if(this.isNotInteractable){
             return;
         }
@@ -36,8 +38,8 @@ Template.Active.events({
             Session.set("move-state",ms);
         }
     },
-    "click .active-card .ability":function(event){
-        if(this.isNotInteractable&& this.isFirstRound&& this.isSecondRound){
+    "click .active-card .ability":function(event: JQuery.Event){
+        if(this.isNotInteractable && this.isFirstRound || this.isSecondRound){
             return;
         }
         let ms = Session.get("move-state");
