@@ -276,7 +276,7 @@ export module GameManager {
         return hand.filter(playableCard => !!playableCard);
     }
 
-    function applyDamage(target: PlayableCard, opponent: Player, damage: number, player: Player) {
+    export function applyDamage(target: PlayableCard, opponent: Player, damage: number, player: Player) {
         if(!target || !target.card || !target.card.healthPoints){
             return false;
         }
