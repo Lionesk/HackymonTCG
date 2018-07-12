@@ -30,8 +30,7 @@ Template.PlayLayout.helpers({
 Template.GameOverModal.helpers({
     playerVictory: function () {
         let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
-        return true;
-        //return state.winner === state.player;
+        return state.winner === state.player;
     }
 });
 
