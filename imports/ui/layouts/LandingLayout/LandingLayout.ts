@@ -3,7 +3,9 @@ import { Template } from 'meteor/templating';
 import { Session } from 'meteor/session';
 import './LandingLayout.html';
 import './LandingLayout.css';
+import '../../partials/Header/Header.ts';
 import '../../partials/UploadDeck/UploadDeck.ts';
+import '../../partials/loading/loading.ts';
 import {Decks, Cards, Abilities, GameStates} from "../../../api/collections";
 import {MoveState} from "../PlayLayout/MoveState";
 declare let FlowRouter: any;
@@ -23,6 +25,10 @@ Template.LandingLayout.helpers({
     },
     getDecks:function(){
       return Decks.find({"userid":Meteor.userId()}).fetch();
+    },
+    isAdmin:function(){
+      //return Meteor.users.find({"userid":Meteor.userId()}).fetch()[0].isAdmin;
+      return Meteor.user().username === "admin";
     },
     canResumeGame:function(){
       let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];

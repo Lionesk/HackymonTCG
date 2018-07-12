@@ -1,13 +1,16 @@
 <Template name="LandingLayout" class="container">
     <main>
         <div >
+        {{>Header}}
         {{#if IsLoggedIn}}
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 landing-box">
                     <br />
+                {{#if isAdmin}}
+                    {{> UploadDeck uploadType="abilities"}}
+                    {{> UploadDeck uploadType="cards"}}
+                {{/if}}
 
-                {{> UploadDeck uploadType="abilities"}}
-                {{> UploadDeck uploadType="cards"}}
                 {{> UploadDeck uploadType="deck"}}
                 <br />
 
@@ -71,7 +74,9 @@
                     {{/if}}
                 {{/if}}
             {{/if}}
-        {{/if}}
+        {{else}}
+            {{>loader}}
+    {{/if}}
     </div>
     </main>
 </Template>

@@ -1,0 +1,7 @@
+#pokecontainer {
+    position: relative;
+    z-index: 15;
+    top: 90%;
+    left: 50%;
+    margin: -75px 0 0 -75px;
+}
