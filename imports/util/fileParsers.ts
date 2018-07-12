@@ -40,7 +40,7 @@ export function parseCardString(data: string): void {
       const tokens: string[] = cardStr.split(':');
       const name: string = tokens[0];
       const type: CardType = tokens[1] as CardType;
-      let card: Card;
+      let card: Card | undefined;
       switch (type) {
         case CardType.POKEMON:
           card = parsePokemon(ctr++, name, type, tokens);
@@ -65,7 +65,7 @@ export function parsePokemon(index: number, name: string, type: CardType, tokens
   if (type === CardType.POKEMON) {
     let category: PokemonCat;
     let healthPoints: number;
-    let evolution: string;
+    let evolution: string | undefined;
     if (tokens[3] === PokemonCat.STAGE_ONE) {
       evolution = tokens[4];
       category = tokens[6] as PokemonCat;
@@ -78,14 +78,14 @@ export function parsePokemon(index: number, name: string, type: CardType, tokens
     const retreatCost: Cost = {};
     const retreatTokens: string[] = tokens.slice(tokens.indexOf("retreat") + 1, tokens.indexOf("attacks"));
     for (let i = 0; i < retreatTokens.length; i += 3) {
-      retreatCost[retreatTokens[i + 1]] = retreatTokens[i + 2]
+      retreatCost[retreatTokens[i + 1] as EnergyCat] = parseInt(retreatTokens[i + 2]);
     }
 
     let costAcc: Cost = {};
     
     let abilities: AbilityReference[] = tokens.slice(tokens.indexOf("attacks") + 1).join(":").split(",").map((abilityString: string) => {
       const abilityTokens = abilityString.split(":");
-      costAcc[abilityTokens[1]] = parseInt(abilityTokens[2]);
+      costAcc[abilityTokens[1] as EnergyCat] = parseInt(abilityTokens[2]);
       if (abilityTokens.length === 4) {
         const ability: AbilityReference =  {
           index: parseInt(abilityTokens[3]),
@@ -94,6 +94,8 @@ export function parsePokemon(index: number, name: string, type: CardType, tokens
         costAcc = {};
 
         return ability
+      } else {
+        throw "HOW";
       }
     });
     // remove undefined entries
@@ -299,7 +301,7 @@ function parseSearch(action: Partial<AbilityAction>, actionData: string): Partia
   const fileterTokens = tokens.slice(sourceIndex + 1, tokens.length - 1);
   action = parseFilter(action, fileterTokens);
 
-  action.amount = parseInt(tokens.pop());
+  action.amount = parseInt(tokens.pop() || "0");
   
    return action;
 }
@@ -360,7 +362,7 @@ function parseDeck(action: Partial<AbilityAction>, data: string): Partial<Abilit
     action.choice = tokens[choiceIndex + 1] as Choice;
   }
 
-  action = parseAmount(action, tokens.pop());
+  action = parseAmount(action, tokens.pop() || "");
   
   return action;
 }
@@ -427,9 +429,9 @@ function parseCondition(action: Partial<AbilityAction>, data: string): Partial<A
   return action;
 }
 
-export function parseDeckFile(fileString: string, name:string, id?: string){
+export function parseDeckFile(fileString: string, name:string, id?: string) {
   let deckcardsString = fileString.split("\n");
-  let deckcards = [];
+  let deckcards: number[] = [];
   deckcardsString.forEach((cardString)=>{
     deckcards.push(parseInt(cardString));
   });

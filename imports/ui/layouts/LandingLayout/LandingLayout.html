@@ -1,6 +1,7 @@
 <Template name="LandingLayout" class="container">
     <main>
         <div >
+        {{>Header}}
         {{#if IsLoggedIn}}
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3 landing-box">
@@ -29,7 +30,7 @@
                         <br />
                        <label class="btn btn-primary"> 
                            <span>Shuffle deck</span>
-                            <input type="checkbox" checked text="Shuffle Deck" class="shuffle-option"  />
+                            <input type="checkbox" checked text="Shuffle Deck" class="shuffle-option" id="shuffle-option" />
                         </label>
                         <br />
                         <br />
@@ -73,7 +74,9 @@
                     {{/if}}
                 {{/if}}
             {{/if}}
-        {{/if}}
+        {{else}}
+            {{>loader}}
+    {{/if}}
     </div>
     </main>
 </Template>

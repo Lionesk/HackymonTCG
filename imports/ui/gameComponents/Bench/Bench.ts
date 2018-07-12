@@ -1,3 +1,4 @@
+import "jquery";
 import './Bench.html';
 import './Bench.css';
 import '../Card/Card.ts';
@@ -8,7 +9,7 @@ import { Session } from 'meteor/session'
 import { PlayableCard } from '../../../gameLogic/PlayableCard';
 
 Template.Bench.helpers({
-    isCardDefined:function(playableCard){
+    isCardDefined(playableCard: PlayableCard) {
         if(playableCard==undefined){
             return false;
         }
@@ -25,16 +26,16 @@ Template.Bench.helpers({
 });
 
 Template.Bench.events({
-    "click .bench-card": async function(event){
+    async "click .bench-card"(event: JQuery.Event){
         if(this.isNotInteractable && this.isFirstRound){
             return;
         }
-        let playableCardId =event.currentTarget.getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
+        let playableCardId = (event.currentTarget as HTMLElement).getElementsByClassName("playable-card")[0].getAttribute("data-playable-card-id")
         let playableCard;
         console.log(this);
         await Promise.all(this.bench.map(async (pc: PlayableCard) => {
             if(pc!=null){
-                if(pc.id === parseInt(playableCardId)){
+                if(playableCardId && pc.id === parseInt(playableCardId)){
                     playableCard=pc;
 
                     if(playableCard.card.type == CardType.POKEMON){

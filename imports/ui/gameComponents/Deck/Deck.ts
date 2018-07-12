@@ -7,4 +7,4 @@ Template.Deck.helpers({
     createPlaceholderCard:function(){
         return {"card":{"name":"deck"}};
     }
-})
+});
