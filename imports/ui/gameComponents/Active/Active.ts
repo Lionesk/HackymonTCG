@@ -20,7 +20,13 @@ Template.Active.helpers({
         } else {
             return true;
         }
-    }
+    },
+    getCostValue:function(cost){
+        return this.active.card.retreatCost[cost];
+    },
+    getCostKeys:function(){
+        return Object.keys(this.active.card.retreatCost);
+    },
 });
 
 Template.Active.events({
@@ -51,5 +57,10 @@ Template.Active.events({
             }
         console.log("active click");
 
+    },
+    "click .retreat":function(event){
+        let ms = Session.get("move-state");
+        MoveStateController.setRetreat(ms);
+        Session.set("move-state",ms);
     }
 });

@@ -1,4 +1,7 @@
 .bench{
     background-color:rgba(200, 255, 0, 0.342);
     padding:10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
 }

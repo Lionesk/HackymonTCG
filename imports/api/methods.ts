@@ -79,6 +79,9 @@ Meteor.methods({
             Decks.remove({userid:Meteor.userId()});
         }
     },
+    retreatPokemon:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
+        GameManager.retreatPokemon(humanPlayer,pokemonPlayableCard);
+    },
     testModifyGameState:function(){
         if(Meteor.isServer){
             //simulates a change done by the gamemanager
