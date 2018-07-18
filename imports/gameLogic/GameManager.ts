@@ -4,7 +4,7 @@ import { Cards, CardType, Decks, EnergyCard, GameStates, AbilityType } from "../
 import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
 import { AbilityAction, Abilities } from "../api/collections/abilities";
-import { Cost, AbilityReference } from "../api/collections/Cards";
+import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
 
 export module GameManager {
     /***
@@ -377,7 +377,34 @@ export module GameManager {
             return isCastable;
         }, true);
     }
-
+    function removeCost(retreatCost: Cost, cardEnergy: EnergyCard[]){
+        let costEnergy =[];
+        let colorlessCount=0;
+        Object.keys(retreatCost).forEach((costKey) => {
+            for(let i =0; i<retreatCost[costKey];i++){
+                costEnergy.push(costKey);
+                if(costKey=== EnergyCat.COLORLESS){
+                    colorlessCount++;
+                }else{
+                    costEnergy.push(costKey);
+                }
+            }
+         });
+         console.log(cardEnergy);
+         costEnergy.forEach((costE)=>{
+            cardEnergy.forEach((cardE,index)=>{
+                if(cardE.category===costE){
+                    this.splice(index,1);
+                }
+            })
+         })
+         console.log(cardEnergy);
+         for(let i= 0; i<colorlessCount;i++){
+            cardEnergy.splice(0,1);
+         }
+         console.log(cardEnergy);
+         return cardEnergy;
+    }
     function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard): boolean {
         let target: PlayableCard;
         if (selectedTarget) {
@@ -399,7 +426,20 @@ export module GameManager {
         });
         return appliedDamage
     }
-
+    export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
+        console.log("RETREAT");
+        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        let player: Player = humanPlayer ? state.player : state.ai;
+        if (checkCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[])) {
+            player.active.currentEnergy = removeCost(player.active.card.retreatCost,player.active.currentEnergy  as EnergyCard[]);
+            let active = new PlayableCard(player.active.id, player.active.card);
+            active.currentEnergy =player.active.currentEnergy;
+            player.bench.push(active);
+            player.active=undefined;
+            GameStates.update({userid: Meteor.userId()}, state); 
+            placeActive(humanPlayer,pokemonPlayableCard);
+        }
+    }
     function collectPrizeCard(player:Player){
         player.hand.push(player.prize.pop());
         if(player.prize.length){

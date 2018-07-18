@@ -55,5 +55,10 @@ Template.Active.events({
             }
         console.log("active click");
 
+    },
+    "click .retreat":function(event){
+        let ms = Session.get("move-state");
+        MoveStateController.setRetreat(ms);
+        Session.set("move-state",ms);
     }
 });

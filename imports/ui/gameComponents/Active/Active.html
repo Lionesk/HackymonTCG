@@ -6,6 +6,7 @@
                     {{> Card playableCard=active}}
                 </div>
                 {{#unless isNotInteractable}}
+                {{#unless isSecondRound}}
                 <div class="col-sm-2 retreat">
                         Retreat
                         <br />
@@ -15,6 +16,7 @@
                                 <span>: {{getCostValue energyCost}}&nbsp;</span>
                         {{/each}}
                 </div>
+                {{/unless}}
                 {{/unless}}
             </div>
         {{/if}}
