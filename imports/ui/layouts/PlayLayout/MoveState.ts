@@ -3,9 +3,9 @@ import {PlayableCard} from "../../../gameLogic/PlayableCard"
 import { asyncCall } from "../../helpers";
 
 export class MoveState{
-    selectedEnergyCard: PlayableCard;
-    selectedPokemonCard: PlayableCard;
-    selectedEvolutionPokemonCard: PlayableCard;
+    selectedEnergyCard: PlayableCard | null;
+    selectedPokemonCard: PlayableCard  | null;
+    selectedEvolutionPokemonCard: PlayableCard | null;
     retreating:boolean;
 
     constructor() {
@@ -125,7 +125,7 @@ export class MoveStateController{
         ms.retreating=false;
     }
 
-    static isEmpty(ms){
+    static isEmpty(ms: MoveState){
         return ms.selectedEnergyCard === null&&ms.selectedPokemonCard === null&& ms.selectedEvolutionPokemonCard === null;
     }
 }

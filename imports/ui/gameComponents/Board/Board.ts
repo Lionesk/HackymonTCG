@@ -9,7 +9,7 @@ import { Template } from 'meteor/templating'
 declare let FlowRouter:any
 
 Template.Board.events({
-    'click .changeTestGameState':function(){
+    'click .changeTestGameState'(){
         Meteor.call('testModifyGameState',function(){
             FlowRouter.go('/play');
         });
@@ -20,7 +20,7 @@ Template.Board.events({
 });
 
 Template.Bench.helpers({
-    isActivePlaced:function(){
+    isActivePlaced(){
         return this.gamestate.player.active !==null&& this.gamestate.player.active !==undefined;
     }
 })
