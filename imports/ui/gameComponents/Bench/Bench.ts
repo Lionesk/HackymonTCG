@@ -10,7 +10,7 @@ import { PlayableCard } from '../../../gameLogic/PlayableCard';
 
 Template.Bench.helpers({
     isCardDefined(playableCard: PlayableCard) {
-        if(playableCard==undefined){
+        if(!playableCard){
             return false;
         }
         if(Object.keys(playableCard).length === 0){

@@ -11,7 +11,7 @@ import { PlayableCard } from '../../../gameLogic/PlayableCard';
 Template.Hand.helpers({
     isCardDefined:function(playableCard: PlayableCard){
         // console.log(playableCard)
-        if(playableCard==undefined){
+        if(!playableCard){
             return false;
         }
         if(Object.keys(playableCard).length === 0){
