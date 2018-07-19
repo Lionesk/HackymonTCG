@@ -34,7 +34,7 @@ export module GameManager {
     export function placePrizeCards(player: Player) {
         for (let i = 0; i < 6; i++) {
             player.prize.push(player.deck.pop() as PlayableCard);
-            player.inPlay[player.deckIndex++].position = CardPosition.PRIZE;
+            // player.inPlay[player.deckIndex++].position = CardPosition.PRIZE;
         }
     }
 
@@ -189,7 +189,7 @@ export module GameManager {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
-            player.inPlay[player.deckIndex++].position = CardPosition.HAND;
+            // player.inPlay[player.deckIndex++].position = CardPosition.HAND;
             player.hand.push(player.deck.pop() as PlayableCard);
         }
     }
@@ -238,7 +238,7 @@ export module GameManager {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
             console.log("placing to active")
-            card.position = CardPosition.ACTIVE;
+            // card.position = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player, player.active);
         }
@@ -255,7 +255,7 @@ export module GameManager {
         let pokemonCard = mapCardCopy(player, card);
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
-            card.position = CardPosition.BENCH;
+            // card.position = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
         }
@@ -335,7 +335,7 @@ export module GameManager {
         if (target.currentDamage >= target.card.healthPoints) {
             discard(opponent, target);
             collectPrizeCard(player);
-            target.position = CardPosition.DISCARD;
+            // target.position = CardPosition.DISCARD;
         }
         return true;
     }
@@ -515,7 +515,7 @@ export module GameManager {
 
     }
 
-    function returnHandToDeck(player: Player) {
+    export function returnHandToDeck(player: Player) {
         for (let i = 0; i < 7; i++) {
             let card = player.hand.pop();
 
@@ -529,7 +529,7 @@ export module GameManager {
         }
     }
 
-    function resolveMulligan(player: Player, name: string) {
+    export function resolveMulligan(player: Player, name: string) {
         console.log(name + " has a mulligan");
         returnHandToDeck(player);
 
