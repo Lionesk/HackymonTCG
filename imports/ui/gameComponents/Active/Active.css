@@ -1,4 +1,26 @@
 .active{
     background-color:rgba(30, 255, 0, 0.425);
     padding:10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+}
+
+.retreat{
+    background-color:rgb(192, 171, 51);
+    color:black;
+    border-color: rgb(0, 0, 0);
+    border-style:solid;
+    border-width:1px;
+    border-radius: 10px;
+    margin:1px;
+    padding:2px;
+    box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+    -moz-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
+}
+
+.retreat:hover{
+    background-color:rgb(240, 176, 39);
+    cursor:pointer;
 }

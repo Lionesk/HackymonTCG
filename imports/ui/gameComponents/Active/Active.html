@@ -5,6 +5,19 @@
                 <div class="col-sm-2 col-sm-offset-5 active-card">
                     {{> Card playableCard=active}}
                 </div>
+                {{#unless isNotInteractable}}
+                {{#unless isSecondRound}}
+                <div class="col-sm-2 retreat">
+                        Retreat
+                        <br />
+                        Cost:
+                        {{#each energyCost in getCostKeys}}
+                                <img height=20 width=20 src="energy/{{energyCost}}.png" alt="{{energyCost}}" />
+                                <span>: {{getCostValue energyCost}}&nbsp;</span>
+                        {{/each}}
+                </div>
+                {{/unless}}
+                {{/unless}}
             </div>
         {{/if}}
     </div>

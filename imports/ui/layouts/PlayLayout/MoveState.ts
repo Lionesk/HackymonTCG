@@ -4,13 +4,15 @@ import { asyncCall } from "../../helpers";
 
 export class MoveState{
     selectedEnergyCard: PlayableCard | null;
-    selectedPokemonCard: PlayableCard | null;
+    selectedPokemonCard: PlayableCard  | null;
     selectedEvolutionPokemonCard: PlayableCard | null;
+    retreating:boolean;
 
     constructor() {
         this.selectedEnergyCard = null;
         this.selectedPokemonCard = null;
         this.selectedEvolutionPokemonCard = null;
+        this.retreating=false;
     }
 }
 export class MoveStateController{
@@ -56,11 +58,17 @@ export class MoveStateController{
 
         if(ms.selectedEnergyCard){
             this.addEnergy(ms);
-        }else{
+        }else if(ms.retreating){
+            this.retreatPokemon(ms);
+        }
+        else{
             this.evolvePokemon(ms);
         }
     } 
-
+    private static retreatPokemon(ms:MoveState){
+        Meteor.call("retreatPokemon", true, ms.selectedPokemonCard);
+        this.resetMoveState(ms);
+    }
     private static  addEnergy(ms:MoveState){
         if(ms.selectedEnergyCard && ms.selectedPokemonCard){
             // console.log(ms);
@@ -82,6 +90,15 @@ export class MoveStateController{
 
         this.evolvePokemon(ms);
 
+    }
+    static setRetreat(ms:MoveState){
+        if(ms.retreating){
+            this.resetMoveState(ms);
+        }
+        else{
+            this.resetMoveState(ms);
+            ms.retreating=true;
+        }
     }
 
     private static evolvePokemon(ms:MoveState){
@@ -105,6 +122,7 @@ export class MoveStateController{
         ms.selectedEnergyCard = null;
         ms.selectedPokemonCard = null;
         ms.selectedEvolutionPokemonCard = null;
+        ms.retreating=false;
     }
 
     static isEmpty(ms: MoveState){

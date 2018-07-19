@@ -52,8 +52,10 @@ describe('parseCardString', function () {
    assert.equal(aCard.healthPoints, 60);
    assert.equal(aCard.index, 1);
    assert.equal(aCard.category, "colorless");
+   let abilities=0;
 
-   let abilities=aCard.abilities.length;
+if(aCard !== undefined && aCard.abilities !== undefined){
+   abilities=aCard.abilities.length;}
 
    assert.isTrue(abilities>0 );
 
