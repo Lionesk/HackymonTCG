@@ -142,3 +142,51 @@ describe('applyDamage', function () {
             assert.equal(result, false);
       });
 });
+
+
+describe('resolveMulligan', function () {
+      it('REGRESSION one mulligan resolved hand should have 7 cards', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            
+            card1.card = { type: CardType.POKEMON } as any;
+            card2.card = { type: CardType.POKEMON } as any;
+            card3.card = { type: CardType.POKEMON } as any;
+                        
+            let hands: PlayableCard[]=[];
+            thePlayer.deck=[card1];
+            thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+            
+            GameManager.resolveMulligan(thePlayer, "test");
+
+            assert.equal(thePlayer.hand.length, 7);
+            
+
+      });
+});
+
+
+describe('returnHandToDeck', function () {
+      it('REGRESSION hand must be 0 after returning hand to deck', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            
+            card1.card = { type: CardType.POKEMON } as any;
+            card2.card = { type: CardType.POKEMON } as any;
+            card3.card = { type: CardType.POKEMON } as any;
+                        
+            let hands: PlayableCard[]=[];
+            thePlayer.deck=[card1];
+            thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+            
+            GameManager.returnHandToDeck(thePlayer);
+
+            assert.equal(thePlayer.hand.length, 0);
+            
+
+      });
+});

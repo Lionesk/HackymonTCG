@@ -34,13 +34,13 @@ export module GameManager {
     export function placePrizeCards(player: Player) {
         for (let i = 0; i < 6; i++) {
             player.prize.push(player.deck.pop() as PlayableCard);
-            player.inPlay[player.deckIndex++].position = CardPosition.PRIZE;
+            // player.inPlay[player.deckIndex++].position = CardPosition.PRIZE;
         }
     }
 
-    export function initializeGame(shuffle: boolean,playerDeckId?:string,aiDeckId?:string) {
-        if(playerDeckId&&aiDeckId){
-            GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});            
+    export function initializeGame(shuffle: boolean, playerDeckId?: string, aiDeckId?: string) {
+        if (playerDeckId && aiDeckId) {
+            GameStates.update({ userid: Meteor.userId() }, new GameState(Meteor.userId()), { upsert: true });
         }
 
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
@@ -52,11 +52,11 @@ export module GameManager {
         state.humanFirst = coinFlip(); //Human always _chooses_ heads
 
         console.log('Creating new game from uploaded deck.');
-        console.log('playerdeckid: '+playerDeckId);
-        console.log('aiDeckId: '+aiDeckId);
+        console.log('playerdeckid: ' + playerDeckId);
+        console.log('aiDeckId: ' + aiDeckId);
 
-        let playerDeck: Deck = Decks.find({"_id":playerDeckId}).fetch()[0];
-        let aiDeck: Deck = Decks.find({"_id":aiDeckId}).fetch()[0];
+        let playerDeck: Deck = Decks.find({ "_id": playerDeckId }).fetch()[0];
+        let aiDeck: Deck = Decks.find({ "_id": aiDeckId }).fetch()[0];
         state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
         state.player.inPlay = state.player.deck.slice(); // copy actual deck
         state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
@@ -64,14 +64,61 @@ export module GameManager {
 
         GameStates.update({ userid: Meteor.userId() }, state);
 
+        //Mulligan logic starts here
+
+        //if a deck contains no pokemon game should not start
+        // TODO: in frontend player has to stay at initial screen 
+        if (noPokemonInDeck(state.player) || noPokemonInDeck(state.ai)) {
+            console.log("You must have at least 1 pokemon in a deck to play!");
+            return;
+        };
+
         console.log('AI drawing cards.');
         drawPlayer(state.ai, 7);
-        //TODO: Check for AI Mulligan
 
         console.log('Player drawing cards.');
         drawPlayer(state.player, 7);
-        //TODO: Check for human mulligan
 
+        GameStates.update({ userid: Meteor.userId() }, state);
+
+        //mulligan variables
+        let human = state.player;
+        let ai = state.ai;
+        let humanHandLength = human.hand.length;
+        let aiHandLength = ai.hand.length;
+        let humanMulliganCounter = 0;
+        let aiMulliganCounter = 0;
+        let humanMulligan = (mulligan(humanHandLength, human, "human"));
+        let aiMulligan = (mulligan(aiHandLength, ai, "ai"));
+
+        while (!(!humanMulligan && !aiMulligan)) {
+            //case 1:both have mulligans
+            if (humanMulligan && aiMulligan) {
+                console.log("Both players have mulliguns.");
+                resolveMulligan(human, "human");
+                resolveMulligan(ai, "ai");
+            }
+            //case 2: only human has mulligan
+            else if (humanMulligan && !aiMulligan) {
+                humanMulliganCounter++;
+                resolveMulligan(human, "human");
+            }
+            //case 3: only ai has mulligan
+            else {
+                aiMulliganCounter++;
+                resolveMulligan(ai, "ai");
+            };
+            GameStates.update({ userid: Meteor.userId() }, state);
+            humanMulligan = (mulligan(humanHandLength, human, "human"));
+            aiMulligan = (mulligan(aiHandLength, ai, "ai"));
+        }//end of while loop 
+
+        if (humanMulliganCounter !== aiMulliganCounter) {
+            // deal extra cards to non-muligan player (or player with less
+            //  number of mulligans)
+            dealAdditionalCards(humanMulliganCounter, aiMulliganCounter, human, ai);
+        }
+        //end of mulligan logic
         GameStates.update({ userid: Meteor.userId() }, state);
 
         console.log('Placing prize cards');
@@ -92,7 +139,7 @@ export module GameManager {
      */
     export function generateDeck(deck: number[], shuffle: boolean): PlayableCard[] {
         let counter: number = 0;
-        let newDeck: PlayableCard[] =  deck.map(((index: number) => new PlayableCard(counter++, Cards.find({ index }).fetch()[0])));
+        let newDeck: PlayableCard[] = deck.map(((index: number) => new PlayableCard(counter++, Cards.find({ index }).fetch()[0])));
         // for(let i of deck){
         //     let card = Cards.find({index: i}).fetch()[0];
         //     newDeck.push(new PlayableCard(counter++, card));
@@ -120,13 +167,13 @@ export module GameManager {
     }
 
     export function resetRoundParams() {
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-        if(!state.isFirstRound){
-            state.isSecondRound=false;
+        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        if (!state.isFirstRound) {
+            state.isSecondRound = false;
         }
-        state.isFirstRound=false;
-        state.energyPlayed=false;
-        GameStates.update({userid: Meteor.userId()}, state);
+        state.isFirstRound = false;
+        state.energyPlayed = false;
+        GameStates.update({ userid: Meteor.userId() }, state);
     }
 
     /***
@@ -137,12 +184,12 @@ export module GameManager {
      * @param {Player} player
      * @param {number} n
      */
-    export function drawPlayer(player: Player, n: number = 1){
+    export function drawPlayer(player: Player, n: number = 1) {
         for (let i = 0; i < n; i++) {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
-            player.inPlay[player.deckIndex++].position = CardPosition.HAND;
+            // player.inPlay[player.deckIndex++].position = CardPosition.HAND;
             player.hand.push(player.deck.pop() as PlayableCard);
         }
     }
@@ -163,9 +210,9 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy:PlayableCard){
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-        if(humanPlayer && state.energyPlayed){
+    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy: PlayableCard) {
+        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        if (humanPlayer && state.energyPlayed) {
             return;
         }
         let player: Player = humanPlayer ? state.player : state.ai;
@@ -175,8 +222,8 @@ export module GameManager {
             //Pokemon must either be active or on the bench
             addEnergyToCard(pokemon, energy);
             removeFromHand(player, energy);
-            if(humanPlayer){
-                state.energyPlayed=true;
+            if (humanPlayer) {
+                state.energyPlayed = true;
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -191,24 +238,24 @@ export module GameManager {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
             console.log("placing to active")
-            card.position = CardPosition.ACTIVE;
+            // card.position = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player, player.active);
         }
-        GameStates.update({userid: Meteor.userId()}, state);
+        GameStates.update({ userid: Meteor.userId() }, state);
     }
 
     export function placeBench(humanPlayer: boolean, card: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
-        if(!player.active){
-            placeActive(true,card);
+        if (!player.active) {
+            placeActive(true, card);
             return;
         }
         let pokemonCard = mapCardCopy(player, card);
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
-            card.position = CardPosition.BENCH;
+            // card.position = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
         }
@@ -224,7 +271,7 @@ export module GameManager {
         player.hand = player.hand.filter(c => c !== card);
         player.hand = cleanHand(player.hand);
     }
-    function removeFromBench(player: Player, card: PlayableCard){
+    function removeFromBench(player: Player, card: PlayableCard) {
         player.bench = player.bench.filter(c => c !== card);
     }
 
@@ -241,13 +288,13 @@ export module GameManager {
      */
     function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean) {
         let playableCard: PlayableCard | undefined;
-        if(player.active && player.active.id === card.id){
+        if (player.active && player.active.id === card.id) {
             return player.active;
         }
         playableCard = player.hand.find(function (element) {
             return element.id === card.id
         });
-        if(playableCard !== undefined){
+        if (playableCard !== undefined) {
             return playableCard;
         }
         playableCard = player.bench.find(function (element) {
@@ -260,7 +307,9 @@ export module GameManager {
     }
 
     function isPokemon(playableCard: PlayableCard) {
-        return playableCard.card.type === CardType.POKEMON;
+        if (playableCard.card !== undefined) {
+            return playableCard.card.type === CardType.POKEMON;
+        }
     }
 
     function isEnergy(playableCard: PlayableCard) {
@@ -283,10 +332,10 @@ export module GameManager {
 
         target.currentDamage += damage;
 
-        if(target.currentDamage >= target.card.healthPoints){
+        if (target.currentDamage >= target.card.healthPoints) {
             discard(opponent, target);
             collectPrizeCard(player);
-            target.position = CardPosition.DISCARD;
+            // target.position = CardPosition.DISCARD;
         }
         return true;
     }
@@ -296,7 +345,7 @@ export module GameManager {
      * @param {Player} player -- Player who owns card to be discarded
      * @param {PlayableCard} card -- MUST CALL MapCardCopy before invoking this method.
      */
-    function discard(player: Player, card: PlayableCard){
+    function discard(player: Player, card: PlayableCard) {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         //Making an array of cards to discard based on number of energy cards and evolutions on card
         let toDiscard: PlayableCard[] = [];
@@ -306,17 +355,17 @@ export module GameManager {
                 //Playable cards need (unique) IDs and since we get rid of the IDs these cards previously had, we
                 //are making them new ones with this counter
                 let discardIDCounter: number = card.id * 10;
-                for(let energy of card.currentEnergy){
+                for (let energy of card.currentEnergy) {
                     toDiscard.push(new PlayableCard(discardIDCounter++, energy))
                 }
-                if(card.card.evolution !== ""){
+                if (card.card.evolution !== "") {
                     //TODO: Find the evolution card(s) in the DB and add them to the toDiscard array
                 }
-                if(card === player.active){
-                    toDiscard.push(new PlayableCard(discardIDCounter++,player.active.card))
+                if (card === player.active) {
+                    toDiscard.push(new PlayableCard(discardIDCounter++, player.active.card))
                     player.active = undefined;
                 }
-                else if(player.bench.find(function (element) { return element.id === card.id })){
+                else if (player.bench.find(function (element) { return element.id === card.id })) {
                     removeFromBench(player, card);
                 }
                 break;
@@ -328,7 +377,7 @@ export module GameManager {
                 console.log("Invalid card");
                 return;
         }
-        player.discard=player.discard.concat(toDiscard);
+        player.discard = player.discard.concat(toDiscard);
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -336,19 +385,19 @@ export module GameManager {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         let opponent: Player = humanPlayer ? state.ai : state.player;
-        
+
         source = mapCardCopy(player, source);
 
         if (!source.card.abilities) {
             throw new Error("Card has no abilities to execute");
         }
-        
+
         const ability = source.card.abilities.find((ability) => ability.index === abilityIndex);
         if (!ability) {
             console.log("ability not found on card");
             return;
         }
-        let didPokemonAttack=false;
+        let didPokemonAttack = false;
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (ability.cost && checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
@@ -367,7 +416,7 @@ export module GameManager {
         // update model
         GameStates.update({ userid: Meteor.userId() }, state);
 
-        if(didPokemonAttack && humanPlayer){
+        if (didPokemonAttack && humanPlayer) {
             Meteor.call("endTurn");
         }
     }
@@ -389,10 +438,10 @@ export module GameManager {
         }, true);
     }
     function removeCost(retreatCost: Cost, cardEnergy: EnergyCard[]){
-        let costEnergy =[];
+        let costEnergy: EnergyCat[] = [];
         let colorlessCount=0;
-        Object.keys(retreatCost).forEach((costKey) => {
-            for(let i =0; i<retreatCost[costKey];i++){
+        Object.keys(retreatCost).forEach((costKey: EnergyCat) => {
+            for(let i =0; i<(retreatCost[costKey] as number);i++){
                 costEnergy.push(costKey);
                 if(costKey=== EnergyCat.COLORLESS){
                     colorlessCount++;
@@ -420,14 +469,14 @@ export module GameManager {
         let target: PlayableCard;
         if (selectedTarget) {
             target = selectedTarget;
-        } else  {
+        } else {
             target = opponent.active as PlayableCard; // if this is undefined the game should be over
         }
-        let appliedDamage=false;
+        let appliedDamage = false;
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             switch (ability.type) {
                 case AbilityType.DAMAGE:
-                // console.log("t"+parseInt(ability.amount));
+                    // console.log("t"+parseInt(ability.amount));
                     if (ability.amount) {
                         appliedDamage = applyDamage(target, opponent, ability.amount, player);
                     } else {
@@ -445,6 +494,9 @@ export module GameManager {
         console.log("RETREAT");
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
+        if (!player.active || !player.active.card.retreatCost) {
+            throw new Error("no active to retreat");
+        }
         if (checkCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[])) {
             player.active.currentEnergy = removeCost(player.active.card.retreatCost,player.active.currentEnergy  as EnergyCard[]);
             let active = new PlayableCard(player.active.id, player.active.card);
@@ -457,9 +509,86 @@ export module GameManager {
     }
     function collectPrizeCard(player:Player){
         player.hand.push(player.prize.pop() as PlayableCard);
-        if(player.prize.length){
+        if (player.prize.length) {
             //TODO:WIN
         }
-        
+
     }
+
+    export function returnHandToDeck(player: Player) {
+        for (let i = 0; i < 7; i++) {
+            let card = player.hand.pop();
+
+            if (card !== undefined)
+                player.deck.push(card);
+        }
+
+        if (player.hand.length !== 0) {
+            console.log("There is a problem with returnHandToDeck method," +
+                " hand must be 0");
+        }
+    }
+
+    export function resolveMulligan(player: Player, name: string) {
+        console.log(name + " has a mulligan");
+        returnHandToDeck(player);
+
+        player.deck = shuffleDeck(player.deck);
+
+        console.log(name + ' drawing cards.');
+        drawPlayer(player, 7);
+    }
+    //mulligan logic functions from here
+    function dealAdditionalCards(humanMulliganCounter: number,
+        aiMulliganCounter: number, human: Player, ai: Player) {
+        //no additional cards to draw
+        if (humanMulliganCounter === aiMulliganCounter) {
+            return;
+        }
+        let extraCardNum = 0;
+
+        if (humanMulliganCounter < aiMulliganCounter) {
+            extraCardNum = aiMulliganCounter - humanMulliganCounter;
+            console.log("Human draws " + extraCardNum + " additional cards" +
+                "due to ai mulligans");
+            drawPlayer(human, extraCardNum);
+        }
+
+        else {
+            extraCardNum = humanMulliganCounter - aiMulliganCounter;
+            console.log("Ai draws " + extraCardNum + " additional cards" +
+                "due to human mulligans");
+            drawPlayer(ai, extraCardNum);
+        }
+    }
+
+    function noPokemonInDeck(state: Player) {
+        let noPokemonInDeck = true;
+        for (let i = 0; i < state.deck.length; i++) {
+            if (isPokemon(state.deck[i])) {
+                noPokemonInDeck = false;
+                break;
+            }
+        }
+
+        return noPokemonInDeck;
+    }
+
+    function mulligan(numOfCards: number, state: Player, type?: string) {
+        let noPokemon = true;
+        for (let i = 0; i < numOfCards; i++) {
+            
+            if (isPokemon(state.hand[i])) {
+                //console.log("No mulligun for " + type);
+                noPokemon = false;
+                break;
+            }
+        }
+        if (noPokemon) {
+            //console.log("Mulligun for " + type);
+        }
+        return (noPokemon);
+    }
+    //end of mulligan logic functions
+
 }
