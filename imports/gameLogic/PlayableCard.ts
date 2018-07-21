@@ -26,6 +26,14 @@ export class PlayableCard {
         this.previousPosition = this.currentPosition;
         this.currentPosition = pos;
     }
+
+    damage(amount: number) {
+        this.currentDamage += amount;
+    }
+
+    heal(amount: number) {
+        this.currentDamage = Math.min(this.currentDamage - amount, 0);
+    }
     
     constructor(id: number, card?:Card, playable?:PlayableCard){
         this.id = id;

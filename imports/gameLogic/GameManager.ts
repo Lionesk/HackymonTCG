@@ -5,6 +5,7 @@ import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
 import { AbilityAction, Abilities } from "../api/collections/abilities";
 import { Cost, AbilityReference } from "../api/collections/Cards";
+import { createAbility } from "./abilities/AbilityFactory";
 
 export module GameManager {
     /***
@@ -333,7 +334,7 @@ export module GameManager {
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
-        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         let opponent: Player = humanPlayer ? state.ai : state.player;
         
@@ -348,15 +349,20 @@ export module GameManager {
             console.log("ability not found on card");
             return;
         }
-        let didPokemonAttack=false;
+        let didPokemonAttack = true;
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (ability.cost && checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    didPokemonAttack = castAbility(ability, player, opponent, selectedTarget);
+                    try {
+                        castAbility(state, ability, player, opponent, selectedTarget);
+                    } catch (e) {
+                        console.error(e.message);
+                        didPokemonAttack = false;
+                    }
                 }
                 break;
             case CardType.TRAINER:
-                castAbility(ability, player, opponent, selectedTarget);
+                castAbility(state, ability, player, opponent, selectedTarget);
                 discard(player, source);
                 break;
             default:
@@ -382,37 +388,19 @@ export module GameManager {
 
         return Object.keys(abilityCost).reduce<boolean>((isCastable, index: keyof Cost) => {
             //  abilityCost[index] will always be defined
-            if (isCastable && abilityCost[index] as number > AvailableEnergy) {
+            if (isCastable && abilityCost[index] as number > (AvailableEnergy[index] || 0)) {
                 return false;
             }
             return isCastable;
         }, true);
     }
 
-    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard): boolean {
-        let target: PlayableCard;
-        if (selectedTarget) {
-            target = selectedTarget;
-        } else  {
-            target = opponent.active as PlayableCard; // if this is undefined the game should be over
-        }
-        let appliedDamage=false;
+    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
-            switch (ability.type) {
-                case AbilityType.DAMAGE:
-                // console.log("t"+parseInt(ability.amount));
-                    if (ability.amount) {
-                        appliedDamage = applyDamage(target, opponent, ability.amount, player);
-                    } else {
-                        throw new Error("Damage ability must have amount");
-                    }
-                    break;
-                default:
-                    console.log(`${ability.type} is not implemented yet`)
-                    appliedDamage = false;
-            }
+            const executableAbility = createAbility(state, ability);
+            executableAbility.execute(selectedTarget);
+            console.log(executableAbility.toString()); // drop this into an action log
         });
-        return appliedDamage
     }
 
     function collectPrizeCard(player:Player){
@@ -421,5 +409,23 @@ export module GameManager {
             //TODO:WIN
         }
         
+    }
+
+    function getState(): GameState {
+        const state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        if (state.ai.active) {
+            Object.setPrototypeOf(state.ai.active, PlayableCard.prototype);
+        }
+        if (state.player.active) {
+            Object.setPrototypeOf(state.player.active, PlayableCard.prototype);
+        }
+        state.ai.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+
+        return state;
     }
 }
