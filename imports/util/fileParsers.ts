@@ -94,10 +94,8 @@ export function parsePokemon(index: number, name: string, type: CardType, tokens
         costAcc = {};
 
         return ability
-      } else {
-        throw "HOW";
       }
-    });
+    }).filter(ref => !!ref) as AbilityReference[]; // filter should remove undefined
     // remove undefined entries
     let abilityIndex = 0;
     abilities = abilities.reduce((acc: AbilityReference[], val: AbilityReference | undefined) => {
