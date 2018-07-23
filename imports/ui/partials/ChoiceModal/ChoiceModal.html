@@ -1,0 +1,52 @@
+<Template name="ChoiceModal">
+    <div class="modal-fade" id="ChoiceModal"  tabindex="-1" role="alertdialog"  aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <h2 class="modal-title" align="center">Choose Target</h2>
+                        <div class="modal-body modal-choice-body">
+                            <div class="container cardView">
+                                 <div class="row hand-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.aiHand hidden=true}}
+                                </div>
+                                <div class="row bench-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.aiBench}}
+                                </div>
+                                <div class="row active-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.aiActive isActive=true}}
+                                </div>
+                                <div class="row active-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.active isActive=true}}
+                                </div>
+                                <div class="row bench-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.bench}}
+                                </div>
+                                <div class="row hand-choice" style="overflow-x: auto;">
+                                    {{>CardRowView cards=choice.hand}}
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <div class="modal-body" align="right">
+                    <button type="button" id="cancelTarget" class="btn btn-primary">Cancel</button>
+                    <button type="button" id="" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</Template>
+
+<Template name="CardRowView">
+        {{#each card in cards}}
+        {{#if isActive}}
+        <div class="col-sm-2 col-sm-offset-3 cardChoice" style="">
+                {{> Card playableCard=card hidden = hidden miniView=true}}
+            </div>
+        {{else}}
+        <div class="col-sm-2 cardChoice" style="">
+                {{> Card playableCard=card hidden = hidden miniView=true}}
+            </div>
+        {{/if}}
+
+        {{/each}}
+</Template>

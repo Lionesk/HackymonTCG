@@ -1,0 +1,52 @@
+#ChoiceModal {
+    display: none;
+    position: fixed;
+    alignment: center;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    left: 0;
+    top: 0;
+}
+.modal-choice-body{
+    /* transform: scale(0.2) */
+}
+
+.cardView{
+    /* transform: scale(0.4);
+    top:-10% */
+}
+
+.hand-choice{
+    background-color:rgba(255, 166, 0, 0.342);
+    padding:10px;
+    border-color: rgb(0, 0, 0);
+    border-style:solid;
+    border-width:0px;
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    width:75%;
+}
+
+.bench-choice{
+    background-color:rgba(200, 255, 0, 0.342);
+    padding:10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    width:75%;
+    
+}
+
+.active-choice{
+    background-color:rgba(30, 255, 0, 0.425);
+    padding:10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    width:75%;
+    
+}
