@@ -231,6 +231,7 @@ export module GameManager {
 
     export function placeActive(humanPlayer: boolean, card: PlayableCard) {
         console.log("placing to active called");
+
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
         card = mapCardCopy(player, card);
@@ -316,7 +317,7 @@ export module GameManager {
         return playableCard.card.type === CardType.ENERGY;
     }
 
-    function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard) {
+    export function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard) {
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
         pokemonCard.currentEnergy.push(energyCard.card);
     }
@@ -562,26 +563,38 @@ export module GameManager {
         }
     }
 
-    function noPokemonInDeck(state: Player) {
+    export function noPokemonInDeck(state: Player) {
         let noPokemonInDeck = true;
         for (let i = 0; i < state.deck.length; i++) {
             if (isPokemon(state.deck[i])) {
-                noPokemonInDeck = false;
-                break;
+                if(state.deck[i].card && state.deck[i].card.evolution){
+                    continue;
+                }
+                 else{
+                    noPokemonInDeck = false;
+                    break;
+                 }   
+                
             }
         }
 
         return noPokemonInDeck;
     }
 
-    function mulligan(numOfCards: number, state: Player, type?: string) {
+   export function mulligan(numOfCards: number, state: Player, type?: string) {
         let noPokemon = true;
         for (let i = 0; i < numOfCards; i++) {
             
             if (isPokemon(state.hand[i])) {
-                //console.log("No mulligun for " + type);
-                noPokemon = false;
-                break;
+                
+                if(state.deck[i].card && state.deck[i].card.evolution){
+                    continue;
+                }
+                 else{
+                    noPokemon = false;
+                    break;
+                 } 
+               
             }
         }
         if (noPokemon) {

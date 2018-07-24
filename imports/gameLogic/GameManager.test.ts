@@ -1,11 +1,18 @@
 import { assert } from "chai";
 import { GameManager } from './GameManager';
+import { GameState } from './Gamestate';
 import { Player } from "./Player";
 import { PlayableCard, CardPosition } from "./PlayableCard";
 import { Cards, CardType, EnergyCard, GameStates } from "../api/collections";
 import { parsePokemon } from '../util/fileParsers';
 
 
+
+
+/* function fakeGameState(){
+      
+      let state = new GameStates();
+} */
 
 describe('generateDeck', function () {
       it('deck should be assigned to a player shuffled', function () {
@@ -190,3 +197,123 @@ describe('returnHandToDeck', function () {
 
       });
 });
+
+describe('mulligan', function () {
+      it('no pokemon in hand should lead to mulligun', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            
+            card1.card = { type: CardType.TRAINER } as any;
+            card2.card = { type: CardType.ENERGY } as any;
+            card3.card = { type: CardType.TRAINER } as any;
+                        
+            let hands: PlayableCard[]=[];
+            thePlayer.deck=[card1];
+            thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+            
+            let result=GameManager.mulligan(7, thePlayer);
+
+            assert.equal(result, true);
+            
+
+      });
+});
+
+describe('mulligan', function () {
+      it('at least one pokemon in hand is enough to avoid mulligan', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            
+            card1.card = { type: CardType.POKEMON } as any;
+            card2.card = { type: CardType.ENERGY } as any;
+            card3.card = { type: CardType.TRAINER } as any;
+                        
+            let hands: PlayableCard[]=[];
+            thePlayer.deck=[card1];
+            thePlayer.hand = [card1,card2,card3,card2,card2,card3, card3];
+            
+            let result=GameManager.mulligan(7, thePlayer);
+
+            assert.equal(result, false);
+            
+
+      });
+});
+
+describe('mulligan', function () {
+      it('REGRESSION evolution is not considered to be playable card for mulligan determination', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            
+            card1.card = { type: CardType.POKEMON } as any;
+            card2.card = { type: CardType.ENERGY } as any;
+            card3.card = { type: CardType.TRAINER } as any;
+            card1.card.evolution="TEST_EVOLUTION";
+                        
+            let hands: PlayableCard[]=[];
+            thePlayer.deck=[card1];
+            thePlayer.hand = [card1,card2,card3,card2,card2,card3, card3];
+            
+            let result=GameManager.mulligan(7, thePlayer);
+
+            assert.equal(result, true);
+            
+
+      });
+});
+
+describe('addEnergyToCard', function () {
+      it('card is added to energyCard array', function () {
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+                        
+            card1.card = { type: CardType.POKEMON } as any;
+            card2.card = { type: CardType.ENERGY } as any;     
+                       
+            GameManager.addEnergyToCard(card1, card2);
+
+            assert.equal(card1.currentEnergy[0].type, CardType.ENERGY);
+            
+
+      });
+});
+
+describe('noPokemonInDeck', function () {
+      it('correctly determines if there is not a single pokemon in entire deck', function () {
+            let thePlayer: Player = Player.constructor();
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+                        
+            card1.card = { type: CardType.ENERGY } as any;
+            card2.card = { type: CardType.ENERGY } as any;
+            let deck: PlayableCard[]=[];
+            thePlayer.deck=deck;
+                        
+            for(let i=0; i<52; i++){
+                  if(i%2 === 0)
+                  thePlayer.deck.push(card1);
+                  else{
+                        thePlayer.deck.push(card2);
+                  }
+            }
+          
+            let result=GameManager.noPokemonInDeck(thePlayer);
+            assert.equal(result, true);
+            });
+});
+
+
+
+
+
+
+
+
+
+
