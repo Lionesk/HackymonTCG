@@ -193,4 +193,20 @@ Meteor.methods({
             parseDeckFile(data.fileString, data.name);
         }
     },
+    dealAdditionalCards:function() {
+       
+            return GameManager.dealAdditionalCards();
+        
+    },
+    mulliganToHandle:function() {
+       
+        return GameManager.mulliganToHandle();
+    
+},
+reduceHandMulligan:function() {
+       
+        return GameManager.reduceHandMulligan();
+    
+},
+
 });
