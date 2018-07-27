@@ -9,7 +9,7 @@ import { PlayableCard } from "../../../gameLogic/PlayableCard";
 
 Template.Active.helpers({
     isCardDefined:function(playableCard: PlayableCard){
-        if(playableCard==undefined){
+        if(!playableCard){
             return false;
         }
         if(Object.keys(playableCard).length === 0){
@@ -20,7 +20,13 @@ Template.Active.helpers({
         } else {
             return true;
         }
-    }
+    },
+    getCostValue:function(cost:any){
+        return this.active.card.retreatCost[cost];
+    },
+    getCostKeys:function(){
+        return Object.keys(this.active.card.retreatCost);
+    },
 });
 
 Template.Active.events({
@@ -51,5 +57,14 @@ Template.Active.events({
             }
         console.log("active click");
 
+    },
+    "click .retreat":function(event:JQuery.Event){
+        let ms = Session.get("move-state");
+        MoveStateController.setRetreat(ms);
+        Session.set("move-state",ms);
     }
 });
+
+export  function isCardDefined(){
+    
+}
