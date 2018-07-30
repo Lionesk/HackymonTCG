@@ -31,7 +31,9 @@ Template.Active.helpers({
         return Object.keys(this.active.card.retreatCost);
     },
     getChoices:function(){
-        return Session.get("ability").choices;
+        if(Session.get("ability")){
+            return Session.get("ability").choices;
+        }
     }
 });
 
@@ -76,6 +78,7 @@ Template.Active.events({
         }else{
             let gs = await GameStates.find({"userid":Meteor.userId()}).fetch()[0];
             let choices:any;
+            choices={};
             let action=this.ability.actions[actionIndex];
             switch(action.target){
                     case Target.OPPONENT_BENCH:
@@ -99,7 +102,7 @@ Template.Active.events({
                     case Target.YOUR_POKEMON:
                     choices["bench"]=gs.player.bench;
                     choices["hand"]=gs.player.hand;
-                    choices["active"]=gs.player.active;
+                    choices["active"]=[gs.player.active];
                     break;
             }
             Session.set("ability",{

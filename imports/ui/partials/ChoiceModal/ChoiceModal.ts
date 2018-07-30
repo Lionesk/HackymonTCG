@@ -11,7 +11,9 @@ Template.ChoiceModal.helpers({
         return Session.get("ability").targets||null;
     },
     isPokemonOnly:function(){
-        return Session.get("ability").ability.actions[Session.get("ability").actionIndex].choice === Target.YOUR_POKEMON;
+        if(Session.get("ability").actionIndex>-1){
+            return Session.get("ability").ability.actions[Session.get("ability").actionIndex].choice === Target.YOUR_POKEMON;
+        }
     }
 })
 Template.DisplayCard.helpers({
@@ -60,8 +62,12 @@ Template.DisplayCard.events({
        let ac = Session.get("ability");
        if(!ac.targets.find((elem:PlayableCard)=>{return elem.id===this.card.id&&elem.card.name===this.card.card.name})){
         ac.targets.push(this.card);
+       }else{
+        ac.targets = ac.targets.filter((elem:PlayableCard)=>{
+            return elem.id!==this.card.id&&elem.card.name!==this.card.card.name
+        })
        }
-       if(ac.targets.length>4){
+       if(ac.targets.length>ac.ability.actions[ac.actionIndex].amount){
            ac.targets.shift();
        }
        Session.set("ability",ac);

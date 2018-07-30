@@ -3,55 +3,73 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
+                        <div class="container fixed-choice-list">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <div>You Chose:</div>
+                                    </div>
+                                    {{> Targets targets=getTargets}}
+                                </div>
+                            </div>
                         <h2 class="modal-title" align="center">Choose Target(s)</h2>
                         <div class="modal-body modal-choice-body">
                             <div class="container cardView">
                                 {{#if choice.aiDeck}}
-                                    <div class="row deck-choice" style="overflow-x: auto;">
+                                <span>AI Deck</span>
+                                    <div class="row deck-choice" >
                                         {{>CardRowView cards=choice.aiDeck hidden=true}}
                                     </div>
                                 {{/if}}
                                 {{#if choice.aiDiscard}}
-                                    <div class="row discard-choice" style="overflow-x: auto;">
+                                <span>AI Discard</span>
+                                    <div class="row discard-choice" >
                                         {{>CardRowView cards=choice.aiDiscard hidden=true}}
                                     </div>
                                     {{/if}}
                                 {{#if choice.aiHand}}
-                                 <div class="row hand-choice" style="overflow-x: auto;">
+                                <span>AI Hand</span>
+                                 <div class="row hand-choice">
                                     {{>CardRowView cards=choice.aiHand hidden=true}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.aiBench}}
-                                <div class="row bench-choice" style="overflow-x: auto;">
+                                <span>AI Bench</span>
+                                <div class="row bench-choice">
                                     {{>CardRowView cards=choice.aiBench}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.aiActive}}
-                                <div class="row active-choice" style="overflow-x: auto;">
+                                <span>AI Active</span>
+                                <div class="row active-choice" >
                                     {{>CardRowView cards=choice.aiActive isActive=true}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.active}}
-                                <div class="row active-choice" style="overflow-x: auto;">
+                                <span>Player Active</span>
+                                <div class="row active-choice" >
                                     {{>CardRowView cards=choice.active isActive=true}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.bench}}
-                                <div class="row bench-choice" style="overflow-x: auto;">
+                                <span>Player Bench</span>
+                                <div class="row bench-choice">
                                     {{>CardRowView cards=choice.bench}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.hand}}
-                                <div class="row hand-choice" style="overflow-x: auto;">
+                                <span>Player Hand</span>
+                                <div class="row hand-choice" >
                                     {{>CardRowView cards=choice.hand pokemonOnly=isPokemonOnly}}
                                 </div>
                                 {{/if}}
                                 {{#if choice.discard}}
-                                <div class="row discard-choice" style="overflow-x: auto;">
+                                <span>Player Discard</span>
+                                <div class="row discard-choice">
                                     {{>CardRowView cards=choice.discard }}
                                 </div>
                                 {{/if}}
                                 {{#if choice.deck}}
+                                <span>Player Deck</span>
                                 <div class="row deck-choice" style="overflow-x: auto;">
                                     {{>CardRowView cards=choice.deck}}
                                 </div>
@@ -60,30 +78,29 @@
                         </div>
                 </div>
                 <div class="modal-body">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-sm-1">
-                                    <div>You Chose:</div>
-                                </div>
-                                {{> Targets targets=getTargets}}
-                            </div>
+                    <div class="container">
                             <div class="row">
                                 <div class="col-sm-4 col-sm-offset-7">
                                     <button type="button" id="cancelTarget" class="btn btn-danger">Cancel</button>
                                     <button type="button" id="confirmTarget" class="btn btn-success">Confirm</button>
                                 </div>
                             </div>
-                        </div>
+                    </div>
                 </div>
+                
             </div>
         </div>
     </div>
 </Template>
 
 <Template name="CardRowView">
+    {{#if cards.length}}
         {{#each card in cards}}
             {{>DisplayCard card=card hidden=hidden isActive=isActive  }}
         {{/each}}
+    {{else}}
+        {{>DisplayCard card=cards hidden=hidden isActive=isActive  }}
+    {{/if}}
 </Template>
 
 <Template name="DisplayCard">
@@ -100,7 +117,7 @@
 
 <Template name="Targets">
         {{#each card in targets}}
-        <div class="col-sm-1">
+        <div class="col-sm-4 chosen-targets">
             {{card.card.name}}
         </div>
         {{/each}}
