@@ -13,7 +13,7 @@ let commonHelpers ={
         return this.playableCard.card.type === CardType.POKEMON;
     },
     isEvolution() {
-        return this.playableCard.card.evolution !==null&&this.playableCard.card.evolution !==undefined;
+        return this.playableCard.card.evolution;
     },
     isEnergy() {
         return this.playableCard.card.type === CardType.ENERGY;
@@ -31,8 +31,15 @@ let commonHelpers ={
     },
     isMiniView:function(){
         return Session.get('is-mini') || this.miniView;
+    },
+    chosen:function(){
+        if(this.isChosen){
+            return "chosen";
+        }
     }
 };
 
 Template.Card.helpers(commonHelpers);
 Template.miniCard.helpers(commonHelpers);
+Template.PokemonCard.helpers(commonHelpers);
+Template.EnergyCard.helpers(commonHelpers);

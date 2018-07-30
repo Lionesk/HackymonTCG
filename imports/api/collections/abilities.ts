@@ -29,8 +29,10 @@ export enum Target {
   YOUR_POKEMON = "your-pokemon",
   THEM = "them",
   YOU = "you",
-  DECK = "deck",
-  DISCARD = "discard",
+  YOUR_DECK = "your-deck",
+  OPPONENT_DECK = "opponent-deck",
+  YOUR_DISCARD = "your-discard",
+  OPPONENT_DISCARD = "opponent-discard",
   LAST = "last",
   TOP = "top",
 }

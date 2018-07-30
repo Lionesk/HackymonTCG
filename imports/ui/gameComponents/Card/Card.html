@@ -1,8 +1,8 @@
 <Template name="Card" class="container">
-    <div class="playable-card" data-playable-card-id={{playableCard.id}} >
+    <div class="playable-card {{chosen}}" data-playable-card-id={{playableCard.id}} >
         {{#if isMiniView}}
 
-        {{>miniCard playableCard=playableCard hidden=hidden}}
+        {{>miniCard playableCard=playableCard hidden=hidden isChosen=isChosen  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
 
         {{else}}
 
@@ -31,7 +31,7 @@
             {{#each abilityRef in playableCard.card.abilities}}
             <div class="row">
                 <div class="col-sm-12 ability-option">
-                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard }}
+                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
                 </div>
             </div>
             {{/each}}
@@ -149,7 +149,7 @@
             {{#each abilityRef in playableCard.card.abilities}}
             <div class="row">
                 <div class="col-sm-12 ability-option">
-                    {{> Ability miniView=true ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard }}
+                    {{> Ability miniView=true ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
                 </div>
             </div>
             {{/each}}

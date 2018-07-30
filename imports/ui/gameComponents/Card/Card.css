@@ -71,3 +71,7 @@
 .mini-name{
     font-size: 125%;    
 }
+
+.chosen{
+    background-color:red!important;
+}
