@@ -75,25 +75,50 @@ Template.LandingLayout.helpers({
         Session.set("move-state",ms);
         // (TODO) quick fix but this should not use relative element paths (get element by ID instead)
         Meteor.call('newGameStart', (event.currentTarget as any).parentNode.parentNode.parentNode.getElementsByClassName("shuffle-option")[0].checked,playerDeckId,aiDeckId,()=>{
-          Meteor.call("mulliganToHandle", function(err?: Error, result?: {data: any}){
-            if(result){
-              
-          var answer = confirm("Mulligan! You want to draw more cards? If no opponents hand reduces.")
-          if (answer) {
-            Meteor.call("dealAdditionalCards", function(err?: Error, result?: {data: any}){
-              if(result){alert(result);}
-            })
-            alert("Draw card");
-          }
-          else {
-            Meteor.call("reduceHandMulligan", function(err?: Error, result?: {data: any}){
-              if(result){
-                alert(result);}
-            })
-            alert("Opponent hand reduces");
-          }
-            }
-          });      
+          Meteor.call("mulliganToHandle", function(err?: Error, result?: {data: boolean[]}){
+           // console.log(result.data[0]);NOT WORKING RESULT DEBUG
+           let resultArray=[] as any;
+           if(result !== undefined){
+            resultArray = result;
+           }
+           
+              if(resultArray[0]){
+              alert("PRINTING");
+              if(!resultArray[1]){
+                //AI MAKES CHOICE
+                let random_boolean = Math.random() >= 0.5;
+                if(random_boolean){
+                  Meteor.call("dealAdditionalCards", function(err?: Error, msg?: {data: any}){
+                    if(result){alert(msg);}
+                  })
+                }
+                else{
+                  Meteor.call("reduceHandMulligan", function(err?: Error, msg2?: {data: any}){
+                    if(result){
+                      alert(msg2);}
+                  })
+                }
+              }
+              else{
+                //HUMAN LOGIC HERE
+                var answer = confirm("Mulligan! You want to draw more cards? If no opponents hand reduces.")
+                if (answer) {
+                  Meteor.call("dealAdditionalCards", function(err?: Error, result?: {data: any}){
+                    if(result){alert(result);}
+                  })
+                  alert("Draw card");
+                }
+                else {
+                  Meteor.call("reduceHandMulligan", function(err?: Error, result?: {data: any}){
+                    if(result){
+                      alert(result);}
+                  })
+                  alert("Opponent hand reduces");
+                }
+                  }
+              }
+         
+          } );      
           FlowRouter.go('/play');
          
           

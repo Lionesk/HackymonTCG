@@ -563,6 +563,8 @@ export module GameManager {
             "due to ai mulligans";
             console.log(msg);
             drawPlayer(state.player, extraCardNum);
+            GameStates.update({ userid: Meteor.userId() }, state);
+            console.log("Human hand " + state.player.hand);
             return msg;
 
         }
@@ -573,23 +575,36 @@ export module GameManager {
            "due to human mulligans";
             console.log(msg);
             drawPlayer(state.ai, extraCardNum);
+            GameStates.update({ userid: Meteor.userId() }, state);
+            console.log("AI hand " + state.ai.hand);
             return msg;
         }
+        
     }
 
     export function mulliganToHandle(){
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let humanCounter = state.humanMulliganCount;
         let aiCounter = state.aiMulliganCount;
+        let resultArr = [false, false];
 
         console.log("HumanMuligan Count " + humanCounter);
         console.log("Ai Count " + aiCounter);
         //no additional cards to draw
         if (humanCounter === aiCounter) {
-            return false;
+            return resultArr;
         }
-        return true;
+       if (humanCounter < aiCounter) {
+           console.log("sending from if");
+            return [true,true];
+        }
+        else {
+            console.log("sending from else");
+            return [true, false];
+        }
     }
+
+
 
     export function noPokemonInDeck(state: Player) {
         let noPokemonInDeck = true;
@@ -643,9 +658,11 @@ export module GameManager {
             for(let i=0; i<extraCardNum; i++){
                 state.ai.deck.pop();
             }
+            GameStates.update({ userid: Meteor.userId() }, state);
             let msg = "Ai's deck is reduced by " + extraCardNum + " cards " +
             "due to mulligan(s)";
             console.log(msg);
+            console.log("Ai deck " + state.ai.deck);
             return msg;
 
         }
@@ -657,10 +674,13 @@ export module GameManager {
            for(let i=0; i<extraCardNum; i++){
             state.player.deck.pop();
         }
+        GameStates.update({ userid: Meteor.userId() }, state);
             console.log(msg);
-            drawPlayer(state.ai, extraCardNum);
+            console.log("Human deck " + state.player.deck);
+            //drawPlayer(state.ai, extraCardNum);
             return msg;
         }
+        GameStates.update({ userid: Meteor.userId() }, state);
     }
 
     
