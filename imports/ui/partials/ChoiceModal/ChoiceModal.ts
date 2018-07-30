@@ -35,6 +35,7 @@ Template.ChoiceModal.onCreated(function(){
         "choices":{},
         "actionIndex":-1,        
         "targets":[],
+        "playableCard":null,        
     });
 })
 
@@ -42,7 +43,6 @@ Template.ChoiceModal.events({
    "click #cancelTarget":function(){
         let modal = document.getElementById('ChoiceModal');
         if(modal){
-            //console.log("modal2")
             modal.style.display = 'none';
         }
         Session.set("ability",{
@@ -50,8 +50,26 @@ Template.ChoiceModal.events({
             "actionIndex":-1,            
             "choices":{},
             "targets":[],
+            "playableCard":null,            
         });
     },
+    "click #confirmTarget":function(){
+        let ability = Session.get("ability");
+        console.log("CONFIRM AB INDEX: "+ ability.ability.index)
+        Meteor.call("executeAbility",true, ability.playableCard,ability.ability.index,ability.targets)
+        let modal = document.getElementById('ChoiceModal');
+        if(modal){
+            modal.style.display = 'none';
+        }
+        Session.set("ability",{
+            "ability":{},
+            "actionIndex":-1,            
+            "choices":{},
+            "targets":[],
+            "playableCard":null,
+        });
+    }
+    
    
 })
 

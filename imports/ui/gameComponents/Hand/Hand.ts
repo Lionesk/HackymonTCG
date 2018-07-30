@@ -7,6 +7,7 @@ import { CardType } from "../../../api/collections";
 import { Session } from "meteor/session";
 import { MoveStateController, MoveState } from "../../layouts/PlayLayout/MoveState"
 import { PlayableCard } from '../../../gameLogic/PlayableCard';
+import { executeAbility } from "../../abilityHelper";
 
 Template.Hand.helpers({
     isCardDefined:function(playableCard: PlayableCard){
@@ -71,5 +72,14 @@ Template.Hand.events({
                 }
             }
         });
+    },
+    "click .hand-card .ability":function(event: JQueryEventObject){
+        if(this.isFirstRound||this.isSecondRound){
+            return;
+        }
+        if(this.playableCard.card.type=== CardType.TRAINER){ console.log("ab index : "+this.ability.index)
+            executeAbility(this.ability,this.ability.index,this.playableCard);
+        }
     }
+    
 });
