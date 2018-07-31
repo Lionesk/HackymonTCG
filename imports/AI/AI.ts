@@ -7,35 +7,46 @@ import { AbilityReference } from "../api/collections/Cards";
 export module AI {
 
     export function playTurn(){
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-        playTurnFromState(state);
+        playTurnFromState();
     }
 
-    export function playTurnFromState(state: GameState){
+    export function playTurnFromState(){
+        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         GameManager.draw(false);
-        if(state.ai.active === undefined) {
-            state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-            let card = findPokemon(state.ai.hand);
-            if (card) {
-                GameManager.placeActive(false, card);
-            }
-            else {
-                //TODO: Look for card in the bench to place in active
-            }
-            if(state.isFirstRound){
-                return;
-            }
-        }
-        else if(state.ai.bench.length < 5){
-            state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
-            let card = findPokemon(state.ai.hand);
-            if(card){
-                if(!card.card.evolution){
-                    GameManager.placeBench(false, card);
+        if(!state.ai.active) {
+            if(!state.ai.active){
+                let benchCard = findPokemon(state.ai.bench,true);
+                let handCard = findPokemon(state.ai.hand,true);
+                if(benchCard){
+                    GameManager.placeActive(false, benchCard);
+                }else if(handCard){
+                    GameManager.placeActive(false, handCard);
+                }else{
+                    //TODO:AI lose
                 }
             }
-            else {
-                console.log('AI player has no cards to place on the bench.');
+
+        }
+        else if(state.ai.bench.length < 5){
+            if(state.isFirstRound){
+                console.log("firstround")
+                return;
+            }
+            let card = findPokemon(state.ai.hand);
+            for(let i=0;i<5;i++){
+                state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+                card = findPokemon(state.ai.hand,true);
+                if(card)
+                console.log("cardfound: "+ card.card.name)
+                if(card&&state.ai.bench.length < 5){
+                    console.log("cardfound: "+ card.card.name)
+                    if(!card.card.evolution){
+                        GameManager.placeBench(false, card);
+                    }
+                }
+                else {
+                    console.log('AI player has no cards to place on the bench.');
+                }
             }
         }
         if(state.isSecondRound){
