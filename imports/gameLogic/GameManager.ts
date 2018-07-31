@@ -115,6 +115,8 @@ export module GameManager {
                 aiMulliganCounter++;
                 resolveMulligan(ai, "ai");
             };
+            console.log("Mulligan happened human " + " Deck size " + state.player.deck.length);
+            console.log("Mulligan happened ai " + " Deck size " + state.ai.deck.length);
             GameStates.update({ userid: Meteor.userId() }, state);
             humanMulligan = (mulligan(humanHandLength, human, "human"));
             aiMulligan = (mulligan(aiHandLength, ai, "ai"));
@@ -537,11 +539,12 @@ export module GameManager {
     export function resolveMulligan(player: Player, name: string) {
         console.log(name + " has a mulligan");
         returnHandToDeck(player);
-        console.log("Mulligan happened");
+       
         player.deck = shuffleDeck(player.deck);
 
         console.log(name + ' drawing cards.');
         drawPlayer(player, 7);
+        console.log("Mulligan happened" + "Deck size" + player.deck.length);
     }
     //mulligan logic functions from here
     export function dealAdditionalCards() {
@@ -656,7 +659,12 @@ export module GameManager {
         if (humanCounter < aiCounter) {
             extraCardNum = aiCounter - humanCounter;
             for(let i=0; i<extraCardNum; i++){
-                state.ai.deck.pop();
+               // state.ai.deck.pop();
+               let card = state.ai.hand.pop();
+
+               if (card !== undefined)
+               state.ai.deck.push(card);
+                
             }
             GameStates.update({ userid: Meteor.userId() }, state);
             let msg = "Ai's deck is reduced by " + extraCardNum + " cards " +
@@ -672,7 +680,11 @@ export module GameManager {
            let msg = "Human's deck is reduced by " + extraCardNum + " cards " +
            "due to mulligan(s)"
            for(let i=0; i<extraCardNum; i++){
-            state.player.deck.pop();
+            //state.player.deck.pop();
+            let card = state.player.hand.pop();
+
+               if (card !== undefined)
+               state.player.deck.push(card);
         }
         GameStates.update({ userid: Meteor.userId() }, state);
             console.log(msg);
