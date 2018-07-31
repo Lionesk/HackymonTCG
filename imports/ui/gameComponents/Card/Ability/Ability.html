@@ -10,9 +10,9 @@
             </div>
             {{#if miniView}}
             {{#each energyCost in getCostKeys}}
-                <div class="col-sm-10">
+                <div class="col-sm-4">
                     <img height=10 width=10 src="energy/{{energyCost}}.png" alt="{{energyCost}}" />
-                    <span>: {{getCostValue energyCost}}&nbsp;</span>
+                    <span>: {{getCostValue energyCost}} </span>
                 </div>
             {{/each}}
             {{else}}
