@@ -30,15 +30,9 @@ Template.LandingLayout.helpers({
       //return Meteor.users.find({"userid":Meteor.userId()}).fetch()[0].isAdmin;
       return Meteor.user().username === "admin";
     },
-    canResumeGame:function(){
+    canResumeGame: function(){
       let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
-
-      if ((state.ai.deck && state.player.deck)) {
-          //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
-          return false;
-      }else{
-        return true;
-      }
+      return (state.ai.deck.length===0 && state.player.deck.length===0);
     }
   })
 
