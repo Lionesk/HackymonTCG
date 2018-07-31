@@ -56,7 +56,7 @@ Template.LandingLayout.helpers({
           throw new Error("playerDeck element does not exist");
         }
         let playerDeckId = playerDeckElement.options[playerDeckElement.selectedIndex].getAttribute("data-deck-id");
-        let aiDeckElement: HTMLSelectElement | null = document.getElementById("playerDeck") as HTMLSelectElement | null;
+        let aiDeckElement: HTMLSelectElement | null = document.getElementById("aiDeck") as HTMLSelectElement | null;
         if (!aiDeckElement) {
           throw new Error("aiDeck element does not exist");
         }
