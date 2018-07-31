@@ -44,10 +44,12 @@ Template.Options.events({
         FlowRouter.go('/');
     },
     "click .end-turn"() {
-        Meteor.call('endTurn');
-        let ms = Session.get("move-state");
-        MoveStateController.resetMoveState(ms);
-        Session.set("move-state",ms);
+        if(this.active){
+            Meteor.call('endTurn');
+            let ms = Session.get("move-state");
+            MoveStateController.resetMoveState(ms);
+            Session.set("move-state",ms);
+        }
     },
     "click .mini-view"(){
         let isMini = Session.get('is-mini');
