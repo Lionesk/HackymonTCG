@@ -152,7 +152,6 @@ export module GameManager {
             console.log(shuffle);
             newDeck = shuffleDeck(newDeck);
         }
-
         return newDeck;
     }
 
@@ -195,15 +194,11 @@ export module GameManager {
         }
     }
 
-     * 
-     * TODO move to player
-     * 
     export function drawPlayer(player: Player, n: number = 1) {
         for (let i = 0; i < n; i++) {
             // player.inPlay[player.deckIndex++].position = CardPosition.HAND;
             player.hand.push(player.deck.pop() as PlayableCard);
         }
-    }
         let state = getGameState();
         updateGameState(state);
     }
@@ -306,6 +301,7 @@ export module GameManager {
         player.hand = player.hand.filter(c => c !== card);
         player.hand = cleanHand(player.hand);
     }
+
     function removeFromBench(player: Player, card: PlayableCard) {
         player.bench = player.bench.filter(c => c !== card);
     }
@@ -531,6 +527,7 @@ export module GameManager {
     }
 
 
+
     export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard) {
         console.log("RETREAT");
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
@@ -548,12 +545,12 @@ export module GameManager {
             placeActive(humanPlayer, pokemonPlayableCard);
         }
     }
+
     function collectPrizeCard(player: Player) {
         player.hand.push(player.prize.pop() as PlayableCard);
         if (player.prize.length) {
-            setWinner(player);
+            GameManager.setWinner(player);
         }
-
     }
 
     function getState(): GameState {
@@ -599,7 +596,7 @@ export module GameManager {
         console.log(name + ' drawing cards.');
         drawPlayer(player, 7);
     }
-    //mulligan logic functions from here
+
     function dealAdditionalCards(humanMulliganCounter: number,
         aiMulliganCounter: number, human: Player, ai: Player) {
         //no additional cards to draw
@@ -614,7 +611,6 @@ export module GameManager {
                 "due to ai mulligans");
             drawPlayer(human, extraCardNum);
         }
-
         else {
             extraCardNum = humanMulliganCounter - aiMulliganCounter;
             console.log("Ai draws " + extraCardNum + " additional cards" +
