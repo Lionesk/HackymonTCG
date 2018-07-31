@@ -1,11 +1,11 @@
 import { Template } from 'meteor/templating';
 import './PlayLayout.html';
+import './PlayLayout.css';
 import '../../gameComponents/Board/Board.ts'
 import { GameStates } from "../../../api/collections";
 import { GameState } from "../../../gameLogic/GameState";
 import {MoveState} from "./MoveState";
 import {Session} from "meteor/session";
-
 declare let FlowRouter: any;
 
 Template.PlayLayout.helpers({

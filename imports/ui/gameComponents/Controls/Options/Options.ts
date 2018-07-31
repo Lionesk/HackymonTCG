@@ -48,5 +48,9 @@ Template.Options.events({
         let ms = Session.get("move-state");
         MoveStateController.resetMoveState(ms);
         Session.set("move-state",ms);
+    },
+    "click .mini-view"(){
+        let isMini = Session.get('is-mini');
+        Session.set('is-mini',!isMini);
     }
 });
