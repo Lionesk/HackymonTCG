@@ -72,5 +72,11 @@ Template.LandingLayout.helpers({
     },
     'click .dropDecksForUser':function(){
         Meteor.call("dropDecksForUser");
+    },
+    //must have deck uploaded to access delete account button
+    'click .deleteAccount':function(){
+        Meteor.call("dropDecksForUser");
+        Meteor.call("deleteGameState");
+        Meteor.call("deleteAccount");
     }
   })
