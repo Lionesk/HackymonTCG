@@ -79,6 +79,21 @@ Meteor.methods({
             Decks.remove({userid:Meteor.userId()});
         }
     },
+    deleteGameState:function(){
+        if(Meteor.isServer){
+            GameStates.remove({userid:Meteor.userId()});
+        }
+    },
+    deleteAccount:function(){
+        if (!Meteor.isServer) return;
+    
+        try {
+          Meteor.users.remove(this.userId);
+        } catch (e) {
+    
+          throw new Meteor.Error('self-delete', 'Failed to remove yourself');
+        }
+      },
     retreatPokemon:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
         GameManager.retreatPokemon(humanPlayer,pokemonPlayableCard);
     },
