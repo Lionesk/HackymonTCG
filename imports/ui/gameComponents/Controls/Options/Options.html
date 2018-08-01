@@ -36,34 +36,28 @@
                     </div>
             </div>
 
-        {{#if isAI}}
-        {{else}}
+        {{#unless isAI}}
         <br />       
         <div class="row">
-                <div class="col-sm-12">
+                <div class="col-sm-1">
                            Action:
                     </div>
-            </div>
             {{#if isEnergySelected}}
-                <div class="row">
-                    <div class="col-sm-6" >
+                    <div class="col-sm-10" >
                         Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
                     </div>
-                    <div class="col-sm-6" >
-
-                    </div>
-                </div>
             {{/if}}
             {{#if isEvolverSelected}} 
-                <div class="row">
-                    <div class="col-sm-6" >
+                    <div class="col-sm-10" >
                         Pick a {{moveState.selectedEvolutionPokemonCard.card.evolution}} Pokemon to evolve to {{moveState.selectedEvolutionPokemonCard.card.name}}
                     </div>
-                    <div class="col-sm-6" >
-
-                    </div>
+            {{/if}}
+            {{#if isRetreating}} 
+                <div class="col-sm-10" >
+                    Pick a benched Pokemon to switch with your Active
                 </div>
             {{/if}}
-        {{/if}}
+            </div>
+        {{/unless}}
     </div>
 </Template>

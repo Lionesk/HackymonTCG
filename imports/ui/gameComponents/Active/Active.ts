@@ -35,6 +35,11 @@ Template.Active.helpers({
         if(Session.get("ability")){
             return Session.get("ability").choices;
         }
+    },
+    isRetreatSelected:function(){
+        if(Session.get("move-state").retreating){
+            return "retreat-selected";
+        }        
     }
 });
 

@@ -24,6 +24,9 @@ Template.Hand.helpers({
         else{
             return true;
         }
+    },
+    ifMiniAndHidden:function(){
+        return this.hidden && Session.get("is-mini");
     }
 });
 

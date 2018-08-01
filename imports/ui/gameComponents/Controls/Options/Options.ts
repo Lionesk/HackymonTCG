@@ -32,6 +32,9 @@ Template.Options.helpers({
         }else{
             return array.length;
         }
+    },
+    isRetreating:function(){
+        return this.moveState.retreating;
     }
 });
 
