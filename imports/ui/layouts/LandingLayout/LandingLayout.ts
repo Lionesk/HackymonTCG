@@ -30,15 +30,9 @@ Template.LandingLayout.helpers({
       //return Meteor.users.find({"userid":Meteor.userId()}).fetch()[0].isAdmin;
       return Meteor.user().username === "admin";
     },
-    canResumeGame:function(){
+    canResumeGame: function(){
       let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
-
-      if ((state.ai.deck && state.player.deck)) {
-          //Checking if the decks exist as a proxy for whether a game is going on, there is likely a better solution
-          return false;
-      }else{
-        return true;
-      }
+      return (state.ai.deck.length===0 && state.player.deck.length===0);
     }
   })
 
@@ -62,7 +56,7 @@ Template.LandingLayout.helpers({
           throw new Error("playerDeck element does not exist");
         }
         let playerDeckId = playerDeckElement.options[playerDeckElement.selectedIndex].getAttribute("data-deck-id");
-        let aiDeckElement: HTMLSelectElement | null = document.getElementById("playerDeck") as HTMLSelectElement | null;
+        let aiDeckElement: HTMLSelectElement | null = document.getElementById("aiDeck") as HTMLSelectElement | null;
         if (!aiDeckElement) {
           throw new Error("aiDeck element does not exist");
         }
@@ -78,5 +72,11 @@ Template.LandingLayout.helpers({
     },
     'click .dropDecksForUser':function(){
         Meteor.call("dropDecksForUser");
+    },
+    //must have deck uploaded to access delete account button
+    'click .deleteAccount':function(){
+        Meteor.call("dropDecksForUser");
+        Meteor.call("deleteGameState");
+        Meteor.call("deleteAccount");
     }
   })

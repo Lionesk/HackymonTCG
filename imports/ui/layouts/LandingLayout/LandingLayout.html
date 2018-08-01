@@ -38,7 +38,7 @@
                         <br />
                         <br />
                         <span>Choose AI Deck for New Game:</span>
-                        <select id="airDeck">
+                        <select id="aiDeck">
                             {{#each deck in getDecks}}
                                 <option data-deck-id={{deck._id}}>{{deck.name}}</option>
                             {{/each}}
@@ -57,6 +57,14 @@
                         <div class="row">
                             <div class="col-sm-6 col-sm-offset-3">
                                 <div class="newGame btn btn-success">New Game</div >
+                            </div>
+                        </div>
+                        <br />
+                        <br />
+
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <div class="deleteAccount btn btn-danger">Delete Account</div >
                             </div>
                         </div>
                         <br />

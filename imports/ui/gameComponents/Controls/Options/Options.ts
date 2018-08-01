@@ -32,6 +32,9 @@ Template.Options.helpers({
         }else{
             return array.length;
         }
+    },
+    isRetreating:function(){
+        return this.moveState.retreating;
     }
 });
 
@@ -44,9 +47,15 @@ Template.Options.events({
         FlowRouter.go('/');
     },
     "click .end-turn"() {
-        Meteor.call('endTurn');
-        let ms = Session.get("move-state");
-        MoveStateController.resetMoveState(ms);
-        Session.set("move-state",ms);
+        if(this.active){
+            Meteor.call('endTurn');
+            let ms = Session.get("move-state");
+            MoveStateController.resetMoveState(ms);
+            Session.set("move-state",ms);
+        }
+    },
+    "click .mini-view"(){
+        let isMini = Session.get('is-mini');
+        Session.set('is-mini',!isMini);
     }
 });

@@ -1,73 +1,23 @@
 <Template name="Card" class="container">
-    <div class="playable-card" data-playable-card-id={{playableCard.id}} >
-        {{#if hidden}}
-        <div class="back-card">
-            <div class="row">
-                    <div class="col-sm-12">
-                        <img src="pokemon-card-back.png" height="200px" width="170px"  alt="pokemon-card-back"/>
-                    </div>
-            </div>
-        </div>
+    <div class="playable-card {{chosen}}" data-playable-card-id={{playableCard.id}} >
+        {{#if isMiniView}}
 
+        {{>miniCard playableCard=playableCard hidden=hidden isChosen=isChosen  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
+
+        {{else}}
+
+        {{#if hidden}}
+            {{> hiddenCard}}
         {{else}}
         <div  class="card {{fadedClass}}"> 
             <!-- pokemoncard -->
             {{#if isPokemon}}
-                {{#if isEvolution}}
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <span>Evolution</span>
-                        </div>
-                    </div>
-                {{else}}
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <span>Pokemon</span>
-                        </div>
-                    </div>
-                {{/if}}
-                <div class="row">
-                    <div class="col-sm-12">
-                        <span>{{playableCard.card.name}}</span>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-4">
-                        {{ getCurrentHealth}} HP
-                    </div>
-                    <div class="col-sm-4">
-                        {{playableCard.currentDamage}} Dam
-                    </div>
-                    <div class="col-sm-4">
-                        {{playableCard.card.healthPoints}} Max HP
-                    </div>
-                </div>
-                <div class="row">
-                    {{#each energy in playableCard.currentEnergy}}
-                        <div class="col-sm-1">
-                            <img height=20 width=20 src="energy/{{energy.category}}.png" alt="{{energy.category}}" />
-                        </div>
-                    {{/each}}
-                </div>
+               {{> PokemonCard playableCard=playableCard}}
                 
             {{else}}
                 {{#if isEnergy}}
                 <!-- energy -->
-                        <div>
-                            <div class="row">
-                                <div class="col-sm-5">
-                                    <span>EnergyCard:</span>
-                                </div>
-                                <div class="col-sm-7">
-                                    <span>{{playableCard.card.category}}</span>
-                                </div>
-                            </div>
-                            <div class="row vertical-offset">
-                                <div class="col-sm-12 img-energy">
-                                    <img height=100 width=100 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
-                                </div>
-                            </div>
-                        </div>
+                    {{> EnergyCard playableCard=playableCard}}
                     {{else}}
                     <div class="row">
                         <div class="col-sm-12">
@@ -81,15 +31,128 @@
             {{#each abilityRef in playableCard.card.abilities}}
             <div class="row">
                 <div class="col-sm-12 ability-option">
-                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard }}
+                    {{> Ability ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
                 </div>
             </div>
             {{/each}}
-
-
-
-
         </div>
         {{/if}}
+        {{/if}}
     </div>
+</Template>
+
+<Template name="hiddenCard">
+<div class="back-card">
+        <div class="row">
+                <div class="col-sm-12">
+                    <img src="pokemon-card-back.png" height="200px" width="170px"  alt="pokemon-card-back"/>
+                </div>
+        </div>
+    </div>
+</Template>
+
+<Template name="PokemonCard">
+        {{#if isEvolution}}
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Evolution</span>
+            </div>
+        </div>
+    {{else}}
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Pokemon</span>
+            </div>
+        </div>
+    {{/if}}
+    <div class="row">
+        <div class="col-sm-12">
+            <span>{{playableCard.card.name}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            {{ getCurrentHealth }} HP
+        </div>
+        <div class="col-sm-3">
+            {{playableCard.currentDamage}} Dam
+        </div>
+        <div class="col-sm-6">
+            {{playableCard.card.healthPoints}} Max HP
+        </div>
+    </div>
+    <div class="row">
+        {{#each energy in playableCard.currentEnergy}}
+            <div class="col-sm-1">
+                <img height=20 width=20 src="energy/{{energy.category}}.png" alt="{{energy.category}}" />
+            </div>
+        {{/each}}
+    </div>
+</Template>
+
+<Template name="EnergyCard">
+        <div>
+                <div class="row">
+                    <div class="col-sm-5">
+                        <span>EnergyCard:</span>
+                    </div>
+                    <div class="col-sm-7">
+                        <span>{{playableCard.card.category}}</span>
+                    </div>
+                </div>
+                <div class="row vertical-offset">
+                    <div class="col-sm-12 img-energy">
+                        <img height=100 width=100 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
+                    </div>
+                </div>
+            </div>
+</Template>
+
+<Template name="miniCard">
+    
+        {{#if hidden}}
+        <div class="back-card mini">
+                <div class="row">
+                        <div class="col-sm-12">
+                            <img src="pokemon-card-back.png" height="50px" width="40px"  alt="pokemon-card-back"/>
+                        </div>
+                </div>
+            </div>
+        {{else}}
+        <div class=" mini-card mini">
+            {{#if isPokemon}}
+            <div class="row">
+                <div class="col-sm-6 mini-name">
+                    <span>{{playableCard.card.name}}</span>
+                </div>
+                <div class="col-sm-4">
+                    {{ getCurrentHealth }} HP
+                </div>
+            </div>
+            <div class="row">
+                {{#each energy in playableCard.currentEnergy}}
+                    <div class="col-sm-1" >
+                        <img height=10 width=10 src="energy/{{energy.category}}.png" alt="{{energy.category}}" />
+                    </div>
+                {{/each}}
+            </div>
+            {{/if}}
+            {{#if isEnergy}}
+            <div class="col-sm-12 mini-name">
+                    <span>{{playableCard.card.name}}</span>
+            </div>
+            <div class="col-sm-12 img-energy">
+                    <img height=40 width=40 src="energy/{{playableCard.card.category}}.png" alt="{{energy.category}}" />
+                </div>
+            {{/if}}
+
+            {{#each abilityRef in playableCard.card.abilities}}
+            <div class="row">
+                <div class="col-sm-12 ability-option">
+                    {{> Ability miniView=true ability=(getAbility abilityRef.index) abilityIndex=abilityRef.index abilityCost=abilityRef.cost playableCard=playableCard  isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable}}
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{/if}}
 </Template>

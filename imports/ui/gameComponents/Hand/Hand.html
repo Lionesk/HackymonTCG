@@ -2,9 +2,15 @@
     <div class="row hand">
         {{#each playableCard in hand}}
             {{#if isCardDefined (playableCard)}}
-                <div class="col-sm-2 hand-card" >
-                    {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
-                </div>
+                {{#if ifMiniAndHidden}}
+                    <div class="col-sm-1 hand-card " >
+                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
+                    </div>
+                {{else}}
+                    <div class="col-sm-2 hand-card " >
+                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
+                    </div>
+                {{/if}}
             {{/if}}
         {{/each}}
     </div>

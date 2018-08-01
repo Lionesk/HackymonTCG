@@ -6,6 +6,10 @@ import {MoveStateController} from "../../layouts/PlayLayout/MoveState"
 import { Template } from 'meteor/templating'
 import { Session } from 'meteor/session'
 import { PlayableCard } from "../../../gameLogic/PlayableCard";
+import '../../partials/ChoiceModal/ChoiceModal';
+import { GameStates, Choice } from "../../../api/collections";
+import { AbilityAction, AbilityType, Target } from "../../../api/collections/abilities";
+import { executeAbility } from "../../abilityHelper";
 
 Template.Active.helpers({
     isCardDefined:function(playableCard: PlayableCard){
@@ -27,6 +31,16 @@ Template.Active.helpers({
     getCostKeys:function(){
         return Object.keys(this.active.card.retreatCost);
     },
+    getChoices:function(){
+        if(Session.get("ability")){
+            return Session.get("ability").choices;
+        }
+    },
+    isRetreatSelected:function(){
+        if(Session.get("move-state").retreating){
+            return "retreat-selected";
+        }        
+    }
 });
 
 Template.Active.events({
@@ -44,27 +58,17 @@ Template.Active.events({
             Session.set("move-state",ms);
         }
     },
-    "click .active-card .ability":function(event: JQuery.Event){
-        if(this.isNotInteractable && this.isFirstRound || this.isSecondRound){
+    "click .active-card .ability":async function(event: JQuery.Event){
+        if(this.isNotInteractable || this.isFirstRound || this.isSecondRound){
+            console.log("RETURN")
             return;
         }
-        let ms = Session.get("move-state");
-            if(!ms.selectedEnergyCard&& !ms.selectedEvolutionPokemonCard){
-                console.log(" ability: called "+ this.abilityIndex);    
-                console.log("COST")
-                console.log(this.abilityCost)
-                Meteor.call("executeAbility",true, this.playableCard,this.abilityIndex)
-            }
-        console.log("active click");
+        executeAbility(this.ability,this.abilityIndex,this.playableCard);
 
     },
     "click .retreat":function(event:JQuery.Event){
         let ms = Session.get("move-state");
         MoveStateController.setRetreat(ms);
         Session.set("move-state",ms);
-    }
+    },
 });
-
-export  function isCardDefined(){
-    
-}
