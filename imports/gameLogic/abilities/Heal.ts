@@ -2,17 +2,18 @@ import { ExecutableAbilityAction, AbilityTarget, parseTarget, parseAmount } from
 import { GameState } from "../GameState";
 import { AbilityAction } from "../../api/collections/abilities";
 import { PlayableCard } from "../PlayableCard";
+import { Player } from "../Player";
 
 export class Heal implements ExecutableAbilityAction {
   parsedTarget?: AbilityTarget;
   amount: number;
   actualTarget?: PlayableCard;
 
-  constructor(state: GameState, data: AbilityAction) {
+  constructor(state: GameState, data: AbilityAction, playing: Player, opponent: Player) {
     if (data.target) {
-      this.parsedTarget = parseTarget(state, data.target);
+      this.parsedTarget = parseTarget(data.target, playing, opponent);
     }
-    this.amount = parseAmount(state, data); // do parsing for multiplied amount
+    this.amount = parseAmount(state, data, playing, opponent); // do parsing for multiplied amount
   }
 
   execute(target?: AbilityTarget) {
@@ -35,6 +36,6 @@ export class Heal implements ExecutableAbilityAction {
     if (!this.actualTarget) {
       throw new Error("Ability has not yet executed, cannot generate message");
     }
-    return `Healed ${this.actualTarget.card.name} for ${this.amount}`;
+    return `${this.actualTarget.card.name} healed for ${this.amount}`;
   }
 }

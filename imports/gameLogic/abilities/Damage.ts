@@ -2,6 +2,7 @@ import { ExecutableAbilityAction, AbilityTarget, parseAmount, parseTarget } from
 import { AbilityAction, Target } from "../../api/collections/abilities";
 import { PlayableCard } from "../PlayableCard";
 import { GameState } from "../GameState";
+import { Player } from "../Player";
 
 export class Damage implements ExecutableAbilityAction {
   parsedTarget: AbilityTarget;
@@ -9,16 +10,16 @@ export class Damage implements ExecutableAbilityAction {
   actualTarget?: PlayableCard;
   source: PlayableCard;
   
-  constructor(state: GameState, abilityData: AbilityAction) {
-    if (!state.player.active) {
+  constructor(state: GameState, abilityData: AbilityAction, playing: Player, opponent: Player) {
+    if (!playing.active) {
       throw new Error("no pokemon to attack with");
     }
     
     if (abilityData.target) {
-      this.parsedTarget = parseTarget(state, abilityData.target);
+      this.parsedTarget = parseTarget(abilityData.target, playing, opponent);
     }
-    this.amount = parseAmount(state, abilityData); // do parsing for multiplied amount
-    this.source = state.player.active;
+    this.amount = parseAmount(state, abilityData, playing, opponent); // do parsing for multiplied amount
+    this.source = playing.active;
   }
   
   execute(target?: AbilityTarget) {

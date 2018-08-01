@@ -1,6 +1,7 @@
-import { AbilityAction, Target, Condition } from "../../api/collections/abilities";
-import { ExecutableAbilityAction, AbilityTarget, parseAmount, parseTarget } from "./Ability"
+import { AbilityAction, Condition } from "../../api/collections/abilities";
+import { ExecutableAbilityAction, AbilityTarget, parseTarget } from "./Ability"
 import { GameState } from "../GameState";
+import { Player } from "../Player";
 
 function createCondition(state: GameState, condition: Condition) {
   switch (condition) {
@@ -27,14 +28,14 @@ export class Conditional implements ExecutableAbilityAction {
   cond: Condition;
   condResult: boolean;
   
-  constructor(state: GameState, data: AbilityAction, positive: ExecutableAbilityAction, negative?: ExecutableAbilityAction) {
+  constructor(state: GameState, data: AbilityAction, playing: Player, opponent: Player, positive: ExecutableAbilityAction, negative?: ExecutableAbilityAction) {
     if (!data.conditional || !data.conditional.condition) {
       throw new Error("Invalid conditional AbilityAction");
     }
     this.positive = positive;
     this.negative = negative;
     if (data.target) {
-      this.parsedTarget = parseTarget(state, data.target);
+      this.parsedTarget = parseTarget(data.target, playing, opponent);
     }
     this.cond = data.conditional.condition;
     this.condResult = createCondition(state, data.conditional.condition)();;

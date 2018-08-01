@@ -1,6 +1,7 @@
 import { PlayableCard } from "../PlayableCard";
 import { AbilityAction, AbilityFunction, Target } from "../../api/collections/abilities";
 import { GameState } from "../GameState";
+import { Player } from "../Player";
 
 export type AbilityTarget = PlayableCard | PlayableCard[];
 
@@ -8,7 +9,7 @@ export interface ExecutableAbilityAction {
   execute(target?: AbilityTarget, index?: number): void;
 }
 
-export function parseAmount(state: GameState, action: AbilityAction): number {
+export function parseAmount(state: GameState, action: AbilityAction, playing: Player, opponent: Player): number {
   if (!action.amount) {
     throw new Error("action has no amount");
   }
@@ -18,33 +19,33 @@ export function parseAmount(state: GameState, action: AbilityAction): number {
     }
     switch (action.amountFunction) {
       case AbilityFunction.COUNT:
-        return parseCount(state, action.amountFunctionTarget) * action.amount;
+        return parseCount(state, action.amountFunctionTarget, playing, opponent) * action.amount;
     }
   }
 
   return action.amount;
 }
 
-function parseCount(state: GameState, target: Target) {
-  const parsedTarget = parseTarget(state, target);
+function parseCount(state: GameState, target: Target, playing: Player, opponent: Player) {
+  const parsedTarget = parseTarget(target, playing, opponent);
   return Array.isArray(parsedTarget) ? parsedTarget.length : 1;
 }
 
-export function parseTarget(state: GameState, target: Target): PlayableCard | PlayableCard[] {
+export function parseTarget(target: Target, playing: Player, opponent: Player): PlayableCard | PlayableCard[] {
   switch (target) {
     case Target.OPPONENT_ACTIVE:
-      if (!state.ai.active) {
+      if (!opponent.active) {
         throw new Error("No active to target");
       }
-      return state.ai.active;
+      return opponent.active;
     case Target.YOUR_ACTIVE:
     // add specification option
-      if (!state.player.active) {
+      if (!playing.active) {
         throw new Error("No active to target");
       }
-      return state.player.active;
+      return playing.active;
     case Target.OPPONENT_BENCH:
-      return state.ai.bench;
+      return opponent.bench;
   }
   return "" as any;
 }

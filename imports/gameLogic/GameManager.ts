@@ -155,15 +155,9 @@ export module GameManager {
     }
 
     export function draw(humanPlayer: boolean, n?: number) {
-        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
-        let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
-        for (let i = 0; i < toDraw; i++) {
-            if (player.deck.length === 0) {
-                //TODO: End the game here (LOSS)
-            }
-            player.hand.push(player.deck.pop() as PlayableCard);
-        }
+        player.draw(n);
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -277,7 +271,7 @@ export module GameManager {
     }
 
     export function playTrainer() {
-        //TODO: Implement simple (non-exceptional) trainer cards
+        //TODO: Implement simple (non-exceptional) trainer cards should work throygh ability api
     }
 
     /***
@@ -408,6 +402,8 @@ export module GameManager {
                         console.error(e.message);
                         didPokemonAttack = false;
                     }
+                } else {
+                    didPokemonAttack = false;
                 }
                 break;
             case CardType.TRAINER:
@@ -428,7 +424,7 @@ export module GameManager {
     }
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
-        const AvailableEnergy: Cost = cardEnergy.reduce<Cost>((acc, element) => {
+        const available: Cost = cardEnergy.reduce<Cost>((acc, element) => {
             acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
             acc[element.category] = (acc[element.category] || 0) + 1;
 
@@ -437,7 +433,7 @@ export module GameManager {
 
         return Object.keys(abilityCost).reduce<boolean>((isCastable, index: keyof Cost) => {
             //  abilityCost[index] will always be defined
-            if (isCastable && abilityCost[index] as number > (AvailableEnergy[index] || 0)) {
+            if (isCastable && abilityCost[index] as number > (available[index] || 0)) {
                 return false;
             }
             return isCastable;
@@ -446,7 +442,7 @@ export module GameManager {
 
     function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
-            const executableAbility = createAbility(state, ability);
+            const executableAbility = createAbility(state, ability, player, opponent);
             executableAbility.execute(selectedTarget);
             console.log(executableAbility.toString()); // drop this into an action log
         });
@@ -509,6 +505,8 @@ export module GameManager {
 
     function getState(): GameState {
         const state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        Object.setPrototypeOf(state.player, Player.prototype);
+        Object.setPrototypeOf(state.ai, Player.prototype);
         if (state.ai.active) {
             Object.setPrototypeOf(state.ai.active, PlayableCard.prototype);
         }
