@@ -97,16 +97,19 @@ export module GameManager {
                 console.log("Both players have mulliguns.");
                 resolveMulligan(human, "human");
                 resolveMulligan(ai, "ai");
+                state.combatLog.push("You and the AI got a mulligan");
             }
             //case 2: only human has mulligan
             else if (humanMulligan && !aiMulligan) {
                 humanMulliganCounter++;
                 resolveMulligan(human, "human");
+                state.combatLog.push("You got a mulligan");
             }
             //case 3: only ai has mulligan
             else {
                 aiMulliganCounter++;
                 resolveMulligan(ai, "ai");
+                state.combatLog.push("AI got a mulligan");
             };
             GameStates.update({ userid: Meteor.userId() }, state);
             humanMulligan = (mulligan(humanHandLength, human, "human"));
@@ -161,7 +164,13 @@ export module GameManager {
             if (player.deck.length === 0) {
                 //TODO: End the game here (LOSS)
             }
-            player.hand.push(player.deck.pop() as PlayableCard);
+            let drawnCard = player.deck.pop() as PlayableCard;
+            player.hand.push(drawnCard);
+            if(humanPlayer){
+                state.combatLog.push("You've drawn "+drawnCard.card.name);
+            }else{
+                state.combatLog.push("AI have drawn "+drawnCard.card.name);
+            }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -169,6 +178,9 @@ export module GameManager {
     export function resetRoundParams() {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         if (!state.isFirstRound) {
+            if(state.isSecondRound){
+                state.combatLog.push("Select your bench pokemon")
+            }
             state.isSecondRound = false;
         }
         state.isFirstRound = false;
@@ -204,6 +216,11 @@ export module GameManager {
                 if (evolution.card.evolution === toEvolve.card.name) {
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
+                    if(humanPlayer){
+                        state.combatLog.push("You evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
+                    }else{
+                        state.combatLog.push("AI evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
+                    }
                 }
             }
         }
@@ -225,6 +242,11 @@ export module GameManager {
             if (humanPlayer) {
                 state.energyPlayed = true;
             }
+            if(humanPlayer){
+                state.combatLog.push("You added "+energy.card.name+ " to "+ pokemon.card.name);
+            }else{
+                state.combatLog.push("AI added "+energy.card.name+ " to "+ pokemon.card.name);
+            }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -241,6 +263,11 @@ export module GameManager {
             // card.position = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player, player.active);
+            if(humanPlayer){
+                state.combatLog.push("You placed "+card.card.name+ " as your active");
+            }else{
+                state.combatLog.push("AI placed "+card.card.name+ " as its active");
+            }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -258,6 +285,11 @@ export module GameManager {
             // card.position = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
+            if(humanPlayer){
+                state.combatLog.push("You benched "+pokemonCard.card.name);
+            }else{
+                state.combatLog.push("AI benched "+pokemonCard.card.name);
+            } 
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
