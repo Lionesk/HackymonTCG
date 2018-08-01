@@ -169,7 +169,7 @@ export module GameManager {
             if(humanPlayer){
                 state.combatLog.push("You've drawn "+drawnCard.card.name);
             }else{
-                state.combatLog.push("AI have drawn "+drawnCard.card.name);
+                state.combatLog.push("AI have drawn a card");
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
@@ -178,13 +178,13 @@ export module GameManager {
     export function resetRoundParams() {
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         if (!state.isFirstRound) {
-            if(state.isSecondRound){
-                state.combatLog.push("Select your bench pokemon")
-            }
             state.isSecondRound = false;
         }
         state.isFirstRound = false;
         state.energyPlayed = false;
+        if(!state.isFirstRound&&state.isSecondRound){
+            state.combatLog.push("Select your bench pokemon")
+        }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -243,9 +243,9 @@ export module GameManager {
                 state.energyPlayed = true;
             }
             if(humanPlayer){
-                state.combatLog.push("You added "+energy.card.name+ " to "+ pokemon.card.name);
+                state.combatLog.push("You added "+energy.card.name+ " energy to "+ pokemon.card.name);
             }else{
-                state.combatLog.push("AI added "+energy.card.name+ " to "+ pokemon.card.name);
+                state.combatLog.push("AI added "+energy.card.name+ " energy to "+ pokemon.card.name);
             }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
