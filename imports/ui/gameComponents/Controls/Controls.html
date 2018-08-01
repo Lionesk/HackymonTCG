@@ -4,22 +4,22 @@
             <div class="col-sm-6" >
                     {{> Options moveState=getMoveState deck=deck prize=prize discard=discard isAI=isAI}}
                 </div>
-                <div class="col-sm-3" >
+                <!-- <div class="col-sm-3" >
                     {{> Deck deck = deck }}
                 </div>
                 <div class="col-sm-3">
                     {{> Discard discard = discard }}
-                </div>
+                </div> -->
             {{else}}
             <div class="col-sm-6 col-sm-offset-6 pos-fix" >
                 {{> Options moveState=getMoveState deck=deck prize=prize discard=discard isAI=isAI active=active}}
             </div>            
-            <div class="col-sm-6" >
+            <!-- <div class="col-sm-6" >
                 {{> Deck deck = deck }}
             </div>
             <div class="col-sm-6">
                 {{> Discard discard = discard }}
-            </div>
+            </div> -->
 
             {{/if}}
 
