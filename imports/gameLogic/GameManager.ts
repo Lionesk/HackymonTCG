@@ -162,7 +162,7 @@ export module GameManager {
         let player: Player = humanPlayer ? state.player : state.ai;
         player.draw(n);
         if (humanPlayer) {
-            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1]);
+            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
         } else {
             state.combatLog.push("AI have drawn a card");
         }
