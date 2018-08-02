@@ -5,6 +5,7 @@ import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
 import { AbilityAction, Abilities } from "../api/collections/abilities";
 import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
+import { createAbility } from "./abilities/AbilityFactory";
 
 export module GameManager {
     /***
@@ -157,20 +158,13 @@ export module GameManager {
     }
 
     export function draw(humanPlayer: boolean, n?: number) {
-        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
-        let toDraw: number = n ? n : 1; //Assigning number of cards to draw to n if passed, else 1
-        for (let i = 0; i < toDraw; i++) {
-            if (player.deck.length === 0) {
-                //TODO: End the game here (LOSS)
-            }
-            let drawnCard = player.deck.pop() as PlayableCard;
-            player.hand.push(drawnCard);
-            if(humanPlayer){
-                state.combatLog.push("You've drawn "+drawnCard.card.name);
-            }else{
-                state.combatLog.push("AI have drawn a card");
-            }
+        player.draw(n);
+        if (humanPlayer) {
+            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
+        } else {
+            state.combatLog.push("AI have drawn a card");
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -308,7 +302,7 @@ export module GameManager {
     }
 
     export function playTrainer() {
-        //TODO: Implement simple (non-exceptional) trainer cards
+        //TODO: Implement simple (non-exceptional) trainer cards should work throygh ability api
     }
 
     /***
@@ -358,7 +352,7 @@ export module GameManager {
     }
 
     export function applyDamage(target: PlayableCard, opponent: Player, damage: number, player: Player) {
-        if(!target || !target.card || !target.card.healthPoints){
+        if (!target || !target.card || !target.card.healthPoints) {
             return false;
         }
 
@@ -414,7 +408,7 @@ export module GameManager {
     }
 
     export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
-        let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         let opponent: Player = humanPlayer ? state.ai : state.player;
 
@@ -429,15 +423,22 @@ export module GameManager {
             console.log("ability not found on card");
             return;
         }
-        let didPokemonAttack = false;
+        let didPokemonAttack = true;
         switch (source.card.type) {
             case CardType.POKEMON:
                 if (ability.cost && checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
-                    didPokemonAttack = castAbility(ability, player, opponent, selectedTarget);
+                    try {
+                        castAbility(state, ability, player, opponent, selectedTarget);
+                    } catch (e) {
+                        console.error(e.message);
+                        didPokemonAttack = false;
+                    }
+                } else {
+                    didPokemonAttack = false;
                 }
                 break;
             case CardType.TRAINER:
-                castAbility(ability, player, opponent, selectedTarget);
+                castAbility(state, ability, player, opponent, selectedTarget);
                 discard(player, source);
                 break;
             default:
@@ -454,7 +455,7 @@ export module GameManager {
     }
 
     function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
-        const AvailableEnergy: Cost = cardEnergy.reduce<Cost>((acc, element) => {
+        const available: Cost = cardEnergy.reduce<Cost>((acc, element) => {
             acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
             acc[element.category] = (acc[element.category] || 0) + 1;
 
@@ -463,66 +464,56 @@ export module GameManager {
 
         return Object.keys(abilityCost).reduce<boolean>((isCastable, index: keyof Cost) => {
             //  abilityCost[index] will always be defined
-            if (isCastable && abilityCost[index] as number > AvailableEnergy) {
+            if (isCastable && abilityCost[index] as number > (available[index] || 0)) {
                 return false;
             }
             return isCastable;
         }, true);
     }
-    function removeCost(retreatCost: Cost, cardEnergy: EnergyCard[]){
+
+    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
+        Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
+            try {
+                const executableAbility = createAbility(state, ability, player, opponent);
+                executableAbility.execute(selectedTarget);
+                state.combatLog.push(executableAbility.toString()); // drop this into an action log
+            } catch (e) {
+                console.error(e.message);
+            }
+        });
+    }
+
+    function removeCost(retreatCost: Cost, cardEnergy: EnergyCard[]) {
         let costEnergy: EnergyCat[] = [];
-        let colorlessCount=0;
+        let colorlessCount = 0;
         Object.keys(retreatCost).forEach((costKey: EnergyCat) => {
-            for(let i =0; i<(retreatCost[costKey] as number);i++){
+            for (let i = 0; i < (retreatCost[costKey] as number); i++) {
                 costEnergy.push(costKey);
-                if(costKey=== EnergyCat.COLORLESS){
+                if (costKey === EnergyCat.COLORLESS) {
                     colorlessCount++;
-                }else{
+                } else {
                     costEnergy.push(costKey);
                 }
             }
-         });
-         console.log(cardEnergy);
-         costEnergy.forEach((costE)=>{
-            cardEnergy.forEach((cardE,index)=>{
-                if(cardE.category===costE){
-                    this.splice(index,1);
+        });
+        console.log(cardEnergy);
+        costEnergy.forEach((costE) => {
+            cardEnergy.forEach((cardE, index) => {
+                if (cardE.category === costE) {
+                    this.splice(index, 1);
                 }
             })
-         })
-         console.log(cardEnergy);
-         for(let i= 0; i<colorlessCount;i++){
-            cardEnergy.splice(0,1);
-         }
-         console.log(cardEnergy);
-         return cardEnergy;
-    }
-    function castAbility(abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard): boolean {
-        let target: PlayableCard;
-        if (selectedTarget) {
-            target = selectedTarget;
-        } else {
-            target = opponent.active as PlayableCard; // if this is undefined the game should be over
+        })
+        console.log(cardEnergy);
+        for (let i = 0; i < colorlessCount; i++) {
+            cardEnergy.splice(0, 1);
         }
-        let appliedDamage = false;
-        Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
-            switch (ability.type) {
-                case AbilityType.DAMAGE:
-                    // console.log("t"+parseInt(ability.amount));
-                    if (ability.amount) {
-                        appliedDamage = applyDamage(target, opponent, ability.amount, player);
-                    } else {
-                        throw new Error("Damage ability must have amount");
-                    }
-                    break;
-                default:
-                    console.log(`${ability.type} is not implemented yet`)
-                    appliedDamage = false;
-            }
-        });
-        return appliedDamage
+        console.log(cardEnergy);
+        return cardEnergy;
     }
-    export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
+
+
+    export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard) {
         console.log("RETREAT");
         let state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         let player: Player = humanPlayer ? state.player : state.ai;
@@ -530,21 +521,41 @@ export module GameManager {
             throw new Error("no active to retreat");
         }
         if (checkCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[])) {
-            player.active.currentEnergy = removeCost(player.active.card.retreatCost,player.active.currentEnergy  as EnergyCard[]);
+            player.active.currentEnergy = removeCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[]);
             let active = new PlayableCard(player.active.id, player.active.card);
-            active.currentEnergy =player.active.currentEnergy;
+            active.currentEnergy = player.active.currentEnergy;
             player.bench.push(active);
-            player.active=undefined;
-            GameStates.update({userid: Meteor.userId()}, state); 
-            placeActive(humanPlayer,pokemonPlayableCard);
+            player.active = undefined;
+            GameStates.update({ userid: Meteor.userId() }, state);
+            placeActive(humanPlayer, pokemonPlayableCard);
         }
     }
-    function collectPrizeCard(player:Player){
+    function collectPrizeCard(player: Player) {
         player.hand.push(player.prize.pop() as PlayableCard);
         if (player.prize.length) {
             //TODO:WIN
         }
 
+    }
+
+    function getState(): GameState {
+        const state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
+        Object.setPrototypeOf(state.player, Player.prototype);
+        Object.setPrototypeOf(state.ai, Player.prototype);
+        if (state.ai.active) {
+            Object.setPrototypeOf(state.ai.active, PlayableCard.prototype);
+        }
+        if (state.player.active) {
+            Object.setPrototypeOf(state.player.active, PlayableCard.prototype);
+        }
+        state.ai.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+
+        return state;
     }
 
     export function returnHandToDeck(player: Player) {
@@ -609,7 +620,7 @@ export module GameManager {
     function mulligan(numOfCards: number, state: Player, type?: string) {
         let noPokemon = true;
         for (let i = 0; i < numOfCards; i++) {
-            
+
             if (isPokemon(state.hand[i])) {
                 //console.log("No mulligun for " + type);
                 noPokemon = false;

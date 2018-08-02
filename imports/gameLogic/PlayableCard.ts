@@ -1,4 +1,4 @@
-import {Card, CardType, EnergyCard, EnergyCat, PokemonCat} from '../api/collections';
+import {Card, CardType, EnergyCard, EnergyCat, PokemonCat, Status} from '../api/collections';
 
 export enum CardPosition {
     DECK = "deck",
@@ -18,7 +18,8 @@ export class PlayableCard {
     currentEnergy:Card[];
     currentPosition: CardPosition;
     previousPosition?: CardPosition; // used for drag and drop
-    
+    statuses: Status[];
+       
     get position(): CardPosition {
         return this.currentPosition;
     }
@@ -26,9 +27,26 @@ export class PlayableCard {
         this.previousPosition = this.currentPosition;
         this.currentPosition = pos;
     }
+
+    damage(amount: number) {
+        this.currentDamage += amount;
+    }
+
+    heal(amount: number) {
+        this.currentDamage = Math.max(this.currentDamage - amount, 0);
+    }
+
+    applyStat(stat: Status) {
+        this.statuses.push(stat);
+    }
+
+    retreat() {
+        this.statuses = []; // remove statuses on retreat
+    }
     
     constructor(id: number, card?:Card, playable?:PlayableCard){
         this.id = id;
+        this.statuses = [];
         this.currentEnergy = new Array<Card>(0);
         this.currentPosition = CardPosition.DECK;
         if(card !== undefined && playable !== undefined) {
