@@ -58,6 +58,24 @@
                 </div>
             {{/if}}
             </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-2">
+                Combat Log:
+            </div>
+            <div class="col-sm-9">
+                <div class="combat-log {{isExpandedCombatLog}}" title="Expand">
+                    {{#each log in combatLog}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {{log}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+        </div>
         {{/unless}}
     </div>
 </Template>

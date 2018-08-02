@@ -98,16 +98,19 @@ export module GameManager {
                 console.log("Both players have mulliguns.");
                 resolveMulligan(human, "human");
                 resolveMulligan(ai, "ai");
+                state.combatLog.push("You and the AI got a mulligan");
             }
             //case 2: only human has mulligan
             else if (humanMulligan && !aiMulligan) {
                 humanMulliganCounter++;
                 resolveMulligan(human, "human");
+                state.combatLog.push("You got a mulligan");
             }
             //case 3: only ai has mulligan
             else {
                 aiMulliganCounter++;
                 resolveMulligan(ai, "ai");
+                state.combatLog.push("AI got a mulligan");
             };
             GameStates.update({ userid: Meteor.userId() }, state);
             humanMulligan = (mulligan(humanHandLength, human, "human"));
@@ -158,6 +161,11 @@ export module GameManager {
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         player.draw(n);
+        if (humanPlayer) {
+            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1]);
+        } else {
+            state.combatLog.push("AI have drawn a card");
+        }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -168,6 +176,9 @@ export module GameManager {
         }
         state.isFirstRound = false;
         state.energyPlayed = false;
+        if(!state.isFirstRound&&state.isSecondRound){
+            state.combatLog.push("Select your bench pokemon")
+        }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -199,6 +210,11 @@ export module GameManager {
                 if (evolution.card.evolution === toEvolve.card.name) {
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
+                    if(humanPlayer){
+                        state.combatLog.push("You evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
+                    }else{
+                        state.combatLog.push("AI evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
+                    }
                 }
             }
         }
@@ -220,6 +236,11 @@ export module GameManager {
             if (humanPlayer) {
                 state.energyPlayed = true;
             }
+            if(humanPlayer){
+                state.combatLog.push("You added "+energy.card.name+ " energy to "+ pokemon.card.name);
+            }else{
+                state.combatLog.push("AI added "+energy.card.name+ " energy to "+ pokemon.card.name);
+            }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -236,6 +257,11 @@ export module GameManager {
             // card.position = CardPosition.ACTIVE;
             removeFromHand(player, card);
             removeFromBench(player, player.active);
+            if(humanPlayer){
+                state.combatLog.push("You placed "+card.card.name+ " as your active");
+            }else{
+                state.combatLog.push("AI placed "+card.card.name+ " as its active");
+            }
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -253,6 +279,11 @@ export module GameManager {
             // card.position = CardPosition.BENCH;
             player.bench.push(pokemonCard);
             removeFromHand(player, pokemonCard);
+            if(humanPlayer){
+                state.combatLog.push("You benched "+pokemonCard.card.name);
+            }else{
+                state.combatLog.push("AI benched "+pokemonCard.card.name);
+            } 
         }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
@@ -445,7 +476,7 @@ export module GameManager {
             try {
                 const executableAbility = createAbility(state, ability, player, opponent);
                 executableAbility.execute(selectedTarget);
-                console.log(executableAbility.toString()); // drop this into an action log
+                state.combatLog.push(executableAbility.toString()); // drop this into an action log
             } catch (e) {
                 console.error(e.message);
             }
