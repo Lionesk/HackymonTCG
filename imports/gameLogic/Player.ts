@@ -1,4 +1,5 @@
 import {PlayableCard} from './PlayableCard';
+import {GameManager} from "./GameManager";
 
 export class Player{
 
@@ -24,7 +25,7 @@ export class Player{
 
     draw(amount: number = 1) {
         if (this.deck.length < amount) {
-            throw new Error("out of cards should end game");
+            GameManager.setLoser(this);
         }
         this.hand = this.hand.concat(this.deck.slice(0, amount));
         this.deck = this.deck.slice(amount);

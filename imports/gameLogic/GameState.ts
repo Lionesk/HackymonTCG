@@ -32,7 +32,6 @@ export class GameState implements GameStateInterface{
         this.energyPlayed=false;
         this.isFirstRound=true;
         this.playing = false;
-        this.winner=undefined;
         this.isSecondRound = true;
         this.combatLog=["Pick your active pokemon then end your turn"];
     }
