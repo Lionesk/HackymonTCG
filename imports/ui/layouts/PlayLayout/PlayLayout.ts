@@ -6,6 +6,7 @@ import { GameStates } from "../../../api/collections";
 import {MoveState} from "./MoveState";
 import {Session} from "meteor/session";
 declare let FlowRouter: any;
+let PlayerVictory: any;
 
 Template.PlayLayout.helpers({
     IsLoggedIn: function () {
@@ -29,13 +30,17 @@ Template.PlayLayout.helpers({
 
 Template.GameOverModal.helpers({
     playerVictory: function () {
-        let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
-        return state.winner === state.player;
+        if(PlayerVictory === undefined){
+            let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+            PlayerVictory = state.winner.id === state.player.id
+        }
+        return PlayerVictory;
     }
 });
 
 Template.PlayLayout.events({
     'click #endGame': function() {
+        PlayerVictory = undefined;
         FlowRouter.go('/');
     }
 });

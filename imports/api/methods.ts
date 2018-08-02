@@ -13,6 +13,14 @@ Meteor.methods({
             console.log("Printing To Server Console");
         }
     },
+    winGame:function () {
+        let gs = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+        GameManager.draw(false, gs.ai.deck.length, gs);
+    },
+    loseGame:function() {
+        let gs = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+        GameManager.draw(true, gs.player.deck.length, gs);
+    },
     upsertNewGameState:function(){
         if(Meteor.isServer){
             GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
