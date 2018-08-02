@@ -9,6 +9,7 @@ export interface GameStateInterface{
     isFirstRound:boolean;
     playing: boolean;
     isSecondRound:boolean;
+    combatLog:[string];
 }
 
 export class GameState implements GameStateInterface{
@@ -19,7 +20,7 @@ export class GameState implements GameStateInterface{
     energyPlayed:boolean;
     isFirstRound:boolean;
     playing: boolean;
-    
+    combatLog:[string];    
     isSecondRound:boolean;
 
     constructor(userid:string){
@@ -30,5 +31,6 @@ export class GameState implements GameStateInterface{
         this.isFirstRound=true;
         this.playing = false;
         this.isSecondRound = true;
+        this.combatLog=["Pick your active pokemon then end your turn"];
     }
 }

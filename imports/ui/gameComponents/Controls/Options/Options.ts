@@ -35,6 +35,9 @@ Template.Options.helpers({
     },
     isRetreating:function(){
         return this.moveState.retreating;
+    },
+    isExpandedCombatLog:function(){
+        return Session.get("expand-combat-log")?"expand-combat-log":"";
     }
 });
 
@@ -57,5 +60,8 @@ Template.Options.events({
     "click .mini-view"(){
         let isMini = Session.get('is-mini');
         Session.set('is-mini',!isMini);
-    }
+    },
+    "click .combat-log"(){
+        Session.set("expand-combat-log",!Session.get("expand-combat-log"))
+    },    
 });

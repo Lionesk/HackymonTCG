@@ -11,6 +11,7 @@
     box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
     -webkit-box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
     -moz-box-shadow: 0px 0px 24px -3px rgba(0, 0, 0, 0.486);
+    font-size:80%;
 }
 
 .options:hover{
@@ -74,4 +75,41 @@
 .mini-view:hover{
     background-color:rgba(25, 190, 240, 0.836);
     cursor:pointer;
+}
+
+.combat-log{
+    overflow-y:scroll;
+    overflow-x:hidden;
+    height:55px;
+    padding:4px;
+    box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    -webkit-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 24px -3px rgba(0,0,0,0.75);
+    border-color:rgba(19, 218, 19, 0.932);
+    border-radius: 5px;
+    border-style:solid;
+    border-width: 2px;    
+}
+
+.combat-log:hover{
+    cursor:pointer;
+    background-color:rgba(99, 24, 185, 0.377);
+}
+
+.shadow{
+    z-index:-1;
+    position: absolute; 
+    bottom: 0; 
+    left: 0;
+    padding: 20px; 
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,0.6115488431700805) 0%, rgba(0,0,0,0) 100%);
+  }
+.shadow:hover{
+    cursor:pointer;
+    background: rgb(0,0,0);
+    background: linear-gradient(0deg, rgba(0,0,0,0.0) 0%, rgba(0,0,0,0) 100%);
+}
+.expand-combat-log{
+    height:500px;
 }
