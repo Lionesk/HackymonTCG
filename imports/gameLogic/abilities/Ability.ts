@@ -46,6 +46,10 @@ export function parseTarget(target: Target, playing: Player, opponent: Player): 
       return playing.active;
     case Target.OPPONENT_BENCH:
       return opponent.bench;
+    case Target.YOUR_DECK:
+      return playing.deck;
+    case Target.OPPONENT_DECK:
+      return opponent.deck;
   }
   return "" as any;
 }

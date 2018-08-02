@@ -7,6 +7,7 @@ import { Conditional } from "./Conditional";
 import { Player } from "../Player";
 import { Draw } from "./Draw";
 import { ApplyStat } from "./ApplyStat";
+import { Search } from "./Search";
 
 export function createAbility(state: GameState, abilityData: AbilityAction, playing: Player, opponent: Player): ExecutableAbilityAction {
   switch (abilityData.type) {
@@ -23,6 +24,8 @@ export function createAbility(state: GameState, abilityData: AbilityAction, play
       return new Draw(state, abilityData, playing);
     case AbilityType.APPLY_STAT:
       return new ApplyStat(abilityData, playing, opponent);
+    case AbilityType.SEARCH:
+      return new Search(abilityData, playing, opponent);
     default:
       throw new Error(`Unsuported ability type ${abilityData.type}`);
   }

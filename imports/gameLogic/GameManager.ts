@@ -442,9 +442,13 @@ export module GameManager {
 
     function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
-            const executableAbility = createAbility(state, ability, player, opponent);
-            executableAbility.execute(selectedTarget);
-            console.log(executableAbility.toString()); // drop this into an action log
+            try {
+                const executableAbility = createAbility(state, ability, player, opponent);
+                executableAbility.execute(selectedTarget);
+                console.log(executableAbility.toString()); // drop this into an action log
+            } catch (e) {
+                console.error(e.message);
+            }
         });
     }
 
