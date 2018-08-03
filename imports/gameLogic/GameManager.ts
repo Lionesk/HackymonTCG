@@ -351,7 +351,7 @@ export module GameManager {
         return playableCard.card.type === CardType.ENERGY;
     }
 
-    function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard) {
+    export function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard) {
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
         pokemonCard.currentEnergy.push(energyCard.card);
     }
@@ -615,10 +615,13 @@ export module GameManager {
         }
     }
 
-    function noPokemonInDeck(state: Player) {
+    export function noPokemonInDeck(state: Player) {
         let noPokemonInDeck = true;
         for (let i = 0; i < state.deck.length; i++) {
             if (isPokemon(state.deck[i])) {
+                if((state.deck[i].card && state.deck[i].card.evolution)){
+                    continue;
+                }
                 noPokemonInDeck = false;
                 break;
             }
@@ -627,11 +630,14 @@ export module GameManager {
         return noPokemonInDeck;
     }
 
-    function mulligan(numOfCards: number, state: Player, type?: string) {
+    export function mulligan(numOfCards: number, state: Player, type?: string) {
         let noPokemon = true;
         for (let i = 0; i < numOfCards; i++) {
 
             if (isPokemon(state.hand[i])) {
+                if((state.hand[i].card && state.hand[i].card.evolution)){
+                    continue;
+                }
                 //console.log("No mulligun for " + type);
                 noPokemon = false;
                 break;

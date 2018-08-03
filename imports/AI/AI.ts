@@ -74,7 +74,7 @@ export module AI {
         console.log('Ending turn');
     }
 
-    function findPokemon(array: PlayableCard[], basic?: boolean) {
+   export function findPokemon(array: PlayableCard[], basic?: boolean) {
         for(let card of array){
             try {
                 if (card.card.type === CardType.POKEMON) {
@@ -93,7 +93,7 @@ export module AI {
         return null;
     }
 
-    function findEnergy(hand: PlayableCard[]) {
+    export function findEnergy(hand: PlayableCard[]) {
         for(let card of hand){
             if(card.card.type === CardType.ENERGY){
                 console.log('Found an energy card');
