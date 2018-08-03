@@ -538,8 +538,8 @@ export module GameManager {
             active.currentEnergy = player.active.currentEnergy;
             player.bench.push(active);
             player.active = undefined;
-            placeActive(humanPlayer, pokemonPlayableCard);
             updateGameState(state);
+            placeActive(humanPlayer, pokemonPlayableCard);
         }
     }
 
@@ -564,6 +564,12 @@ export module GameManager {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.ai.deck.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.deck.forEach((card: PlayableCard) => {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         return state;
