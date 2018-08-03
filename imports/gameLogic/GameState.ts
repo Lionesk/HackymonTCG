@@ -8,6 +8,7 @@ export interface GameStateInterface{
     energyPlayed:boolean;
     isFirstRound:boolean;
     playing: boolean;
+    winner:Player;
     isSecondRound:boolean;
     combatLog:[string];
 }
@@ -20,6 +21,7 @@ export class GameState implements GameStateInterface{
     energyPlayed:boolean;
     isFirstRound:boolean;
     playing: boolean;
+    winner:Player;
     combatLog:[string];    
     isSecondRound:boolean;
 

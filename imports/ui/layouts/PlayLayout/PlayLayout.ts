@@ -3,10 +3,10 @@ import './PlayLayout.html';
 import './PlayLayout.css';
 import '../../gameComponents/Board/Board.ts'
 import { GameStates } from "../../../api/collections";
-import { GameState } from "../../../gameLogic/GameState";
 import {MoveState} from "./MoveState";
 import {Session} from "meteor/session";
 declare let FlowRouter: any;
+let PlayerVictory: any;
 
 Template.PlayLayout.helpers({
     IsLoggedIn: function () {
@@ -18,7 +18,32 @@ Template.PlayLayout.helpers({
     getGameState:function(){
       return GameStates.find({"userid":Meteor.userId()}).fetch()[0];
     },
-  })
+    isGameOver: function () {
+        let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+        return !(state.winner === undefined);
+    },
+    displayModal: function () {
+        let modal = document.getElementById('GameOverModal');
+        modal.style.display = 'block';
+    }
+  });
+
+Template.GameOverModal.helpers({
+    playerVictory: function () {
+        if(PlayerVictory === undefined){
+            let state = GameStates.find({"userid":Meteor.userId()}).fetch()[0];
+            PlayerVictory = state.winner.id === state.player.id
+        }
+        return PlayerVictory;
+    }
+});
+
+Template.PlayLayout.events({
+    'click #endGame': function() {
+        PlayerVictory = undefined;
+        FlowRouter.go('/');
+    }
+});
 
 Template.Board.onCreated(function(){
   let ms = new MoveState();

@@ -10,10 +10,11 @@ import { Template } from 'meteor/templating'
 declare let FlowRouter:any
 
 Template.Board.events({
-    'click .changeTestGameState'(){
-        Meteor.call('testModifyGameState',function(){
-            FlowRouter.go('/play');
-        });
+    'click .winGame'(){
+        Meteor.call('winGame');
+    },
+    'click .loseGame'(){
+        Meteor.call('loseGame');
     },
     'click .initializeGame':function () {
         Meteor.call('newGameStart', {shuffle: false});

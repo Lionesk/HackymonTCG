@@ -75,13 +75,15 @@ describe('drawPlayer', function () {
             let card1 = PlayableCard.constructor();
             let card2 = PlayableCard.constructor();
             let card3 = PlayableCard.constructor();
+            let card4 = PlayableCard.constructor();
             card1.id = 20;
             card2.id = 17;
             card3.id = 34;
+            card4.id = 4;
             card1.currentPosition = CardPosition.PRIZE;
             card2.currentPosition = CardPosition.PRIZE;
             card3.currentPosition = CardPosition.PRIZE;
-            let deck = [card1, card2, card3];
+            let deck = [card4, card1, card2, card3];
             let hands: PlayableCard[]=[];
             thePlayer.deck = deck;
             thePlayer.hand = hands;
@@ -92,7 +94,7 @@ describe('drawPlayer', function () {
 
             GameManager.drawPlayer(thePlayer, 3);
 
-            assert.equal(thePlayer.deck.length, 0);
+            assert.equal(thePlayer.deck.length, 1);
             assert.equal(thePlayer.hand[0].id, 34);
             assert.equal(thePlayer.hand[1].id, 17);
             assert.equal(thePlayer.hand[2].id, 20);
