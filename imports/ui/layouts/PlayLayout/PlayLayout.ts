@@ -24,7 +24,9 @@ Template.PlayLayout.helpers({
     },
     displayModal: function () {
         let modal = document.getElementById('GameOverModal');
-        modal.style.display = 'block';
+        if(modal){
+            modal.style.display = 'block';
+        }
     }
   });
 
