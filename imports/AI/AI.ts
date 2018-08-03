@@ -11,7 +11,7 @@ export module AI {
     }
 
     export function playTurnFromState(){
-        let state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        let state = GameManager.getState();
         GameManager.draw(false);
         if(!state.ai.active) {
             if(!state.ai.active){
@@ -32,9 +32,9 @@ export module AI {
                 console.log("firstround")
                 return;
             }
-            let card = findPokemon(state.ai.hand);
+            let card = findPokemon(state.ai.hand,true);
             for(let i=0;i<5;i++){
-                state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+                state = GameManager.getState();;
                 card = findPokemon(state.ai.hand,true);
                 if(card)
                 console.log("cardfound: "+ card.card.name)
@@ -52,7 +52,7 @@ export module AI {
         if(state.isSecondRound){
             return;
         }
-        state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
+        state = GameManager.getState();
         let energyCard = findEnergy(state.ai.hand);
         if(state.ai.active && energyCard !== undefined) {
             if(state.ai.active.currentEnergy.length < 4){

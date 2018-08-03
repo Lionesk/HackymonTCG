@@ -550,7 +550,7 @@ export module GameManager {
         }
     }
 
-    function getState(): GameState {
+    export function getState(): GameState {
         const state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         Object.setPrototypeOf(state.player, Player.prototype);
         Object.setPrototypeOf(state.ai, Player.prototype);
