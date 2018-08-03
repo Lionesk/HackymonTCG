@@ -76,13 +76,18 @@ export module AI {
 
     function findPokemon(array: PlayableCard[], basic?: boolean) {
         for(let card of array){
-            if(card.card.type === CardType.POKEMON){
-                if(basic){
-                    if(card.card.evolution){
-                        continue
+            try {
+                if (card.card.type === CardType.POKEMON) {
+                    if (basic) {
+                        if (card.card.evolution) {
+                            continue
+                        }
                     }
+                    return card;
                 }
-                return card;
+            }
+            catch(err) {
+                console.log('Card ' + card + ' is missing parameter "card"');
             }
         }
         return null;
