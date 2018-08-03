@@ -1,0 +1,30 @@
+#DiscardModal {
+    display: none;
+    position: fixed;
+    alignment: center;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+    left: 0;
+    top: 0;
+}
+
+.discard-choice{
+    background-color:rgba(255, 0, 64, 0.445);
+    padding:10px;
+    -webkit-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    -moz-box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    box-shadow: inset 0px 0px 59px 0px rgba(255,255,255,1);
+    width:75%;
+    overflow-x: auto;
+    white-space: nowrap;
+    
+}
+.chosen{
+    background-color:red!important;
+}
+.discard-card-choice{
+    display: inline-block;
+    float: none;
+}
