@@ -75,10 +75,10 @@ export module GameManager {
         };
 
         console.log('AI drawing cards.');
-        drawPlayer(state.ai, 7);
+        draw(false, 7, state);
 
         console.log('Player drawing cards.');
-        drawPlayer(state.player, 7);
+        draw(true, 7, state);
 
         updateGameState(state);
 
@@ -161,20 +161,24 @@ export module GameManager {
         if(n === undefined){
             n = 1;
         }
-        console.log("Trying to draw " + n + " cards from a deck with " + player.deck.length + " cards remaining");
-        if(player.deck.length <= n){
-            console.log(player.id === state.player.id ? "Player" : "AI" + " is drawing their last card!");
-            return setLoser(player, state);
-        }
-        for (let i = 0; i < n; i++) {
-            player.hand.push(player.deck.pop() as PlayableCard);
-        }
+        drawPlayer(player, n);
         if (humanPlayer) {
             state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
         } else {
             state.combatLog.push("AI have drawn a card");
         }
         updateGameState(state);
+    }
+
+    export function drawPlayer(player: Player, n: number = 1) {
+        console.log("Trying to draw " + n + " cards from a deck with " + player.deck.length + " cards remaining");
+        if(player.deck.length <= n){
+            console.log("Player " + player.id + " is drawing their last card!");
+            return setLoser(player);
+        }
+        for (let i = 0; i < n; i++) {
+            player.hand.push(player.deck.pop() as PlayableCard);
+        }
     }
 
     export function setWinner(winner: Player, gs?: GameState) {
@@ -201,19 +205,6 @@ export module GameManager {
         state.energyPlayed = false;
         if(!state.isFirstRound && state.isSecondRound){
             state.combatLog.push("Select your bench pokemon")
-        }
-        updateGameState(state);
-    }
-
-    export function drawPlayer(player: Player, n: number = 1, gs?: GameState) {
-        let state: GameState = gs === undefined ? getState() : gs;
-        console.log("Trying to draw " + n + " cards from a deck with " + player.deck.length + " cards remaining");
-        if(player.deck.length <= n){
-            console.log(player.id === state.player.id ? "Player" : "AI" + " is drawing their last card!");
-            return setLoser(player, state);
-        }
-        for (let i = 0; i < n; i++) {
-            player.hand.push(player.deck.pop() as PlayableCard);
         }
         updateGameState(state);
     }
