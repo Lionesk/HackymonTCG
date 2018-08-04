@@ -3,7 +3,7 @@ import { PlayableCard, CardPosition } from "./PlayableCard";
 import { Cards, CardType, Decks, EnergyCard, GameStates, AbilityType } from "../api/collections";
 import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
-import { AbilityAction, Abilities } from "../api/collections/abilities";
+import { AbilityAction, Abilities, Status } from "../api/collections/abilities";
 import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
 import { createAbility } from "./abilities/AbilityFactory";
 
@@ -536,6 +536,7 @@ export module GameManager {
             player.active.currentEnergy = removeCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[]);
             let active = new PlayableCard(player.active.id, player.active.card);
             active.currentEnergy = player.active.currentEnergy;
+            active.statuses=[];
             player.bench.push(active);
             player.active = undefined;
             updateGameState(state);
@@ -653,6 +654,87 @@ export module GameManager {
             //console.log("Mulligun for " + type);
         }
         return (noPokemon);
+    }
+    export function applyActiveStatuses(){
+        let state = getState();
+        console.log("STATUS")
+        applyStatus(true,state.player, state.combatLog);
+        applyStatus(false,state.ai, state.combatLog);
+        updateGameState(state);
+    }
+    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>){
+        if(!player.active){
+            return
+        }
+        player.active.statuses.forEach((stats)=>{
+            switch(stats){
+                case Status.SLEEP:
+                    let coin= coinFlip();
+                    if(coin){
+                        if(!player.active){
+                            return;
+                        }
+                        removeStatus(player.active, Status.SLEEP);
+                        if(humanPlayer){
+                            combatLog.push("You're "+ player.active.card.name+" woke up!");
+                        }else{
+                            combatLog.push("AI's "+ player.active.card.name+" woke up!");
+                        }
+                    }else{
+                        if(!player.active){
+                            return;
+                        }
+                        if(humanPlayer){
+                            combatLog.push("You're "+ player.active.card.name+" is still asleep!");
+                        }else{
+                            combatLog.push("AI's "+ player.active.card.name+" is still asleep!");
+                        }
+                    }
+                break;
+                case Status.POISONED:
+                    if(!player.active){
+                        return;
+                    }
+                    player.active.damage(1);
+                    if(humanPlayer){
+                        combatLog.push("You're "+ player.active.card.name+" took 1 poison damage!");
+                    }else{
+                        combatLog.push("AI's "+ player.active.card.name+" took 1 poison damage!");
+                    }
+                break;
+                case Status.PARALYZED:
+                    if(!player.active){
+                        return;
+                    }
+                    removeStatus(player.active, Status.PARALYZED);
+                    if(humanPlayer){
+                        combatLog.push("You're "+ player.active.card.name+" is no longer paralyzed!");
+                    }else{
+                        combatLog.push("AI's "+ player.active.card.name+" is no longer paralyzed!");
+                    }
+                break;
+                case Status.STUCK:
+                if(!player.active){
+                    return;
+                }
+                removeStatus(player.active, Status.STUCK);
+                if(humanPlayer){
+                    combatLog.push("You're "+ player.active.card.name+" is no longer stuck!");
+                }else{
+                    combatLog.push("AI's "+ player.active.card.name+" is no longer stuck!");
+                }
+            break;
+            }
+        })
+    }
+    function removeStatus( active:PlayableCard, status:Status){
+        active.statuses = active.statuses.filter((stat)=>{return status!==stat})
+    }
+
+    export function appendCombatLog(log:string){
+        let state = getState();
+        state.combatLog.push(log);
+        updateGameState(state);
     }
 
 }

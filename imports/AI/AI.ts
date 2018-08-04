@@ -1,5 +1,5 @@
 import {PlayableCard} from "../gameLogic/PlayableCard";
-import {Cards, CardType, Decks, EnergyCard, GameStates} from "../api/collections";
+import {Cards, CardType, Decks, EnergyCard, GameStates, Status} from "../api/collections";
 import {GameState} from "../gameLogic/GameState";
 import {GameManager} from "../gameLogic/GameManager";
 import { AbilityReference } from "../api/collections/Cards";
@@ -67,8 +67,20 @@ export module AI {
                 }
             }
         }
+        let isParalyzed=false;
+        let isSleep=false;
         if(state.ai.active){
+            isParalyzed=state.ai.active.statuses.find((stat:Status)=>{return stat===Status.PARALYZED})?true:false;
+            isSleep = state.ai.active.statuses.find((stat:Status)=>{return stat===Status.SLEEP})?true:false;
+        }
+        if(state.ai.active && !(isParalyzed||isSleep)){
             GameManager.executeAbility(false,state.ai.active, (state.ai.active.card.abilities as AbilityReference[])[0].index)
+        }
+        if(isParalyzed){
+            state.combatLog.push("AI's "+state.ai.active+" is paralyzed and can't attack!")
+        }
+        if(isParalyzed){
+            state.combatLog.push("AI's "+state.ai.active+" is asleep and can't attack!")
         }
         //TODO: Try to attack and/or use a trainer card
         console.log('Ending turn');

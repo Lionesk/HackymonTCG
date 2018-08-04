@@ -45,7 +45,7 @@ export enum Choice {
 
 export enum Status {
   PARALYZED = "paralyzed",
-  SLEEP = "sleep",
+  SLEEP = "asleep",
   STUCK = "stuck",
   POISONED = "poisoned",
 }
