@@ -462,7 +462,7 @@ export module GameManager {
         // update model
         updateGameState(state);
 
-        if (didPokemonAttack && humanPlayer) {
+        if (didPokemonAttack && humanPlayer &&source.card.type!==CardType.TRAINER) {
             Meteor.call("endTurn");
         }
     }
