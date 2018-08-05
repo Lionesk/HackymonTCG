@@ -19,7 +19,13 @@ export class ApplyStat implements ExecutableAbilityAction {
   execute(target?: AbilityTarget, index?: number) {
     this.actualTarget = target || this.parsedTarget;
     if (this.actualTarget instanceof PlayableCard) {
-      this.actualTarget.applyStat(this.status);
+      console.log(this.status)
+      if(!this.actualTarget.statuses.find((stat)=>{return stat===this.status})){
+      console.log(this.status)
+      console.log(this.actualTarget)
+        
+        this.actualTarget.applyStat(this.status);
+      }
     } else {
       throw new Error("cannot apply stat on multiple cards");
     }
