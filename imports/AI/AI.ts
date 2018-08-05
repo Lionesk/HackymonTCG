@@ -12,7 +12,9 @@ export module AI {
 
     export function playTurnFromState(){
         let state = GameManager.getState();
-        GameManager.draw(false);
+        if(!(state.isFirstRound||state.isSecondRound)){
+            GameManager.draw(false);
+        }
         if(!state.ai.active) {
             if(!state.ai.active){
                 let benchCard = findPokemon(state.ai.bench,true);
