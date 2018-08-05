@@ -25,7 +25,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                        Deck Size: {{getSize deck}} card(s) left
+                        Deck Size: {{getSize deck}} card(s)
                 </div>
             </div>
             <div class="row">
@@ -38,7 +38,11 @@
                             Discard Size: {{ getSize discard}} card(s)
                     </div>
             </div>
-
+            <div class="row">
+                <div class="col-sm-12">
+                            Hand Size: {{ getSize hand}} card(s)
+                    </div>
+            </div>
         {{#unless isAI}}
         <br />       
         <div class="row">

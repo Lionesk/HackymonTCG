@@ -78,7 +78,10 @@ Meteor.methods({
     endTurn:function(){
         if(Meteor.isServer){
             AI.playTurn();
-            GameManager.draw(true,1);
+            let state: GameState = GameManager.getState();
+            if(!(state.isFirstRound||state.isSecondRound)){
+                GameManager.draw(true,1);
+            }
             GameManager.resetRoundParams();
             GameManager.applyActiveStatuses();
         }
