@@ -6,22 +6,26 @@
                            AI Status
                         </div>
                     {{else}}
-                    <div class="col-sm-5" >
+                    <div class="col-sm-4" >
                         Status:
                     </div>
-                    
-                    <div class="col-sm-3 col-sm-offset-2 end-turn" >
-                        Click to End Turn
+                    <div class="col-sm-2  view-discards" >
+                        Discards
                     </div>
-                    <div class="col-sm-1 " ></div>
-                    <div class="col-sm-3 col-sm-offset-7 end-game" >
-                        Click to Forfeit Game
+                    <div class="col-sm-2  mini-view" >
+                        Mini view
+                    </div>
+                    <div class="col-sm-3  end-turn" >
+                        End Turn
+                    </div>
+                    <div class="col-sm-3  end-game" >
+                        Forfeit Game
                     </div>
                 {{/if}}
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                        Deck Size: {{getSize deck}} card(s) left
+                        Deck Size: {{getSize deck}} card(s)
                 </div>
             </div>
             <div class="row">
@@ -34,35 +38,51 @@
                             Discard Size: {{ getSize discard}} card(s)
                     </div>
             </div>
-
-        {{#if isAI}}
-        {{else}}
-        <br />       
-        <div class="row">
+            <div class="row">
                 <div class="col-sm-12">
-                           Action:
+                            Hand Size: {{ getSize hand}} card(s)
                     </div>
             </div>
+        {{#unless isAI}}
+        <br />       
+        <div class="row">
+                <div class="col-sm-1">
+                           Action:
+                    </div>
             {{#if isEnergySelected}}
-                <div class="row">
-                    <div class="col-sm-6" >
+                    <div class="col-sm-10" >
                         Pick a Pokemon to give the Energy type: {{moveState.selectedEnergyCard.card.category}}
                     </div>
-                    <div class="col-sm-6" >
-
-                    </div>
-                </div>
             {{/if}}
             {{#if isEvolverSelected}} 
-                <div class="row">
-                    <div class="col-sm-6" >
+                    <div class="col-sm-10" >
                         Pick a {{moveState.selectedEvolutionPokemonCard.card.evolution}} Pokemon to evolve to {{moveState.selectedEvolutionPokemonCard.card.name}}
                     </div>
-                    <div class="col-sm-6" >
-
-                    </div>
+            {{/if}}
+            {{#if isRetreating}} 
+                <div class="col-sm-10" >
+                    Pick a benched Pokemon to switch with your Active
                 </div>
             {{/if}}
-        {{/if}}
+            </div>
+        <br />
+        <div class="row">
+            <div class="col-sm-2">
+                Combat Log:
+            </div>
+            <div class="col-sm-9">
+                <div class="combat-log {{isExpandedCombatLog}}" title="Expand">
+                    {{#each log in combatLog}}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            {{log}}
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+
+        </div>
+        {{/unless}}
     </div>
 </Template>

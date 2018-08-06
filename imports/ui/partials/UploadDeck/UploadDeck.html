@@ -4,8 +4,15 @@
     <span>Upload: {{uploadType}}</span>
     </div>
     <div class="uploadDropper col-sm-6">
-        <input type="file" id="file" name="file" multiple>
+        <input type="file" id="file" name="file">
     </div>
 </div>
+{{#if deckError}}
+    <div class="row">
+        <div class="alert alert-danger" role="alert">
+            Deck Error: Please upload a deck of size 60!
+        </div>        
+    </div>
+{{/if}}
 </Template>
 

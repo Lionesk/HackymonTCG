@@ -29,8 +29,10 @@ export enum Target {
   YOUR_POKEMON = "your-pokemon",
   THEM = "them",
   YOU = "you",
-  DECK = "deck",
-  DISCARD = "discard",
+  YOUR_DECK = "your-deck",
+  OPPONENT_DECK = "opponent-deck",
+  YOUR_DISCARD = "your-discard",
+  OPPONENT_DISCARD = "opponent-discard",
   LAST = "last",
   TOP = "top",
 }
@@ -43,7 +45,7 @@ export enum Choice {
 
 export enum Status {
   PARALYZED = "paralyzed",
-  SLEEP = "sleep",
+  SLEEP = "asleep",
   STUCK = "stuck",
   POISONED = "poisoned",
 }
@@ -65,6 +67,16 @@ export enum Condition {
   CHOICE = "choice",
 }
 
+export interface Filter {
+  category?: CardCategory;
+  type?: CardType;
+  top?: boolean;
+  count?: number;
+  evolution?: boolean;
+  evolutionTarget?: Target;
+}
+
+
 export interface AbilityAction {
   type: AbilityType;
   source?: Target;
@@ -78,14 +90,7 @@ export interface AbilityAction {
     conditionAbility?: AbilityAction;
     healTarget?: Target;
   };
-  filter?: {
-    category?: CardCategory;
-    type?: CardType;
-    top?: boolean;
-    count?: number;
-    evolution?: boolean;
-    evolutionTarget?: Target;
-  }
+  filter?: Filter;
   amount?: number;
   amountFunction?: AbilityFunction;
   amountFunctionTarget?: Target;

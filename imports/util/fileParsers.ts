@@ -296,7 +296,7 @@ function parseSearch(action: Partial<AbilityAction>, actionData: string): Partia
     sourceIndex = 6;
   }
   action.source = tokens[sourceIndex] as Target;
-  const fileterTokens = tokens.slice(sourceIndex + 1, tokens.length - 1);
+  const fileterTokens = tokens.slice(sourceIndex + 1, tokens.length);
   action = parseFilter(action, fileterTokens);
 
   action.amount = parseInt(tokens.pop() || "0");
@@ -366,24 +366,14 @@ function parseDeck(action: Partial<AbilityAction>, data: string): Partial<Abilit
 }
 
 function parseFilter(action: Partial<AbilityAction>, tokens: string[]): Partial<AbilityAction> {
+  // TODO add evolves from and choice filter
   action.filter = {};
-  switch (tokens[0]) {
-    case "cat":
-      action.filter.category = tokens[1] as CardCategory;
-      break;
-    case "top":
-      action.filter.top = true;
-      action.filter.count = parseInt(tokens[1]);
-      break;
-    case "evolves-from":
-      action.filter.evolution = true;
-      action.filter.evolutionTarget = tokens[1] as Target;
-      break;
-    default:
-      action.filter.type = tokens[0] as CardType;
-      if (tokens.length > 1) {
-        action.filter.category = tokens[2] as CardCategory;
-      }
+  const catIndex = tokens.indexOf("cat");
+  if (catIndex !== -1) {
+    action.filter.category = tokens[catIndex + 1] as CardCategory;
+  }
+  if (Object.values(CardType).includes(tokens[1])) {
+    action.filter.type = tokens[1] as CardType;
   }
 
   return action;

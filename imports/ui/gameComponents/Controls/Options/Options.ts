@@ -32,6 +32,12 @@ Template.Options.helpers({
         }else{
             return array.length;
         }
+    },
+    isRetreating:function(){
+        return this.moveState.retreating;
+    },
+    isExpandedCombatLog:function(){
+        return Session.get("expand-combat-log")?"expand-combat-log":"";
     }
 });
 
@@ -44,9 +50,24 @@ Template.Options.events({
         FlowRouter.go('/');
     },
     "click .end-turn"() {
-        Meteor.call('endTurn');
-        let ms = Session.get("move-state");
-        MoveStateController.resetMoveState(ms);
-        Session.set("move-state",ms);
+        if(this.active){
+            Meteor.call('endTurn');
+            let ms = Session.get("move-state");
+            MoveStateController.resetMoveState(ms);
+            Session.set("move-state",ms);
+        }
+    },
+    "click .mini-view"(){
+        let isMini = Session.get('is-mini');
+        Session.set('is-mini',!isMini);
+    },
+    "click .combat-log"(){
+        Session.set("expand-combat-log",!Session.get("expand-combat-log"))
+    },    
+    "click .view-discards"(){
+        let modal = document.getElementById('DiscardModal');
+        if(modal){
+            modal.style.display = 'block';
+        }
     }
 });

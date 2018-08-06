@@ -1,8 +1,9 @@
 <Template name="Board" class="container">
-
+    {{> DiscardModal discards=gamestate.player.discards}}
     <div class="row" >
         <div class="col-sm-12">
-            <button class="changeTestGameState">Set to test state</button>
+            <!-- <button class="winGame">Win the game</button> -->
+            <!-- <button class="loseGame">Lose the game</button> -->
             <!-- <button class="initializeGame">Create new game with uploaded deck</button> -->
         </div>
     </div>
@@ -10,7 +11,7 @@
     <div class="board">
         <div class="row">
                 <div class="col-sm-12">
-                    {{> Controls deck= gamestate.ai.deck prize=gamestate.ai.prize discard=gamestate.ai.discard isAI=true}}
+                    {{> Controls deck= gamestate.ai.deck prize=gamestate.ai.prize discard=gamestate.ai.discard isAI=true hand=gamestate.ai.hand}}
             </div>
         </div>
         <div class="row" >
@@ -25,7 +26,7 @@
         </div>
         <div class="row">
             <div class="col-sm-6 col-sm-offset-6">
-                {{> Controls deck= gamestate.player.deck prize=gamestate.player.prize discard=gamestate.player.discard}}
+                {{> Controls deck= gamestate.player.deck prize=gamestate.player.prize discard=gamestate.player.discard active=gamestate.player.active combatLog=reverseCombatLog hand=gamestate.player.hand}}
             </div>
         </div>
     </div>

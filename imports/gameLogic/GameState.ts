@@ -8,9 +8,11 @@ export interface GameStateInterface{
     energyPlayed:boolean;
     isFirstRound:boolean;
     playing: boolean;
+    winner:Player;
     isSecondRound:boolean;
     humanMulliganCount: number;
     aiMulliganCount: number;
+    combatLog:[string];
 }
 
 export class GameState implements GameStateInterface{
@@ -23,6 +25,8 @@ export class GameState implements GameStateInterface{
     playing: boolean;
     humanMulliganCount: number;
     aiMulliganCount: number;
+    winner:Player;
+    combatLog:[string];    
     isSecondRound:boolean;
 
     constructor(userid:string){
@@ -35,5 +39,6 @@ export class GameState implements GameStateInterface{
         this.isSecondRound = true;
         this.humanMulliganCount=0;
         this.aiMulliganCount=0;
+        this.combatLog=["Pick your active pokemon then end your turn"];
     }
 }
