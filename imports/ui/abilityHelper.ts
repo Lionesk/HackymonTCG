@@ -10,8 +10,8 @@ export async function executeAbility(ability:any, abilityIndex:number,playableCa
             actionIndex=index;console.log(elem.choice);
             return (elem.choice!==Choice.OPPONENT 
                 && elem.choice!==Choice.RANDOM 
-                &&elem.choice!==undefined)
-                ||elem.type===AbilityType.SEARCH})
+                &&elem.choice!==undefined)})
+                // ||elem.type===AbilityType.SEARCH})
         ){
             yourChoice=true;
         }
@@ -48,7 +48,7 @@ export async function executeAbility(ability:any, abilityIndex:number,playableCa
                     break;
                     case Target.YOUR_POKEMON:
                     choices["bench"]=gs.player.bench;
-                    choices["hand"]=gs.player.hand;
+                    // choices["hand"]=gs.player.hand;
                     choices["active"]=[gs.player.active];
                     break;
             }

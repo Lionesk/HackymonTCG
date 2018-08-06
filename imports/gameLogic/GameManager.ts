@@ -3,7 +3,7 @@ import { PlayableCard } from "./PlayableCard";
 import { Cards, CardType, Decks, EnergyCard, GameStates, AbilityType } from "../api/collections";
 import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
-import { AbilityAction, Abilities } from "../api/collections/abilities";
+import { AbilityAction, Abilities, Status } from "../api/collections/abilities";
 import { Cost, AbilityReference, EnergyCat, TrainerCard, PokemonCard, Card } from "../api/collections/Cards";
 import { createAbility } from "./abilities/AbilityFactory";
 
@@ -361,7 +361,7 @@ export module GameManager {
         return playableCard.card.type === CardType.ENERGY;
     }
 
-    function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard<EnergyCard>) {
+    export function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard<EnergyCard>) {
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
         pokemonCard.currentEnergy.push(energyCard);
     }
@@ -442,7 +442,7 @@ export module GameManager {
         // update model
         updateGameState(state);
 
-        if (didPokemonAttack && humanPlayer) {
+        if (didPokemonAttack && humanPlayer &&source.card.type!==CardType.TRAINER) {
             Meteor.call("endTurn");
         }
     }
@@ -516,10 +516,11 @@ export module GameManager {
             player.active.currentEnergy = removeCost(player.active.card.retreatCost, player.active.currentEnergy as PlayableCard<EnergyCard>[]);
             let active = new PlayableCard(player.active.id, player.active.card);
             active.currentEnergy = player.active.currentEnergy;
+            active.statuses=[];
             player.bench.push(active);
             player.active = undefined;
-            placeActive(humanPlayer, pokemonPlayableCard);
             updateGameState(state);
+            placeActive(humanPlayer, pokemonPlayableCard);
         }
     }
 
@@ -530,7 +531,7 @@ export module GameManager {
         }
     }
 
-    function getState(): GameState {
+    export function getState(): GameState {
         const state = GameStates.find({ userid: Meteor.userId() }).fetch()[0];
         Object.setPrototypeOf(state.player, Player.prototype);
         Object.setPrototypeOf(state.ai, Player.prototype);
@@ -544,6 +545,12 @@ export module GameManager {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.ai.deck.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.deck.forEach((card: PlayableCard) => {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         return state;
@@ -595,10 +602,13 @@ export module GameManager {
         }
     }
 
-    function noPokemonInDeck(state: Player) {
+    export function noPokemonInDeck(state: Player) {
         let noPokemonInDeck = true;
         for (let i = 0; i < state.deck.length; i++) {
             if (isPokemon(state.deck[i])) {
+                if((state.deck[i].card && state.deck[i].card.evolution)){
+                    continue;
+                }
                 noPokemonInDeck = false;
                 break;
             }
@@ -607,11 +617,14 @@ export module GameManager {
         return noPokemonInDeck;
     }
 
-    function mulligan(numOfCards: number, state: Player, type?: string) {
+    export function mulligan(numOfCards: number, state: Player, type?: string) {
         let noPokemon = true;
         for (let i = 0; i < numOfCards; i++) {
 
             if (isPokemon(state.hand[i])) {
+                if((state.hand[i].card && state.hand[i].card.evolution)){
+                    continue;
+                }
                 //console.log("No mulligun for " + type);
                 noPokemon = false;
                 break;
@@ -621,6 +634,87 @@ export module GameManager {
             //console.log("Mulligun for " + type);
         }
         return (noPokemon);
+    }
+    export function applyActiveStatuses(){
+        let state = getState();
+        console.log("STATUS")
+        applyStatus(true,state.player, state.combatLog);
+        applyStatus(false,state.ai, state.combatLog);
+        updateGameState(state);
+    }
+    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>){
+        if(!player.active){
+            return
+        }
+        player.active.statuses.forEach((stats)=>{
+            switch(stats){
+                case Status.SLEEP:
+                    let coin= coinFlip();
+                    if(coin){
+                        if(!player.active){
+                            return;
+                        }
+                        removeStatus(player.active, Status.SLEEP);
+                        if(humanPlayer){
+                            combatLog.push("You're "+ player.active.card.name+" woke up!");
+                        }else{
+                            combatLog.push("AI's "+ player.active.card.name+" woke up!");
+                        }
+                    }else{
+                        if(!player.active){
+                            return;
+                        }
+                        if(humanPlayer){
+                            combatLog.push("You're "+ player.active.card.name+" is still asleep!");
+                        }else{
+                            combatLog.push("AI's "+ player.active.card.name+" is still asleep!");
+                        }
+                    }
+                break;
+                case Status.POISONED:
+                    if(!player.active){
+                        return;
+                    }
+                    player.active.damage(1);
+                    if(humanPlayer){
+                        combatLog.push("You're "+ player.active.card.name+" took 1 poison damage!");
+                    }else{
+                        combatLog.push("AI's "+ player.active.card.name+" took 1 poison damage!");
+                    }
+                break;
+                case Status.PARALYZED:
+                    if(!player.active){
+                        return;
+                    }
+                    removeStatus(player.active, Status.PARALYZED);
+                    if(humanPlayer){
+                        combatLog.push("You're "+ player.active.card.name+" is no longer paralyzed!");
+                    }else{
+                        combatLog.push("AI's "+ player.active.card.name+" is no longer paralyzed!");
+                    }
+                break;
+                case Status.STUCK:
+                if(!player.active){
+                    return;
+                }
+                removeStatus(player.active, Status.STUCK);
+                if(humanPlayer){
+                    combatLog.push("You're "+ player.active.card.name+" is no longer stuck!");
+                }else{
+                    combatLog.push("AI's "+ player.active.card.name+" is no longer stuck!");
+                }
+            break;
+            }
+        })
+    }
+    function removeStatus( active:PlayableCard, status:Status){
+        active.statuses = active.statuses.filter((stat)=>{return status!==stat})
+    }
+
+    export function appendCombatLog(log:string){
+        let state = getState();
+        state.combatLog.push(log);
+        updateGameState(state);
     }
 
 }

@@ -64,4 +64,10 @@ Template.Options.events({
     "click .combat-log"(){
         Session.set("expand-combat-log",!Session.get("expand-combat-log"))
     },    
+    "click .view-discards"(){
+        let modal = document.getElementById('DiscardModal');
+        if(modal){
+            modal.style.display = 'block';
+        }
+    }
 });

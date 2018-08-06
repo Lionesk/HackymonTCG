@@ -3,6 +3,7 @@ import './Board.css';
 import '../AISide/AISide.ts';
 import '../PlayerSide/PlayerSide.ts';
 import '../Controls/Controls.ts';
+import '../../partials/DiscardModal/DiscardModal.ts';
 
 import { Template } from 'meteor/templating'
 

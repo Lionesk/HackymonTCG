@@ -3,9 +3,23 @@
     <div class="active" >
         {{#if isCardDefined (active)}}
             <div class="row">
-                <div class="col-sm-2 col-sm-offset-5 active-card">
+                {{#if active.statuses.length}}
+                <div class="col-sm-3">
+                </div>                
+                <div class="col-sm-2 current-status">
+                    Status: 
+                    {{#each status in active.statuses}}
+                        {{status}} 
+                    {{/each}}
+                </div>
+                <div class="col-sm-2 active-card">
                     {{> Card playableCard=active isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable }}
                 </div>
+                {{else}}
+                    <div class="col-sm-2 col-sm-offset-5 active-card">
+                        {{> Card playableCard=active isFirstRound=isFirstRound isSecondRound=isSecondRound isNotInteractable=isNotInteractable }}
+                    </div>
+                {{/if}}
                 {{#unless isNotInteractable}}
                 {{#unless isSecondRound}}
                 <div class="col-sm-2 retreat {{isRetreatSelected}}">

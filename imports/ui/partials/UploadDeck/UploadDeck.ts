@@ -1,5 +1,6 @@
 import "jquery";
 import { Template } from 'meteor/templating';
+import {Session} from 'meteor/session';
 import './UploadDeck.html';
 import { Cards, CardType, TrainerCat } from "../../../api/collections";
 import { asyncCall } from "../../helpers";
@@ -30,6 +31,11 @@ Template.UploadDeck.events({
         if (file) {
             const fileString: string = await loadFile(file);
             if(this.uploadType === UploadType.DECK){
+                if(fileString.split("\n").length !==60){
+                    Session.set("deck-size-error",true);
+                    return;
+                }
+                Session.set("deck-size-error",false);
                 await UploadMap[this.uploadType as UploadType]({fileString: fileString, name: file.name}); // use target instead of this for better typing
 
             }else{
@@ -45,6 +51,12 @@ Template.UploadDeck.events({
         if (file) {
             const fileString: string = await loadFile(file);
             if(this.uploadType === UploadType.DECK){
+                console.log(fileString.split("\n").length)
+                if(fileString.split("\n").length !==60){
+                    Session.set("deck-size-error",true);
+                    return;
+                }
+                Session.set("deck-size-error",false);
                 await UploadMap[this.uploadType as UploadType]({fileString:fileString, name:file.name}); // use target instead of this for better typing
 
             }else{
@@ -72,3 +84,9 @@ async function loadFile(file: File): Promise<string> {
         f.readAsText(file);
     });
 }
+
+Template.UploadDeck.helpers({
+    deckError:function(){
+        return Session.get("deck-size-error") && (this.uploadType === UploadType.DECK);
+    }
+})

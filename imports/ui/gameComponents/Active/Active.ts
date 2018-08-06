@@ -8,7 +8,7 @@ import { Session } from 'meteor/session'
 import { PlayableCard } from "../../../gameLogic/PlayableCard";
 import '../../partials/ChoiceModal/ChoiceModal';
 import { GameStates, Choice } from "../../../api/collections";
-import { AbilityAction, AbilityType, Target } from "../../../api/collections/abilities";
+import { AbilityAction, AbilityType, Target, Status } from "../../../api/collections/abilities";
 import { executeAbility } from "../../abilityHelper";
 
 Template.Active.helpers({
@@ -63,12 +63,46 @@ Template.Active.events({
             console.log("RETURN")
             return;
         }
-        executeAbility(this.ability,this.abilityIndex,this.playableCard);
-
+        let isParalyzed=false;
+        let isSleep=false;
+        if(this.playableCard){
+            isParalyzed=this.playableCard.statuses.find((stat:Status)=>{return stat===Status.PARALYZED})?true:false;
+            isSleep = this.playableCard.statuses.find((stat:Status)=>{return stat===Status.SLEEP})?true:false;
+        }
+        if(!(isParalyzed||isSleep)){
+            executeAbility(this.ability,this.abilityIndex,this.playableCard);
+        }else{
+            if(isParalyzed){
+                Meteor.call("appendCombatLog", "Your "+this.playableCard+" is paralyzed and can't attack!")
+            }
+            if(isParalyzed){
+                Meteor.call("appendCombatLog", "Your "+this.playableCard+" is asleep and can't attack!")
+            }
+        }
     },
     "click .retreat":function(event:JQuery.Event){
-        let ms = Session.get("move-state");
-        MoveStateController.setRetreat(ms);
-        Session.set("move-state",ms);
+        let isStuck=false;
+        let isParalyzed=false;
+        let isSleep=false;
+        if(this.playableCard){
+            isStuck=this.playableCard.statuses.find((stat:Status)=>{return stat===Status.STUCK})?true:false;
+            isParalyzed=this.playableCard.statuses.find((stat:Status)=>{return stat===Status.PARALYZED})?true:false;
+            isSleep = this.playableCard.statuses.find((stat:Status)=>{return stat===Status.SLEEP})?true:false;
+        }
+        if(!(isParalyzed||isSleep||isStuck)){
+            let ms = Session.get("move-state");
+            MoveStateController.setRetreat(ms);
+            Session.set("move-state",ms);
+        }else{
+            if(isParalyzed){
+                Meteor.call("appendCombatLog", "Your "+this.playableCard+" is paralyzed and can't retreat!")
+            }
+            if(isParalyzed){
+                Meteor.call("appendCombatLog", "Your "+this.playableCard+" is asleep and can't retreat!")
+            }
+            if(isStuck){
+                Meteor.call("appendCombatLog", "Your "+this.playableCard+" is stuck and can't retreat!")                
+            }
+        }
     },
 });

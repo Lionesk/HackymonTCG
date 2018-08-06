@@ -6,8 +6,11 @@
                            AI Status
                         </div>
                     {{else}}
-                    <div class="col-sm-6" >
+                    <div class="col-sm-4" >
                         Status:
+                    </div>
+                    <div class="col-sm-2  view-discards" >
+                        Discards
                     </div>
                     <div class="col-sm-2  mini-view" >
                         Mini view
@@ -22,7 +25,7 @@
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                        Deck Size: {{getSize deck}} card(s) left
+                        Deck Size: {{getSize deck}} card(s)
                 </div>
             </div>
             <div class="row">
@@ -35,7 +38,11 @@
                             Discard Size: {{ getSize discard}} card(s)
                     </div>
             </div>
-
+            <div class="row">
+                <div class="col-sm-12">
+                            Hand Size: {{ getSize hand}} card(s)
+                    </div>
+            </div>
         {{#unless isAI}}
         <br />       
         <div class="row">
