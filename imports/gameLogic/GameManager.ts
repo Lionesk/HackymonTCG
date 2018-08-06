@@ -182,7 +182,7 @@ export module GameManager {
         console.log("Trying to draw " + n + " cards from a deck with " + player.deck.length + " cards remaining");
         if(player.deck.length <= n){
             console.log("Player " + player.id + " is drawing their last card!");
-            return setLoser(player);
+            setLoser(player);
         }
         for (let i = 0; i < n; i++) {
             player.hand.push(player.deck.pop() as PlayableCard);
