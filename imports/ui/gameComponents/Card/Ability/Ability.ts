@@ -10,6 +10,18 @@ Template.Action.helpers({
     },
     isApplyStat:function(action: AbilityAction){
         return action.type === "applystat";        
+    },
+    topActionString:function(action: AbilityAction){
+        let str = "Apply ";
+        if(action.amount){
+            str = str.concat(action.amount+" ");
+        }
+        if(action.type){
+            str = str.concat(action.type+" ");
+        }
+        if(action.type){
+            str = str.concat(action.type+" ");
+        }
     }
 });
 Template.Ability.helpers({

@@ -36,37 +36,40 @@
 </Template>
 
 <Template name="Action">
+    <div class="col-sm-12">
+        {{> topActionString action}}
+        <!-- <div style="word-wrap: break-word!important; overflow-wrap: break-word!important;">
         {{#if action.amount}}
-            <div class="col-sm-6">Apply {{action.amount}}</div>
+            Apply {{action.amount}}&nbsp;
         {{/if}}
         {{#if action.type}}
-            <div class="col-sm-6">{{action.type}}</div>
+            {{action.type}}&nbsp;
         {{/if}}
         {{#if action.target}}
-            <div class="col-sm-12">to {{action.target}}</div>
+            to {{action.target}}&nbsp;
         {{/if}}
         {{#if action.amountFunction}}
-            <div class="col-sm-12">{{action.amountOperator}} by {{action.amountFunction}}</div>
+            {{action.amountOperator}} by {{action.amountFunction}}&nbsp;
         {{/if}}
         {{#if action.amountFunctionTarget}}
-            <div class="col-sm-12">of {{action.amountFunctionTarget}}</div>
+            of {{action.amountFunctionTarget}}&nbsp;
         {{/if}}
         {{#if action.choice}}
-            <div class="col-sm-6">Based on{{action.choice}}</div>
+            Based on{{action.choice}}&nbsp;
         {{/if}}
         {{#if action.source}}
-            <div class="col-sm-6">Source: {{action.source}}</div>
+            Source: {{action.source}}&nbsp;
         {{/if}}
         {{#if action.status}}
-            <div class="col-sm-6">Applies {{action.status}}</div>
+            Applies {{action.status}}&nbsp;
         {{/if}}
         {{#if action.specification}}
-            <div class="col-sm-12">Specs {{action.specification}}</div>
+            Specs {{action.specification}}&nbsp;
         {{/if}}
 
         {{#if action.conditional}}
             {{#if action.conditional.condition}}
-                <div class="col-sm-6">{{action.conditional.condition}}</div>
+               {{action.conditional.condition}}
                 <div class="col-sm-12">{{> Action action=action.conditional.conditionAbility}}</div>
             {{/if}}
             {{#if action.conditional.healTarget}}
@@ -82,21 +85,20 @@
 
         {{#if action.filter}}
             {{#if action.filter.category}}
-                <div class="col-sm-6">{{action.filter.category}}</div>
+                {{action.filter.category}}&nbsp;
             {{/if}}
             {{#if action.filter.type}}
-                <div class="col-sm-6">{{action.filter.type}}</div>
+                {{action.filter.type}}&nbsp;
             {{/if}}
             {{#if action.filter.top}}
-                <div class="col-sm-6">
                     {{#if action.filter.top}}
                         Top of Deck
                     {{/if}}
-                </div>
             {{/if}}
             {{#if action.filter.count}}
-                <div class="col-sm-6">{{action.filter.count}}</div>
+                {{action.filter.count}}&nbsp;
             {{/if}}
         {{/if}}
-
+        </div> -->
+    </div>
 </Template>
