@@ -8,7 +8,6 @@ import '../../partials/UploadDeck/UploadDeck.ts';
 import '../../partials/loading/loading.ts';
 import {Decks, Cards, Abilities, GameStates} from "../../../api/collections";
 import {MoveState} from "../PlayLayout/MoveState";
-import swal from 'sweetalert';
 declare let FlowRouter: any;
 
 
@@ -69,6 +68,7 @@ Template.LandingLayout.helpers({
         Session.set("move-state",ms);
         // (TODO) quick fix but this should not use relative element paths (get element by ID instead)
       Meteor.call('newGameStart', (event.currentTarget as any).parentNode.parentNode.parentNode.getElementsByClassName("shuffle-option")[0].checked, playerDeckId, aiDeckId, () => {
+        FlowRouter.go('/play');
         Meteor.call("mulliganToHandle", function (err?: Error, result?: { data: boolean[] }) {
           let resultArray = [] as any;
           if (result !== undefined) {
@@ -79,39 +79,22 @@ Template.LandingLayout.helpers({
               //AI MAKES CHOICE
               let random_boolean = Math.random() >= 0.5;
               if (random_boolean) {
-                Meteor.call("dealAdditionalCards", function (err?: Error, result?: { data: any }) {
-                  if (result) { alert(result); }
-                })
+                Meteor.call("dealAdditionalCards", function (err?: Error, result?: { data: any }) {})
               }
               else {
-                Meteor.call("reduceHandMulligan", function (err?: Error, result?: { data: any }) {
-                  if (result) {
-                    alert(result);
-                  }
-                })
+                Meteor.call("reduceHandMulligan", function (err?: Error, result?: { data: any }) {})
               }
             }
             else {
               //HUMAN LOGIC HERE
-              var answer = confirm("Mulligan! You want to draw more cards? If no opponents hand reduces.")
-              if (answer) {
-                Meteor.call("dealAdditionalCards", function (err?: Error, result?: { data: any }) {
-                  if (result) { alert(result); }
-                })
-                alert("Draw card");
+              let modal = document.getElementById('MulliganModal');
+              if(modal){
+                  modal.style.display = 'block';
               }
-              else {
-                Meteor.call("reduceHandMulligan", function (err?: Error, result?: { data: any }) {
-                  if (result) {
-                    alert(result);
-                  }
-                })
-                alert("Opponent hand reduces");
-              }
+              
             }
           }
         });
-        FlowRouter.go('/play');
       });
     },
     'click .dropDecksForUser':function(){

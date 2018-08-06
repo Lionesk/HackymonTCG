@@ -166,10 +166,14 @@ export module GameManager {
             n = 1;
         }
         drawPlayer(player, n);
-        if (humanPlayer) {
-            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
-        } else {
-            state.combatLog.push("AI have drawn a card");
+        if(!(state.isFirstRound||state.isSecondRound)){
+            if (humanPlayer) {
+                for(let i=n;i>0;i--){
+                    state.combatLog.push("You've drawn " + player.hand[player.hand.length - i].card.name);
+                }
+            } else {
+                state.combatLog.push("AI have "+n+" drawn a card(s)");
+            }
         }
         updateGameState(state);
     }
@@ -724,27 +728,23 @@ export module GameManager {
             console.log(msg);
             console.log("Ai deck " + state.ai.deck);
             return msg;
-
         }
-
         else {
-        extraCardNum = humanCounter -aiCounter;
+            extraCardNum = humanCounter -aiCounter;
            let msg = "Human's deck is reduced by " + extraCardNum + " cards " +
            "due to mulligan(s)"
            for(let i=0; i<extraCardNum; i++){
-            //state.player.deck.pop();
-            let card = state.player.hand.pop();
-
-               if (card !== undefined)
-               state.player.deck.push(card);
-        }
+                let card = state.player.hand.pop();
+                if (card !== undefined){
+                state.player.deck.push(card);
+                }
+            }
             updateGameState(state);
             console.log(msg);
             console.log("Human deck " + state.player.deck);
             //drawPlayer(state.ai, extraCardNum);
             return msg;
         }
-        updateGameState(state);
     }
 
     
