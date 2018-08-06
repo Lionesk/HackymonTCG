@@ -754,20 +754,23 @@ export module GameManager {
 
     
     //end of mulligan logic functions
-    export function applyActiveStatuses(){
+    export function applyActiveStatuses(beginningOfRound:boolean){
         let state = getState();
         console.log("STATUS")
-        applyStatus(true,state.player, state.combatLog);
-        applyStatus(false,state.ai, state.combatLog);
+        applyStatus(true,state.player, state.combatLog,beginningOfRound);
+        applyStatus(false,state.ai, state.combatLog,beginningOfRound);
         updateGameState(state);
     }
-    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>){
+    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>,beginningOfRound:boolean){
         if(!player.active){
             return
         }
         player.active.statuses.forEach((stats)=>{
             switch(stats){
                 case Status.SLEEP:
+                    if(beginningOfRound){
+                        return;
+                    }
                     let coin= coinFlip();
                     if(coin){
                         if(!player.active){
@@ -791,17 +794,23 @@ export module GameManager {
                     }
                 break;
                 case Status.POISONED:
+                    if(!beginningOfRound){
+                        return;
+                    }
                     if(!player.active){
                         return;
                     }
-                    player.active.damage(1);
+                    player.active.damage(10);
                     if(humanPlayer){
-                        combatLog.push("You're "+ player.active.card.name+" took 1 poison damage!");
+                        combatLog.push("You're "+ player.active.card.name+" took 10 poison damage!");
                     }else{
-                        combatLog.push("AI's "+ player.active.card.name+" took 1 poison damage!");
+                        combatLog.push("AI's "+ player.active.card.name+" took 10 poison damage!");
                     }
                 break;
                 case Status.PARALYZED:
+                    if(beginningOfRound){
+                        return;
+                    }
                     if(!player.active){
                         return;
                     }
@@ -813,6 +822,9 @@ export module GameManager {
                     }
                 break;
                 case Status.STUCK:
+                if(beginningOfRound){
+                    return;
+                }
                 if(!player.active){
                     return;
                 }
