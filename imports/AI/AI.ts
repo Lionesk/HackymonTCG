@@ -2,7 +2,7 @@ import {PlayableCard} from "../gameLogic/PlayableCard";
 import {Cards, CardType, Decks, EnergyCard, GameStates} from "../api/collections";
 import {GameState} from "../gameLogic/GameState";
 import {GameManager} from "../gameLogic/GameManager";
-import { AbilityReference } from "../api/collections/Cards";
+import { AbilityReference, PokemonCard } from "../api/collections/Cards";
 
 export module AI {
 
@@ -54,13 +54,13 @@ export module AI {
         }
         state = GameStates.find({userid: Meteor.userId()}).fetch()[0];
         let energyCard = findEnergy(state.ai.hand);
-        if(state.ai.active && energyCard !== undefined) {
+        if(state.ai.active && energyCard) {
             if(state.ai.active.currentEnergy.length < 4){
                 GameManager.addEnergy(false, state.ai.active, energyCard);
             }
             else{
                 for(let card of state.ai.bench){
-                    if(card !== undefined && card.currentEnergy.length < 3){
+                    if(card && card.currentEnergy.length < 3){
                         GameManager.addEnergy(false, card, energyCard);
                         break;
                     }
@@ -74,7 +74,7 @@ export module AI {
         console.log('Ending turn');
     }
 
-    function findPokemon(array: PlayableCard[], basic?: boolean) {
+    function findPokemon(array: PlayableCard[], basic?: boolean): PlayableCard<PokemonCard> | null {
         for(let card of array){
             try {
                 if (card.card.type === CardType.POKEMON) {
@@ -83,7 +83,7 @@ export module AI {
                             continue
                         }
                     }
-                    return card;
+                    return card as PlayableCard<PokemonCard>;
                 }
             }
             catch(err) {
@@ -93,14 +93,14 @@ export module AI {
         return null;
     }
 
-    function findEnergy(hand: PlayableCard[]) {
+    function findEnergy(hand: PlayableCard[]): PlayableCard<EnergyCard> | null {
         for(let card of hand){
             if(card.card.type === CardType.ENERGY){
                 console.log('Found an energy card');
-                return card;
+                return card as PlayableCard<EnergyCard>;
             }
         }
         console.log('Did not find an enery card');
-        return undefined
+        return null;
     }
 }

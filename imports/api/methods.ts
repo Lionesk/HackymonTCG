@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Cards, CardType, PokemonCat, EnergyCat , Decks } from "./collections";
+import { Cards, CardType, PokemonCat, EnergyCat , Decks, PokemonCard, EnergyCard } from "./collections";
 import { GameStates } from "./collections";
 import { GameManager } from "../gameLogic/GameManager";
 import { GameState } from "../gameLogic/GameState";
@@ -54,23 +54,23 @@ Meteor.methods({
             GameManager.executeAbility(humanPlayer, source, abilityIndex, target);
         }
     },
-    addEnergy:function(humanPlayer: boolean, pokemonPlayableCard:PlayableCard, energyPlayableCard:PlayableCard){
+    addEnergy:function(humanPlayer: boolean, pokemonPlayableCard:PlayableCard<PokemonCard>, energyPlayableCard:PlayableCard<EnergyCard>){
         if(Meteor.isServer){
             GameManager.addEnergy(humanPlayer, pokemonPlayableCard, energyPlayableCard);
         }
     },
-    evolvePokemon:function(humanPlayer: boolean, evolution: PlayableCard, toEvolve: PlayableCard){
+    evolvePokemon:function(humanPlayer: boolean, evolution: PlayableCard<PokemonCard>, toEvolve: PlayableCard<PokemonCard>){
         if(Meteor.isServer){
             console.log("evolve: "+ evolution.card.name+" to "+ toEvolve.card.name)
             GameManager.evolve(humanPlayer, toEvolve, evolution);
         }
     },
-    benchPokemon:function(humanPlayer: boolean, pokemonPlayableCard:PlayableCard){
+    benchPokemon:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard<PokemonCard>){
         if(Meteor.isServer){
             GameManager.placeBench(humanPlayer, pokemonPlayableCard);
         }
     },
-    placeActive:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
+    placeActive:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard<PokemonCard>){
         if(Meteor.isServer) {
             GameManager.placeActive(humanPlayer, pokemonPlayableCard);
         }
@@ -102,7 +102,7 @@ Meteor.methods({
           throw new Meteor.Error('self-delete', 'Failed to remove yourself');
         }
       },
-    retreatPokemon:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard){
+    retreatPokemon:function(humanPlayer: boolean, pokemonPlayableCard: PlayableCard<PokemonCard>){
         GameManager.retreatPokemon(humanPlayer,pokemonPlayableCard);
     },
     uploadCards(data: { fileString: string }) {

@@ -9,8 +9,9 @@ export class Damage implements ExecutableAbilityAction {
   amount: number;
   actualTarget?: PlayableCard;
   source: PlayableCard;
+  targetPlayer: Player;
   
-  constructor(state: GameState, abilityData: AbilityAction, playing: Player, opponent: Player) {
+  constructor(abilityData: AbilityAction, playing: Player, opponent: Player) {
     if (!playing.active) {
       throw new Error("no pokemon to attack with");
     }
@@ -18,23 +19,21 @@ export class Damage implements ExecutableAbilityAction {
     if (abilityData.target) {
       this.parsedTarget = parseTarget(abilityData.target, playing, opponent);
     }
-    this.amount = parseAmount(state, abilityData, playing, opponent); // do parsing for multiplied amount
+    this.amount = parseAmount(abilityData, playing, opponent); // do parsing for multiplied amount
     this.source = playing.active;
+    this.targetPlayer = opponent;
   }
   
   execute(target?: AbilityTarget) {
     if (Array.isArray(target) || Array.isArray(this.parsedTarget)) {
-      throw new Error("Invalid Target, should be s-ingle playable card");
+      throw new Error("Invalid Target, should be single playable card");
     }
     // sort of wonky since target can be provided by front end
-    if (target) {
-      target.damage(this.amount);
-      this.actualTarget = target;
-    } else {
-      this.parsedTarget.damage(this.amount);
-      this.actualTarget = this.parsedTarget;
-    }
-    
+    this.actualTarget = target ? target : this.parsedTarget;
+    this.actualTarget.damage(this.amount);
+    if (this.actualTarget.isDead()) {
+      this.targetPlayer.discard(this.actualTarget);
+    }    
   }
 
   toString() {

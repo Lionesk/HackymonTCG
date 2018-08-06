@@ -9,11 +9,11 @@ export class Heal implements ExecutableAbilityAction {
   amount: number;
   actualTarget?: PlayableCard;
 
-  constructor(state: GameState, data: AbilityAction, playing: Player, opponent: Player) {
+  constructor(data: AbilityAction, playing: Player, opponent: Player) {
     if (data.target) {
       this.parsedTarget = parseTarget(data.target, playing, opponent);
     }
-    this.amount = parseAmount(state, data, playing, opponent); // do parsing for multiplied amount
+    this.amount = parseAmount(data, playing, opponent); // do parsing for multiplied amount
   }
 
   execute(target?: AbilityTarget) {

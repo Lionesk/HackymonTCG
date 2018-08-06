@@ -1,37 +1,20 @@
-import {Card, CardType, EnergyCard, EnergyCat, PokemonCat, Status} from '../api/collections';
+import {Card, CardType, EnergyCard, EnergyCat, PokemonCat, Status, TrainerCard, PokemonCard} from '../api/collections';
 
-export enum CardPosition {
-    DECK = "deck",
-    ACTIVE = "active",
-    ATTATCHED = "attatched",
-    BENCH = "bench",
-    HAND = "hand",
-    PRIZE = "prize",
-    DISCARD = "discard",
-    DRAG = "drag",
-}
-
-export class PlayableCard {
+export class PlayableCard<T extends Card = Card> {
     id:number;
-    card:Card;
+    card: T;
     currentDamage:number;
-    currentEnergy:Card[];
-    currentPosition: CardPosition;
-    previousPosition?: CardPosition; // used for drag and drop
+    currentEnergy: PlayableCard<EnergyCard>[];
     statuses: Status[];
-       
-    get position(): CardPosition {
-        return this.currentPosition;
-    }
-    set position(pos: CardPosition) {
-        this.previousPosition = this.currentPosition;
-        this.currentPosition = pos;
-    }
 
+    // return true if damage causes knockout
     damage(amount: number) {
         this.currentDamage += amount;
     }
-
+    
+    isDead() {
+        return this.currentDamage >= (this.card.healthPoints as number);
+    }
     heal(amount: number) {
         this.currentDamage = Math.max(this.currentDamage - amount, 0);
     }
@@ -43,12 +26,29 @@ export class PlayableCard {
     retreat() {
         this.statuses = []; // remove statuses on retreat
     }
+
+    evolve(evolution: PlayableCard<PokemonCard>) {
+        if (this.card.type !== CardType.POKEMON) {
+            throw new Error("cannot evolve non pokemon");
+        }
+        if (evolution.card.evolution === this.card.name) {
+            (this.card as PokemonCard) = evolution.card;
+        } else {
+            throw new Error("Invalid evolution target");
+        }
+    }
+
+    addEnergy(energy: PlayableCard<EnergyCard>) {
+        if (this.card.type !== CardType.POKEMON) {
+            throw new Error("Cannot add energy to non pokemon");
+        }
+        this.currentEnergy.push(energy);
+    }
     
-    constructor(id: number, card?:Card, playable?:PlayableCard){
+    constructor(id: number, card?: T, playable?: PlayableCard<T>){
         this.id = id;
         this.statuses = [];
-        this.currentEnergy = new Array<Card>(0);
-        this.currentPosition = CardPosition.DECK;
+        this.currentEnergy = [];
         if(card !== undefined && playable !== undefined) {
             this.currentDamage = 0;
         }
@@ -62,13 +62,11 @@ export class PlayableCard {
             if(playable.card.type === CardType.POKEMON){
                 this.currentEnergy = playable.currentEnergy;
                 this.currentDamage = playable.currentDamage;
-                this.currentPosition = playable.currentPosition;
-                this.previousPosition = playable.previousPosition;
                 if(! this.currentDamage){
                     this.currentDamage=0;
                 }
                 if(! this.currentEnergy){
-                    this.currentEnergy=new Array<Card>(0);
+                    this.currentEnergy = [];
                 }
             }
             else if(playable.card.type === CardType.ENERGY){
