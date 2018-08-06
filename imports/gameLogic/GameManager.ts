@@ -226,6 +226,7 @@ export module GameManager {
             if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
                 player.active === toEvolve)) {
                 if (evolution.card.evolution === toEvolve.card.name) {
+                    discard(player,new PlayableCard(100,toEvolve.card),true)
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
                     if(humanPlayer){
@@ -388,7 +389,7 @@ export module GameManager {
      * @param {Player} player -- Player who owns card to be discarded
      * @param {PlayableCard} card -- MUST CALL MapCardCopy before invoking this method.
      */
-    function discard(player: Player, card: PlayableCard) {
+    function discard(player: Player, card: PlayableCard, preserveCard?:boolean) {
         let state = getState();
         //Making an array of cards to discard based on number of energy cards and evolutions on card
         let toDiscard: PlayableCard[] = [];
@@ -401,20 +402,24 @@ export module GameManager {
                 for (let energy of card.currentEnergy) {
                     toDiscard.push(new PlayableCard(discardIDCounter++, energy))
                 }
-                if (card.card.evolution !== "") {
-                    //TODO: Find the evolution card(s) in the DB and add them to the toDiscard array
-                }
                 if (card === player.active) {
                     toDiscard.push(new PlayableCard(discardIDCounter++, player.active.card))
-                    player.active = undefined;
+                    if(!preserveCard){
+                       player.active = undefined;
+                    }
                 }
                 else if (player.bench.find(function (element) { return element.id === card.id })) {
-                    removeFromBench(player, card);
+                    if(!preserveCard){
+                        removeFromBench(player, card);
+                    }
                 }
+                
                 break;
             case CardType.TRAINER:
                 toDiscard.push(card);
-                removeFromHand(player, card);
+                if(!preserveCard){
+                    removeFromHand(player, card);
+                }
                 break;
             default:
                 console.log("Invalid card");
