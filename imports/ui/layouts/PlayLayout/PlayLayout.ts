@@ -5,6 +5,7 @@ import '../../gameComponents/Board/Board.ts'
 import { GameStates } from "../../../api/collections";
 import {MoveState} from "./MoveState";
 import {Session} from "meteor/session";
+import '../../partials/MulliganModal/MulliganModal'
 declare let FlowRouter: any;
 let PlayerVictory: any;
 
@@ -51,4 +52,3 @@ Template.Board.onCreated(function(){
   let ms = new MoveState();
   Session.set("move-state",ms);
 });
-

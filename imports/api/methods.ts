@@ -124,9 +124,18 @@ Meteor.methods({
             parseDeckFile(data.fileString, data.name);
         }
     },
+    dealAdditionalCards:function() {
+        return GameManager.dealAdditionalCards();
+    },
+    mulliganToHandle:function() {
+        return GameManager.mulliganToHandle();
+    },
+    reduceHandMulligan:function() {
+        return GameManager.reduceHandMulligan();
+    },
     appendCombatLog(log:string){
-        if(Meteor.isServer){
-            GameManager.appendCombatLog(log);
-        }
+            if(Meteor.isServer){
+                GameManager.appendCombatLog(log);
+            }
     }
-});
+    });

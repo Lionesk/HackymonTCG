@@ -4,9 +4,7 @@
             {{RedirectToLandingLayout}}
          {{/unless}}
         {{>GameOverModal}}
-         <!-- {{> ChoiceModal aiHand=getGameState.ai.hand aiBench=getGameState.ai.bench aiActive=getGameState.ai.active
-            active=getGameState.player.active  bench=getGameState.player.bench hand=getGameState.player.hand
-        }} -->
+        {{>MulliganModal}}
         {{#if isGameOver}}
             {{displayModal}}
         {{/if}}
