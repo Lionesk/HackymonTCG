@@ -54,6 +54,9 @@ Template.Hand.events({
                 if((!this.active && this.isFirstRound)|| !this.isFirstRound){
                     if(playableCard.card.type== CardType.POKEMON){
                         if(playableCard.card.evolution){
+                            if(this.isFirstRound||this.isSecondRound){
+                                return;
+                            }
                             const ms: MoveState = Session.get("move-state"); // if this is not a move state we are in trouble :/                       
                             MoveStateController.setEvolutionPokemon(ms, playableCard);
                             Session.set("move-state", ms);
@@ -65,10 +68,10 @@ Template.Hand.events({
                         }
                     }
                 }
-                if(this.isFirstRound||this.isSecondRound){
-                    return;
-                }
                 if(playableCard.card.type == CardType.ENERGY){
+                    if(this.isFirstRound||this.isSecondRound){
+                        return;
+                    }
                     let ms: MoveState = Session.get("move-state");
                     MoveStateController.setEnergy(ms, playableCard, this.energyPlayed);
                     Session.set("move-state", ms);

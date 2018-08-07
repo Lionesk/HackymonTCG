@@ -182,7 +182,7 @@ export module GameManager {
         console.log("Trying to draw " + n + " cards from a deck with " + player.deck.length + " cards remaining");
         if(player.deck.length <= n){
             console.log("Player " + player.id + " is drawing their last card!");
-            return setLoser(player);
+            setLoser(player);
         }
         for (let i = 0; i < n; i++) {
             player.hand.push(player.deck.pop() as PlayableCard);
@@ -226,6 +226,7 @@ export module GameManager {
             if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
                 player.active === toEvolve)) {
                 if (evolution.card.evolution === toEvolve.card.name) {
+                    discard(player,new PlayableCard(100,toEvolve.card),true)
                     toEvolve.card = evolution.card;
                     removeFromHand(player, evolution)
                     if(humanPlayer){
@@ -388,7 +389,7 @@ export module GameManager {
      * @param {Player} player -- Player who owns card to be discarded
      * @param {PlayableCard} card -- MUST CALL MapCardCopy before invoking this method.
      */
-    function discard(player: Player, card: PlayableCard) {
+    function discard(player: Player, card: PlayableCard, preserveCard?:boolean) {
         let state = getState();
         //Making an array of cards to discard based on number of energy cards and evolutions on card
         let toDiscard: PlayableCard[] = [];
@@ -401,20 +402,24 @@ export module GameManager {
                 for (let energy of card.currentEnergy) {
                     toDiscard.push(new PlayableCard(discardIDCounter++, energy))
                 }
-                if (card.card.evolution !== "") {
-                    //TODO: Find the evolution card(s) in the DB and add them to the toDiscard array
-                }
                 if (card === player.active) {
                     toDiscard.push(new PlayableCard(discardIDCounter++, player.active.card))
-                    player.active = undefined;
+                    if(!preserveCard){
+                       player.active = undefined;
+                    }
                 }
                 else if (player.bench.find(function (element) { return element.id === card.id })) {
-                    removeFromBench(player, card);
+                    if(!preserveCard){
+                        removeFromBench(player, card);
+                    }
                 }
+                
                 break;
             case CardType.TRAINER:
                 toDiscard.push(card);
-                removeFromHand(player, card);
+                if(!preserveCard){
+                    removeFromHand(player, card);
+                }
                 break;
             default:
                 console.log("Invalid card");
@@ -749,20 +754,23 @@ export module GameManager {
 
     
     //end of mulligan logic functions
-    export function applyActiveStatuses(){
+    export function applyActiveStatuses(beginningOfRound:boolean){
         let state = getState();
         console.log("STATUS")
-        applyStatus(true,state.player, state.combatLog);
-        applyStatus(false,state.ai, state.combatLog);
+        applyStatus(true,state.player, state.combatLog,beginningOfRound);
+        applyStatus(false,state.ai, state.combatLog,beginningOfRound);
         updateGameState(state);
     }
-    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>){
+    function applyStatus(humanPlayer:boolean, player:Player, combatLog:Array<string>,beginningOfRound:boolean){
         if(!player.active){
             return
         }
         player.active.statuses.forEach((stats)=>{
             switch(stats){
                 case Status.SLEEP:
+                    if(beginningOfRound){
+                        return;
+                    }
                     let coin= coinFlip();
                     if(coin){
                         if(!player.active){
@@ -786,17 +794,23 @@ export module GameManager {
                     }
                 break;
                 case Status.POISONED:
+                    if(!beginningOfRound){
+                        return;
+                    }
                     if(!player.active){
                         return;
                     }
-                    player.active.damage(1);
+                    player.active.damage(10);
                     if(humanPlayer){
-                        combatLog.push("You're "+ player.active.card.name+" took 1 poison damage!");
+                        combatLog.push("You're "+ player.active.card.name+" took 10 poison damage!");
                     }else{
-                        combatLog.push("AI's "+ player.active.card.name+" took 1 poison damage!");
+                        combatLog.push("AI's "+ player.active.card.name+" took 10 poison damage!");
                     }
                 break;
                 case Status.PARALYZED:
+                    if(beginningOfRound){
+                        return;
+                    }
                     if(!player.active){
                         return;
                     }
@@ -808,6 +822,9 @@ export module GameManager {
                     }
                 break;
                 case Status.STUCK:
+                if(beginningOfRound){
+                    return;
+                }
                 if(!player.active){
                     return;
                 }

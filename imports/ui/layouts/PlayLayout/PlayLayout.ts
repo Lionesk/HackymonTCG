@@ -5,7 +5,8 @@ import '../../gameComponents/Board/Board.ts'
 import { GameStates } from "../../../api/collections";
 import {MoveState} from "./MoveState";
 import {Session} from "meteor/session";
-import '../../partials/MulliganModal/MulliganModal'
+import '../../partials/MulliganModal/MulliganModal';
+import {MoveStateController} from "./MoveState";
 declare let FlowRouter: any;
 let PlayerVictory: any;
 
@@ -44,6 +45,10 @@ Template.GameOverModal.helpers({
 Template.PlayLayout.events({
     'click #endGame': function() {
         PlayerVictory = undefined;
+        Meteor.call('upsertNewGameState');
+        let ms = Session.get("move-state");
+        MoveStateController.resetMoveState(ms);
+        Session.set("move-state",ms);
         FlowRouter.go('/');
     }
 });
