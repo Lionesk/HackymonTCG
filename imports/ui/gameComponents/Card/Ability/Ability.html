@@ -37,7 +37,7 @@
 
 <Template name="Action">
     <div class="col-sm-12">
-        {{> topActionString action}}
+        {{topActionString action}}
         <!-- <div style="word-wrap: break-word!important; overflow-wrap: break-word!important;">
         {{#if action.amount}}
             Apply {{action.amount}}&nbsp;
@@ -65,7 +65,7 @@
         {{/if}}
         {{#if action.specification}}
             Specs {{action.specification}}&nbsp;
-        {{/if}}
+        {{/if}}-->
 
         {{#if action.conditional}}
             {{#if action.conditional.condition}}
@@ -73,7 +73,7 @@
                 <div class="col-sm-12">{{> Action action=action.conditional.conditionAbility}}</div>
             {{/if}}
             {{#if action.conditional.healTarget}}
-                <div class="col-sm-6">Target: {{> Action action=action.healTarget}} :</div>
+                <div class="col-sm-6">if {{> Action action=action.healTarget}} was healed</div>
             {{/if}}
             {{#if action.conditional.true}}
                 <div class="col-sm-12">Success: {{> Action action=action.conditional.true}}</div>
@@ -83,6 +83,8 @@
             {{/if}}
         {{/if}}
 
+        {{bottomActionString action}}
+<!--
         {{#if action.filter}}
             {{#if action.filter.category}}
                 {{action.filter.category}}&nbsp;
