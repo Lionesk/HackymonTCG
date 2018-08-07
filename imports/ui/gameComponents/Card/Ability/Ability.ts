@@ -51,10 +51,28 @@ Template.Action.helpers({
             str = str.concat("to "+action.target.replace("-"," ")+" ");
         }        
         if(action.amountFunction){
-            str = str.concat("by "+action.amountOperator+" by "+ action.amountFunction);
+            let opStr = ""
+            switch(action.amountOperator){
+                case "*":
+                opStr="multiple"
+                break;
+                case "-":
+                opStr="subtraction"
+                break;
+                case "+":
+                opStr="addition"
+                break;
+                case "/":
+                opStr="division"
+                break;
+                default:
+                opStr=action.amountOperator+"";
+                break;
+            }
+            str = str.concat("by "+opStr+" of "+ action.amountFunction+" ");
         }
         if(action.amountFunctionTarget){
-            str = str.concat("of "+action.amountFunctionTarget+" ");
+            str = str.concat("of "+action.amountFunctionTarget.replace("-"," ")+" ");
         }
         return str;
     },
