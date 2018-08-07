@@ -1,11 +1,18 @@
 import { assert } from "chai";
 import { GameManager } from './GameManager';
+import { GameState } from './Gamestate';
 import { Player } from "./Player";
 import { PlayableCard, CardPosition } from "./PlayableCard";
 import { Cards, CardType, EnergyCard, GameStates } from "../api/collections";
 import { parsePokemon } from '../util/fileParsers';
 
 
+
+
+/* function fakeGameState(){
+      
+      let state = new GameStates();
+} */
 
 describe('generateDeck', function () {
       it('deck should be assigned to a player shuffled', function () {
@@ -209,14 +216,14 @@ describe('mulligan', function () {
             thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
             
             let result=GameManager.mulligan(7, thePlayer);
-  
+
             assert.equal(result, true);
             
-  
+
       });
-  });
-  
-  describe('mulligan', function () {
+});
+
+describe('mulligan', function () {
       it('at least one pokemon in hand is enough to avoid mulligan', function () {
             let thePlayer: Player = Player.constructor();
             let card1 = new PlayableCard(20);
@@ -232,14 +239,14 @@ describe('mulligan', function () {
             thePlayer.hand = [card1,card2,card3,card2,card2,card3, card3];
             
             let result=GameManager.mulligan(7, thePlayer);
-  
+
             assert.equal(result, false);
             
-  
+
       });
-  });
-  
-  describe('mulligan', function () {
+});
+
+describe('mulligan', function () {
       it('REGRESSION evolution is not considered to be playable card for mulligan determination', function () {
             let thePlayer: Player = Player.constructor();
             let card1 = new PlayableCard(20);
@@ -256,14 +263,14 @@ describe('mulligan', function () {
             thePlayer.hand = [card1,card2,card3,card2,card2,card3, card3];
             
             let result=GameManager.mulligan(7, thePlayer);
-  
+
             assert.equal(result, true);
             
-  
+
       });
-  });
-  
-  describe('addEnergyToCard', function () {
+});
+
+describe('addEnergyToCard', function () {
       it('card is added to energyCard array', function () {
             let card1 = new PlayableCard(20);
             let card2 = new PlayableCard(17);
@@ -272,14 +279,14 @@ describe('mulligan', function () {
             card2.card = { type: CardType.ENERGY } as any;     
                        
             GameManager.addEnergyToCard(card1, card2);
-  
+
             assert.equal(card1.currentEnergy[0].type, CardType.ENERGY);
             
-  
+
       });
-  });
-  
-  describe('noPokemonInDeck', function () {
+});
+
+describe('noPokemonInDeck', function () {
       it('correctly determines if there is not a single pokemon in entire deck', function () {
             let thePlayer: Player = Player.constructor();
             let card1 = new PlayableCard(20);
@@ -301,4 +308,14 @@ describe('mulligan', function () {
             let result=GameManager.noPokemonInDeck(thePlayer);
             assert.equal(result, true);
             });
-  });
+});
+
+
+
+
+
+
+
+
+
+

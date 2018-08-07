@@ -79,6 +79,7 @@ Meteor.methods({
         if(Meteor.isServer){
             let state: GameState = GameManager.getState();
             // sets loser if player can't draw on next turn or ai can't draw on current turn
+            GameManager.applyActiveStatuses(true);
             GameManager.checkForOutOfCards(state);
             if (!state.winner) {
                 AI.playTurn();
@@ -86,7 +87,7 @@ Meteor.methods({
                     GameManager.draw(true,1);
                 }
                 GameManager.resetRoundParams();
-                GameManager.applyActiveStatuses();
+                GameManager.applyActiveStatuses(false);
             }            
         }
     },
@@ -128,9 +129,18 @@ Meteor.methods({
             parseDeckFile(data.fileString, data.name);
         }
     },
+    dealAdditionalCards:function() {
+        return GameManager.dealAdditionalCards();
+    },
+    mulliganToHandle:function() {
+        return GameManager.mulliganToHandle();
+    },
+    reduceHandMulligan:function() {
+        return GameManager.reduceHandMulligan();
+    },
     appendCombatLog(log:string){
-        if(Meteor.isServer){
-            GameManager.appendCombatLog(log);
-        }
+            if(Meteor.isServer){
+                GameManager.appendCombatLog(log);
+            }
     }
-});
+    });
