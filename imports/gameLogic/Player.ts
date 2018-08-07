@@ -78,12 +78,12 @@ export class Player{
         const toDiscard: PlayableCard<Card>[] = [];
         switch (card.card.type) {
             case CardType.POKEMON:
-                toDiscard.push(card);
                 for (let energy of card.currentEnergy) {
                     toDiscard.push(energy);
                 }
+                card.currentEnergy = [];
+                toDiscard.push(card);
                 if (card === this.active) {
-                    toDiscard.push(this.active);
                     this.active = undefined;
                 }
                 else if (this.bench.find((element) => element.id === card.id)) {
