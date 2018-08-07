@@ -13,7 +13,6 @@ export class Player{
 
     // check all win conditions
     outOfPrize(): boolean {
-        console.log(this.prize.length);
         return this.prize.length === 0;
     }
     
