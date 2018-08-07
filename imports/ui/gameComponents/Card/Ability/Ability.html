@@ -27,80 +27,32 @@
         </div>
         {{#unless miniView}}
             {{#each action in this.ability.actions }}
-            <div class="row">
+            <!-- <div class="row"> -->
                 {{>Action action=action}}
-            </div>
+            <!-- </div> -->
             {{/each}}
         {{/unless}}
     </div>
 </Template>
 
 <Template name="Action">
-    <div class="col-sm-12">
-        {{topActionString action}}
-        <!-- <div style="word-wrap: break-word!important; overflow-wrap: break-word!important;">
-        {{#if action.amount}}
-            Apply {{action.amount}}&nbsp;
-        {{/if}}
-        {{#if action.type}}
-            {{action.type}}&nbsp;
-        {{/if}}
-        {{#if action.target}}
-            to {{action.target}}&nbsp;
-        {{/if}}
-        {{#if action.amountFunction}}
-            {{action.amountOperator}} by {{action.amountFunction}}&nbsp;
-        {{/if}}
-        {{#if action.amountFunctionTarget}}
-            of {{action.amountFunctionTarget}}&nbsp;
-        {{/if}}
-        {{#if action.choice}}
-            Based on{{action.choice}}&nbsp;
-        {{/if}}
-        {{#if action.source}}
-            Source: {{action.source}}&nbsp;
-        {{/if}}
-        {{#if action.status}}
-            Applies {{action.status}}&nbsp;
-        {{/if}}
-        {{#if action.specification}}
-            Specs {{action.specification}}&nbsp;
-        {{/if}}-->
-
+    <p class=" action">
+        {{{topActionString action}}}
         {{#if action.conditional}}
             {{#if action.conditional.condition}}
                {{action.conditional.condition}}
-                <div class="col-sm-12">{{> Action action=action.conditional.conditionAbility}}</div>
+               {{> Action action=action.conditional.conditionAbility}}
             {{/if}}
             {{#if action.conditional.healTarget}}
-                <div class="col-sm-6">if {{> Action action=action.healTarget}} was healed</div>
+                 {{> Action action=action.healTarget}} was healed
             {{/if}}
             {{#if action.conditional.true}}
-                <div class="col-sm-12">Success: {{> Action action=action.conditional.true}}</div>
+                Success: {{> Action action=action.conditional.true}}
             {{/if}}
             {{#if action.conditional.false}}
-                <div class="col-sm-12">Fail: {{> Action action=action.conditional.false}}</div>
+                Fail: {{> Action action=action.conditional.false}}
             {{/if}}
         {{/if}}
-
-        {{bottomActionString action}}
-<!--
-        {{#if action.filter}}
-            {{#if action.filter.category}}
-                {{action.filter.category}}&nbsp;
-            {{/if}}
-            {{#if action.filter.type}}
-                {{action.filter.type}}&nbsp;
-            {{/if}}
-            {{#if action.filter.top}}
-                    {{#if action.filter.top}}
-                        Top of Deck
-                    {{/if}}
-            {{/if}}
-            {{#if action.filter.count}}
-                {{action.filter.count}}&nbsp;
-            {{/if}}
-        {{/if}}
-        </div> -->
-    </div>
+        {{{bottomActionString action}}}
+    </p>
 </Template>

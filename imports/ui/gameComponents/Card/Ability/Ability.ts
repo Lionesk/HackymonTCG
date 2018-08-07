@@ -15,23 +15,40 @@ Template.Action.helpers({
         let str = "";
         if(action.choice){
             str = str.concat("Based on "+action.choice+" choice, apply ");
+        }else if(action.type ===AbilityType.CONDITIONAL){
+            str = str.concat("On ");
         }else{
             str = str.concat("Apply ");
         }
         if(action.source){
-            str = str.concat("from "+action.source+", ");
+            str = str.concat("from "+action.source+" ");
         }
         if(action.amount){
             str = str.concat(action.amount+" ");
         }
         if(action.type){
-            str = str.concat(action.type+" ");
+            let typestr ="";
+            switch(action.type){
+                case AbilityType.APPLY_STAT:
+                    typestr = "";
+                break;
+                case AbilityType.CONDITIONAL:
+                    typestr = "condition:";
+                break;
+                case AbilityType.DAMAGE:
+                    typestr = "damage";
+                break;
+                default:
+                    typestr = action.type;
+                break;
+            }
+            str = str.concat(typestr+" ");
         }
         if(action.status){
-            str = str.concat("apply "+action.status+" ");
+            str = str.concat("status "+action.status+" ");
         }
         if(action.target){
-            str = str.concat("to "+action.target+" ");
+            str = str.concat("to "+action.target.replace("-"," ")+" ");
         }        
         if(action.amountFunction){
             str = str.concat("by "+action.amountOperator+" by "+ action.amountFunction);
@@ -50,7 +67,7 @@ Template.Action.helpers({
             return str;
         }
         if(action.filter.category){
-            str = str.concat("Filter by "+action.filter.category+" ");
+            str = str.concat("filter by "+action.filter.category+" ");
         }
         if(action.filter.top){
             str = str.concat("on "+action.filter.top?"top":"" +" ");
