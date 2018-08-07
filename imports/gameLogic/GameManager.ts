@@ -179,7 +179,7 @@ export module GameManager {
     export function setWinner(winner: Player, gs?: GameState) {
         let state: GameState = gs === undefined ? getState() : gs;
         console.log(winner.id === state.player.id ? "Player has won": "AI has won");
-        state.winner = winner.id === state.player.id ? state.player : state.ai;
+        state.winner = state.winner || winner; // don't override winner if somehow multiple win conditions trigger in bizarre orders
         updateGameState(state);
     }
 
@@ -396,7 +396,34 @@ export module GameManager {
         updateGameState(state);
     }
 
+    function checkForDeath(state: GameState) {
+        const playerDiscardCount = state.player.discardDead();
+        const aiDiscardCount = state.ai.discardDead();
+        state.player.collectPrizeCard(aiDiscardCount);
+        state.ai.collectPrizeCard(playerDiscardCount);
+    }
+
+    export function checkForOutOfCards(state: GameState) {
+        if (state.ai.cantDraw()) {
+            setWinner(state.player, state);
+        } else if (state.player.cantDraw()) {
+            setWinner(state.ai, state);
+        }
+    }
+    
+    function checkForWinner(state: GameState) {
+        if (state.player.outOfPrize() || state.ai.noPokemon()) {
+            setWinner(state.player, state);
+        } else if (state.ai.outOfPrize() || state.player.noPokemon()) {            console.log("WINNER WINNER CHICKEN DINNER: ", state.ai.outOfPrize, state.player.noPokemon)
+            setWinner(state.ai, state);
+        }
+    }
+    
     function updateGameState(state: GameState) {
+        if (!state.isFirstRound && !state.isSecondRound && !state.winner) {
+            checkForDeath(state);
+            checkForWinner(state);
+        }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -545,6 +572,12 @@ export module GameManager {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.ai.hand.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.hand.forEach((card: PlayableCard) => {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.ai.deck.forEach((card: PlayableCard) => {

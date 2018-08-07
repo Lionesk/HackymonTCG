@@ -1,5 +1,4 @@
 import {PlayableCard} from './PlayableCard';
-import {GameManager} from "./GameManager";
 import { PokemonCard, Card, CardType } from '../api/collections';
 
 export class Player{
@@ -12,6 +11,21 @@ export class Player{
     deck: PlayableCard<Card>[];
     discardPile: PlayableCard<Card>[];
 
+    // check all win conditions
+    outOfPrize(): boolean {
+        console.log(this.prize.length);
+        return this.prize.length === 0;
+    }
+    
+    // check all lose conditions
+    cantDraw(): boolean {
+        return this.deck.length === 0;
+    }
+
+    noPokemon(): boolean {
+        return this.bench.length === 0 && !this.active;
+    }
+    
     constructor(player?: Player){
         this.id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         this.deck = [];
@@ -22,11 +36,43 @@ export class Player{
     }
 
     draw(amount: number = 1) {
-        if (this.deck.length < amount) {
-            return GameManager.setLoser(this);
+        if (this.deck.length > amount) {
+            this.hand = this.hand.concat(this.deck.slice(0, amount));
+            this.deck = this.deck.slice(amount);
+        } else {
+            this.hand = this.hand.concat(this.deck);
+            this.deck = [];
         }
-        this.hand = this.hand.concat(this.deck.slice(0, amount));
-        this.deck = this.deck.slice(amount);
+    }
+
+    /**
+     *
+     *
+     * @returns the numer of cards discarded
+     * @memberof Player
+     */
+    discardDead() {
+        let discardCount = 0;
+        if (this.active && this.active.isDead()) {
+            this.discard(this.active);
+            discardCount += 1;
+        }
+        // filter first since this alters the bench
+        const benchDead = this.bench.filter(card => card.isDead());
+        discardCount += benchDead.length;
+        benchDead.forEach(card => this.discard(card));
+
+        return discardCount;
+    }
+
+    collectPrizeCard(amount: number = 1) {
+        if (amount <= this.prize.length) {
+            this.hand = this.hand.concat(this.prize.slice(0, amount));
+            this.prize = this.prize.slice(amount);
+        } else {
+            this.hand = this.prize.concat(this.prize);
+            this.prize = [];
+        }
     }
 
     discard(card: PlayableCard<Card>) {

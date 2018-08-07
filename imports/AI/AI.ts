@@ -23,8 +23,6 @@ export module AI {
                     GameManager.placeActive(false, benchCard);
                 }else if(handCard){
                     GameManager.placeActive(false, handCard);
-                }else{
-                    //TODO:AI lose
                 }
             }
 
