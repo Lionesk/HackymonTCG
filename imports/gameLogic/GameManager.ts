@@ -161,10 +161,14 @@ export module GameManager {
         let state: GameState = gs || getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         player.draw(n);
-        if (humanPlayer) {
-            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
-        } else {
-            state.combatLog.push("AI have drawn a card");
+        if(!(state.isFirstRound||state.isSecondRound)){
+            if (humanPlayer) {
+                for(let i=n;i>0;i--){
+                    state.combatLog.push("You've drawn " + player.hand[player.hand.length - i].card.name);
+                }
+            } else {
+                state.combatLog.push("AI have "+n+" drawn a card(s)");
+            }
         }
         updateGameState(state);
     }
