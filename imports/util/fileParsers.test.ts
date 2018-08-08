@@ -180,7 +180,7 @@ describe('parseDeckFile', function () {
 		Decks.remove({"userid":"test"});
 	});
 
-     it('deck should be inserted into the db', function() {
+     it('REGRESSION deck should be inserted into the db', function() {
     
 let data="25\n51\n50";
 let name="testDeck";
@@ -191,6 +191,8 @@ let id="test";
    let deck=Decks.find({"userid":id, "name":name}).fetch()[0];
 
   assert.equal(deck.deckcards[0], 25);
+  assert.equal(deck.deckcards[1], 51);
+  assert.equal(deck.deckcards[2], 50);
   
     
       });
@@ -222,7 +224,7 @@ describe('parseAbility', function () {
 		Decks.remove({"userid":"test"});
 	});
 
-     it('ability should be parsed (heal type)', function() {
+     it('REGRESSION ability should be parsed (heal type)', function() {
     
 
    let result=parseAbility("heal:target:choice:your:30");
