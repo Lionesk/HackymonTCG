@@ -7,3 +7,6 @@
     margin:1px;
     padding:6px;
 } */
+body{
+    overflow-x: hidden;
+}

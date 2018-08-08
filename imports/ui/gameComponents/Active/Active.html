@@ -1,8 +1,7 @@
-<Template name='Active' class="container">
+<Template name='Active'>
         {{> ChoiceModal choice=getChoices playableCard=active}}
-    <div class="active" >
+    <div class="active row" >
         {{#if isCardDefined (active)}}
-            <div class="row">
                 {{#if active.statuses.length}}
                 <div class="col-sm-3">
                 </div>                
@@ -33,7 +32,6 @@
                 </div>
                 {{/unless}}
                 {{/unless}}
-            </div>
         {{/if}}
     </div>
 </Template>

@@ -104,11 +104,10 @@ export class MoveStateController{
     private static evolvePokemon(ms:MoveState){
         console.log("EVOL: "+ms.selectedEvolutionPokemonCard +"   " +ms.selectedPokemonCard)
         if(ms.selectedEvolutionPokemonCard && ms.selectedPokemonCard){
-            
             if(ms.selectedEvolutionPokemonCard.card.evolution !==  ms.selectedPokemonCard.card.name){
+                this.resetMoveState(ms);
                 return;
             }
-            
             else{
                 Meteor.call("evolvePokemon", true, ms.selectedEvolutionPokemonCard, ms.selectedPokemonCard);
                 this.resetMoveState(ms);

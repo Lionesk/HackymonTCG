@@ -4,11 +4,11 @@
             {{#if isCardDefined (playableCard)}}
                 {{#if ifMiniAndHidden}}
                     <div class="col-sm-1 hand-card " >
-                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
+                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed isFirstRound=isFirstRound isSecondRound=isSecondRound}}
                     </div>
                 {{else}}
                     <div class="col-sm-2 hand-card " >
-                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed}}
+                        {{> Card playableCard=playableCard hidden = hidden energyPlayed=energyPlayed isFirstRound=isFirstRound isSecondRound=isSecondRound}}
                     </div>
                 {{/if}}
             {{/if}}

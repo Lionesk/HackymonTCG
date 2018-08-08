@@ -51,6 +51,21 @@ export async function executeAbility(ability:any, abilityIndex:number,playableCa
                     // choices["hand"]=gs.player.hand;
                     choices["active"]=[gs.player.active];
                     break;
+                    case Target.YOUR:
+                    choices["bench"]=gs.player.bench;
+                    choices["active"]=[gs.player.active];
+                    break;
+                    case Target.THEM:
+                    choices["bench"]=gs.ai.bench;
+                    choices["active"]=[gs.ai.active];
+                    break;                    case Target.YOUR:
+                    choices["bench"]=gs.player.bench;
+                    choices["active"]=[gs.player.active];
+                    break;
+                    case Target.YOU:
+                    choices["bench"]=gs.ai.bench;
+                    choices["active"]=[gs.ai.active];
+                    break;
             }
             Session.set("ability",{
                 "ability":ability,
