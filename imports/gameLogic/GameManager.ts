@@ -1,10 +1,10 @@
 import { Player } from "./Player";
-import { PlayableCard, CardPosition } from "./PlayableCard";
+import { PlayableCard } from "./PlayableCard";
 import { Cards, CardType, Decks, EnergyCard, GameStates, AbilityType } from "../api/collections";
 import { Deck } from "../api/collections/Deck";
 import { GameState } from "./GameState";
 import { AbilityAction, Abilities, Status } from "../api/collections/abilities";
-import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
+import { Cost, AbilityReference, EnergyCat, TrainerCard, PokemonCard, Card } from "../api/collections/Cards";
 import { createAbility } from "./abilities/AbilityFactory";
 
 export module GameManager {
@@ -59,9 +59,7 @@ export module GameManager {
         let playerDeck: Deck = Decks.find({ "_id": playerDeckId }).fetch()[0];
         let aiDeck: Deck = Decks.find({ "_id": aiDeckId }).fetch()[0];
         state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
-        state.player.inPlay = state.player.deck.slice(); // copy actual deck
         state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
-        state.ai.inPlay = state.ai.deck.slice(); // copy actual deck
 
         updateGameState(state);
 
@@ -159,21 +157,14 @@ export module GameManager {
         return newDeck;
     }
 
-    export function draw(humanPlayer: boolean, n?: number, gs?: GameState) {
-        let state: GameState = gs === undefined ? getState() : gs;
+    export function draw(humanPlayer: boolean, n: number = 1, gs?: GameState) {
+        let state: GameState = gs || getState();
         let player: Player = humanPlayer ? state.player : state.ai;
-        if(n === undefined){
-            n = 1;
-        }
-        drawPlayer(player, n);
-        if(!(state.isFirstRound||state.isSecondRound)){
-            if (humanPlayer) {
-                for(let i=n;i>0;i--){
-                    state.combatLog.push("You've drawn " + player.hand[player.hand.length - i].card.name);
-                }
-            } else {
-                state.combatLog.push("AI have "+n+" drawn a card(s)");
-            }
+        player.draw(n);
+        if (humanPlayer) {
+            state.combatLog.push("You've drawn " + player.hand[player.hand.length - 1].card.name);
+        } else {
+            state.combatLog.push("AI have drawn a card");
         }
         updateGameState(state);
     }
@@ -192,7 +183,7 @@ export module GameManager {
     export function setWinner(winner: Player, gs?: GameState) {
         let state: GameState = gs === undefined ? getState() : gs;
         console.log(winner.id === state.player.id ? "Player has won": "AI has won");
-        state.winner = winner.id === state.player.id ? state.player : state.ai;
+        state.winner = state.winner || winner; // don't override winner if somehow multiple win conditions trigger in bizarre orders
         updateGameState(state);
     }
 
@@ -217,57 +208,65 @@ export module GameManager {
         updateGameState(state);
     }
 
-    export function evolve(humanPlayer: boolean, toEvolve: PlayableCard, evolution: PlayableCard) {
+    export function evolve(humanPlayer: boolean, toEvolve: PlayableCard<PokemonCard>, evolution: PlayableCard<PokemonCard>) {
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
+        if (toEvolve.card.type !== CardType.POKEMON || evolution.card.type !== CardType.POKEMON) {
+            throw new Error("Invalid cards for evolution")
+        }
+        
         if (isPokemon(toEvolve) && isPokemon(evolution)) {
-            toEvolve = mapCardCopy(player, toEvolve);
-            evolution = mapCardCopy(player, evolution);
-            if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) ||
-                player.active === toEvolve)) {
-                if (evolution.card.evolution === toEvolve.card.name) {
-                    discard(player,new PlayableCard(100,toEvolve.card),true)
-                    toEvolve.card = evolution.card;
-                    removeFromHand(player, evolution)
-                    if(humanPlayer){
-                        state.combatLog.push("You evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
-                    }else{
-                        state.combatLog.push("AI evolved "+toEvolve.card.name+ " to "+ evolution.card.name);
-                    }
+            toEvolve = mapCardCopy(player, toEvolve) as PlayableCard<PokemonCard>;
+            evolution = mapCardCopy(player, evolution) as PlayableCard<PokemonCard>;
+            // TODO find way to discard card prior to evolution
+            if (player.hand.includes(evolution) && (player.bench.includes(toEvolve) || player.active === toEvolve)) {
+                toEvolve.evolve(evolution);
+                removeFromHand(player, evolution);
+                if (humanPlayer) {
+                    state.combatLog.push("You evolved " + toEvolve.card.name + " to " + evolution.card.name);
+                } else {
+                    state.combatLog.push("AI evolved " + toEvolve.card.name + " to " + evolution.card.name);
                 }
+
             }
         }
         updateGameState(state);
     }
 
-    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard, energy: PlayableCard) {
+    export function addEnergy(humanPlayer: boolean, pokemon: PlayableCard<PokemonCard>, energy: PlayableCard<EnergyCard>) {
         let state = getState();
+        if (pokemon.card.type !== CardType.POKEMON || energy.card.type != CardType.ENERGY) {
+            throw new Error("invalid cards for apply energy");
+        }
+        
         if (humanPlayer && state.energyPlayed) {
             return;
         }
         let player: Player = humanPlayer ? state.player : state.ai;
         if (isPokemon(pokemon) && isEnergy(energy)) {
-            pokemon = mapCardCopy(player, pokemon);
-            energy = mapCardCopy(player, energy);
+            pokemon = mapCardCopy(player, pokemon) as PlayableCard<PokemonCard>;
+            energy = mapCardCopy(player, energy) as PlayableCard<EnergyCard>;
             //Pokemon must either be active or on the bench
-            addEnergyToCard(pokemon, energy);
+            pokemon.addEnergy(energy);
             removeFromHand(player, energy);
             if (humanPlayer) {
                 state.energyPlayed = true;
             }
-            if(humanPlayer){
-                state.combatLog.push("You added "+energy.card.name+ " energy to "+ pokemon.card.name);
-            }else{
-                state.combatLog.push("AI added "+energy.card.name+ " energy to "+ pokemon.card.name);
-            }
+            
+            state.combatLog.push(`${humanPlayer ? 'You' : 'AI'} added ${energy.card.name} energy to ${pokemon.card.name}`);
+            
+            updateGameState(state);
         }
-        updateGameState(state);
     }
 
-    export function placeActive(humanPlayer: boolean, card: PlayableCard) {
+    export function placeActive(humanPlayer: boolean, card: PlayableCard<PokemonCard>) {
+        if (card.card.type !== CardType.POKEMON) {
+            throw new Error("Invalid card type for place active")
+        }
+        
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
-        card = mapCardCopy(player, card);
+        card = mapCardCopy(player, card) as PlayableCard<PokemonCard>;
         if (!player.active && isPokemon(card)) {
             //Only possible if there is no active Pokemon and the card is a Pokemon type
             player.active = card;
@@ -283,14 +282,18 @@ export module GameManager {
         updateGameState(state);
     }
 
-    export function placeBench(humanPlayer: boolean, card: PlayableCard) {
+    export function placeBench(humanPlayer: boolean, card: PlayableCard<PokemonCard>) {
+        if (card.card.type !== CardType.POKEMON) {
+            throw new Error("Invlid card type for benching");
+        }
+        
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         if (!player.active) {
             placeActive(true, card);
             return;
         }
-        let pokemonCard = mapCardCopy(player, card);
+        let pokemonCard = mapCardCopy(player, card) as PlayableCard<PokemonCard>;
         if (player.bench.length < 5 && isPokemon(pokemonCard)) {
             //Only possible if player has less than 5 Pokemon on the bench
             // card.position = CardPosition.BENCH;
@@ -312,7 +315,7 @@ export module GameManager {
      */
     function removeFromHand(player: Player, card: PlayableCard) {
         player.hand = player.hand.filter(c => c !== card);
-        player.hand = cleanHand(player.hand);
+        player.hand = cleanHand(player.hand); // not needed?
     }
 
     function removeFromBench(player: Player, card: PlayableCard) {
@@ -330,18 +333,21 @@ export module GameManager {
      * @param {PlayableCard} card
      * @returns {PlayableCard}
      */
-    function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean) {
+    function mapCardCopy(player: Player, card: PlayableCard, hand?: boolean): PlayableCard {
         let playableCard: PlayableCard | undefined;
         if (player.active && player.active.id === card.id) {
+            if (card.card.type != CardType.POKEMON) {
+                throw new Error("attempting to fetch active from non pokemon");
+            }
             return player.active;
         }
-        playableCard = player.hand.find(function (element) {
+        playableCard = player.hand.find((element: PlayableCard) => {
             return element.id === card.id
         });
         if (playableCard !== undefined) {
             return playableCard;
         }
-        playableCard = player.bench.find(function (element) {
+        playableCard = player.bench.find((element) => {
             return element.id === card.id
         });
         if (!playableCard) {
@@ -360,9 +366,9 @@ export module GameManager {
         return playableCard.card.type === CardType.ENERGY;
     }
 
-    export function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard) {
+    export function addEnergyToCard(pokemonCard: PlayableCard, energyCard: PlayableCard<EnergyCard>) {
         console.log('Adding ' + energyCard.card.name + ' energy to ' + pokemonCard.card.name);
-        pokemonCard.currentEnergy.push(energyCard.card);
+        pokemonCard.currentEnergy.push(energyCard);
     }
 
     function cleanHand(hand: PlayableCard[]) {
@@ -391,45 +397,38 @@ export module GameManager {
      */
     function discard(player: Player, card: PlayableCard, preserveCard?:boolean) {
         let state = getState();
-        //Making an array of cards to discard based on number of energy cards and evolutions on card
-        let toDiscard: PlayableCard[] = [];
-        switch (card.card.type) {
-            case CardType.POKEMON:
-                toDiscard.push(card);
-                //Playable cards need (unique) IDs and since we get rid of the IDs these cards previously had, we
-                //are making them new ones with this counter
-                let discardIDCounter: number = card.id * 10;
-                for (let energy of card.currentEnergy) {
-                    toDiscard.push(new PlayableCard(discardIDCounter++, energy))
-                }
-                if (card === player.active) {
-                    toDiscard.push(new PlayableCard(discardIDCounter++, player.active.card))
-                    if(!preserveCard){
-                       player.active = undefined;
-                    }
-                }
-                else if (player.bench.find(function (element) { return element.id === card.id })) {
-                    if(!preserveCard){
-                        removeFromBench(player, card);
-                    }
-                }
-                
-                break;
-            case CardType.TRAINER:
-                toDiscard.push(card);
-                if(!preserveCard){
-                    removeFromHand(player, card);
-                }
-                break;
-            default:
-                console.log("Invalid card");
-                return;
-        }
-        player.discard = player.discard.concat(toDiscard);
+        player.discard(card);        
         updateGameState(state);
     }
 
+    function checkForDeath(state: GameState) {
+        const playerDiscardCount = state.player.discardDead();
+        const aiDiscardCount = state.ai.discardDead();
+        state.player.collectPrizeCard(aiDiscardCount);
+        state.ai.collectPrizeCard(playerDiscardCount);
+    }
+
+    export function checkForOutOfCards(state: GameState) {
+        if (state.ai.cantDraw()) {
+            setWinner(state.player, state);
+        } else if (state.player.cantDraw()) {
+            setWinner(state.ai, state);
+        }
+    }
+    
+    function checkForWinner(state: GameState) {
+        if (state.player.outOfPrize() || state.ai.noPokemon()) {
+            setWinner(state.player, state);
+        } else if (state.ai.outOfPrize() || state.player.noPokemon()) {            console.log("WINNER WINNER CHICKEN DINNER: ", state.ai.outOfPrize, state.player.noPokemon)
+            setWinner(state.ai, state);
+        }
+    }
+    
     function updateGameState(state: GameState) {
+        if (!state.isFirstRound && !state.isSecondRound && !state.winner) {
+            checkForDeath(state);
+            checkForWinner(state);
+        }
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
@@ -452,7 +451,7 @@ export module GameManager {
         let didPokemonAttack = true;
         switch (source.card.type) {
             case CardType.POKEMON:
-                if (ability.cost && checkCost(ability.cost, source.currentEnergy as EnergyCard[])) {
+                if (ability.cost && checkCost(ability.cost, source.currentEnergy as PlayableCard<EnergyCard>[])) {
                     try {
                         castAbility(state, ability, player, opponent, selectedTarget);
                     } catch (e) {
@@ -480,10 +479,10 @@ export module GameManager {
         }
     }
 
-    function checkCost(abilityCost: Cost, cardEnergy: EnergyCard[]): boolean {
+    function checkCost(abilityCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]): boolean {
         const available: Cost = cardEnergy.reduce<Cost>((acc, element) => {
             acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
-            acc[element.category] = (acc[element.category] || 0) + 1;
+            acc[element.card.category] = (acc[element.card.category] || 0) + 1;
 
             return acc;
         }, {});
@@ -500,7 +499,7 @@ export module GameManager {
     function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
-                const executableAbility = createAbility(state, ability, player, opponent);
+                const executableAbility = createAbility(ability, player, opponent);
                 executableAbility.execute(selectedTarget);
                 state.combatLog.push(executableAbility.toString()); // drop this into an action log
             } catch (e) {
@@ -509,7 +508,7 @@ export module GameManager {
         });
     }
 
-    function removeCost(retreatCost: Cost, cardEnergy: EnergyCard[]) {
+    function removeCost(retreatCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]) {
         let costEnergy: EnergyCat[] = [];
         let colorlessCount = 0;
         Object.keys(retreatCost).forEach((costKey: EnergyCat) => {
@@ -525,7 +524,7 @@ export module GameManager {
         console.log(cardEnergy);
         costEnergy.forEach((costE) => {
             cardEnergy.forEach((cardE, index) => {
-                if (cardE.category === costE) {
+                if (cardE.card.category === costE) {
                     this.splice(index, 1);
                 }
             })
@@ -538,15 +537,15 @@ export module GameManager {
         return cardEnergy;
     }
 
-    export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard) {
+    export function retreatPokemon(humanPlayer: boolean, pokemonPlayableCard: PlayableCard<PokemonCard>) {
         console.log("RETREAT");
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         if (!player.active || !player.active.card.retreatCost) {
             throw new Error("no active to retreat");
         }
-        if (checkCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[])) {
-            player.active.currentEnergy = removeCost(player.active.card.retreatCost, player.active.currentEnergy as EnergyCard[]);
+        if (checkCost(player.active.card.retreatCost, player.active.currentEnergy as PlayableCard<EnergyCard>[])) {
+            player.active.currentEnergy = removeCost(player.active.card.retreatCost, player.active.currentEnergy as PlayableCard<EnergyCard>[]);
             let active = new PlayableCard(player.active.id, player.active.card);
             active.currentEnergy = player.active.currentEnergy;
             active.statuses=[];
@@ -578,6 +577,12 @@ export module GameManager {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.player.bench.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.ai.hand.forEach((card: PlayableCard) => {
+            Object.setPrototypeOf(card, PlayableCard.prototype);
+        });
+        state.player.hand.forEach((card: PlayableCard) => {
             Object.setPrototypeOf(card, PlayableCard.prototype);
         });
         state.ai.deck.forEach((card: PlayableCard) => {

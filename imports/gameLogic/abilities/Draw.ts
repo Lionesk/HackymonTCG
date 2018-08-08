@@ -10,7 +10,7 @@ export class Draw implements ExecutableAbilityAction {
   playing: Player;
 
   
-  constructor(state: GameState, data: AbilityAction, playing: Player) {
+  constructor(data: AbilityAction, playing: Player) {
     if (data.amount === undefined) { //  could be 0
       throw new Error("Cannot draw no amount");
     }

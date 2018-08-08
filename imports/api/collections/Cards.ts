@@ -56,6 +56,7 @@ export interface PokemonCard extends Card {
     retreatCost: Cost;
     evolution?: string;
     abilities: AbilityReference[];
+    healthPoints: number;
 }
 
 export interface TrainerCard extends Card {
