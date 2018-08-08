@@ -304,7 +304,7 @@ describe('checkCost', function () {
                   [EnergyCat.FIGHTING]: 1
             };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             let result= GameManager.checkCost(aCost, energyArr);
@@ -320,17 +320,17 @@ describe('checkCost', function () {
                   [EnergyCat.COLORLESS]: 1,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard>(1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.COLORLESS
-            };
+            });
 
             energyArr.push(aCard);
             let result= GameManager.checkCost(aCost, energyArr);
@@ -346,17 +346,17 @@ describe('checkCost', function () {
                   [EnergyCat.FIGHTING]: 1,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             let result= GameManager.checkCost(aCost, energyArr);
@@ -373,7 +373,7 @@ describe('checkCost', function () {
                   [EnergyCat.FIGHTING]: 1
             };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             let result= GameManager.checkCost(aCost, energyArr);
@@ -389,17 +389,17 @@ describe('checkCost', function () {
                   [EnergyCat.COLORLESS]: 1,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard>(1,{
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             let result= GameManager.checkCost(aCost, energyArr);
@@ -415,17 +415,17 @@ describe('checkCost', function () {
                   [EnergyCat.COLORLESS]: 3,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             let result= GameManager.checkCost(aCost, energyArr);
@@ -442,23 +442,23 @@ describe('removeCost', function () {
                   [EnergyCat.COLORLESS]: 1,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             energyArr.push(aCard);
             let result= GameManager.removeCost(aCost, energyArr);
 
-            assert.equal(result[0].index, 17);
+            assert.equal(result[0].card.index, 17);
             });
 });
 
@@ -469,17 +469,17 @@ describe('removeCost', function () {
                   [EnergyCat.COLORLESS]: 1,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             energyArr.push(aCard);
@@ -496,17 +496,17 @@ describe('removeCost', function () {
                   [EnergyCat.COLORLESS]: 2,
                               };
             //create energyArr
-            let energyArr: EnergyCard[];
+            let energyArr: PlayableCard<EnergyCard>[];
             energyArr=[];
             
             //create Energy cards
-            let aCard: EnergyCard;
-            aCard = {
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
                   name: "Test",
                   index: 17,
                   type: CardType.ENERGY,
                   category: EnergyCat.PSYCHIC
-            };
+            });
 
             energyArr.push(aCard);
             energyArr.push(aCard);
