@@ -32,7 +32,7 @@ export async function executeAbility(ability:any, abilityIndex:number,playableCa
                     choices["aiBench"]=gs.ai.bench;
                     break;
                     case Target.OPPONENT_DISCARD:
-                    choices["aiDiscard"]=gs.ai.discard;
+                    choices["aiDiscard"]=gs.ai.discardPile;
                     break;
                     case Target.OPPONENT_DECK:
                     choices["aiDeck"]=gs.ai.deck;
@@ -41,7 +41,7 @@ export async function executeAbility(ability:any, abilityIndex:number,playableCa
                     choices["bench"]=gs.player.bench;
                     break;
                     case Target.YOUR_DISCARD:
-                    choices["discard"]=gs.player.discard;
+                    choices["discard"]=gs.player.discardPile;
                     break;
                     case Target.YOUR_DECK:
                     choices["deck"]=gs.player.deck;

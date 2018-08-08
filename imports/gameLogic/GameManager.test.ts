@@ -2,8 +2,8 @@ import { assert } from "chai";
 import { GameManager } from './GameManager';
 import { GameState } from './Gamestate';
 import { Player } from "./Player";
-import { PlayableCard, CardPosition } from "./PlayableCard";
-import { Cards, CardType, EnergyCard, GameStates } from "../api/collections";
+import { PlayableCard } from "./PlayableCard";
+import { Cards, CardType, EnergyCard, GameStates, PokemonCard } from "../api/collections";
 import { parsePokemon } from '../util/fileParsers';
 import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
 
@@ -56,17 +56,10 @@ describe('placePrizeCards', function () {
             card1.id = 20;
             card2.id = 17;
             card3.id = 34;
-            card1.currentPosition = CardPosition.PRIZE;
-            card2.currentPosition = CardPosition.PRIZE;
-            card3.currentPosition = CardPosition.PRIZE;
             let deck = [card1, card2, card3];
             let prizes: PlayableCard[]=[];
             thePlayer.deck = deck;
             thePlayer.prize = prizes;
-            thePlayer.inPlay = [card1,card2,card3,card1,card2,card3];
-            thePlayer.deckIndex=0;
-
-            console.log(thePlayer.inPlay);
 
             GameManager.placePrizeCards(thePlayer);
 
@@ -80,25 +73,15 @@ describe('placePrizeCards', function () {
 describe('drawPlayer', function () {
       it('draw cards verify correctness of hand and deck', function () {
             let thePlayer: Player = Player.constructor();
-            let card1 = PlayableCard.constructor();
-            let card2 = PlayableCard.constructor();
-            let card3 = PlayableCard.constructor();
-            let card4 = PlayableCard.constructor();
-            card1.id = 20;
-            card2.id = 17;
-            card3.id = 34;
-            card4.id = 4;
-            card1.currentPosition = CardPosition.PRIZE;
-            card2.currentPosition = CardPosition.PRIZE;
-            card3.currentPosition = CardPosition.PRIZE;
+            let card1 = new PlayableCard(20);
+            let card2 = new PlayableCard(17);
+            let card3 = new PlayableCard(34);
+            let card4 = new PlayableCard(4);
             let deck = [card4, card1, card2, card3];
             let hands: PlayableCard[]=[];
             thePlayer.deck = deck;
             thePlayer.hand = hands;
-            thePlayer.inPlay = [card1,card2,card3,card1,card2,card3];
-            thePlayer.deckIndex=0;
 
-            console.log(thePlayer.inPlay);
 
             GameManager.drawPlayer(thePlayer, 3);
 
@@ -274,14 +257,14 @@ describe('mulligan', function () {
 describe('addEnergyToCard', function () {
       it('card is added to energyCard array', function () {
             let card1 = new PlayableCard(20);
-            let card2 = new PlayableCard(17);
+            let card2 = new PlayableCard<EnergyCard>(17);
                         
             card1.card = { type: CardType.POKEMON } as any;
             card2.card = { type: CardType.ENERGY } as any;     
                        
             GameManager.addEnergyToCard(card1, card2);
 
-            assert.equal(card1.currentEnergy[0].type, CardType.ENERGY);
+            assert.equal(card1.currentEnergy[0].card.type, CardType.ENERGY);
             
 
       });

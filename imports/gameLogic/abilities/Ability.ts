@@ -9,7 +9,7 @@ export interface ExecutableAbilityAction {
   execute(target?: AbilityTarget, index?: number): void;
 }
 
-export function parseAmount(state: GameState, action: AbilityAction, playing: Player, opponent: Player): number {
+export function parseAmount(action: AbilityAction, playing: Player, opponent: Player): number {
   if (!action.amount) {
     throw new Error("action has no amount");
   }
@@ -19,14 +19,14 @@ export function parseAmount(state: GameState, action: AbilityAction, playing: Pl
     }
     switch (action.amountFunction) {
       case AbilityFunction.COUNT:
-        return parseCount(state, action.amountFunctionTarget, playing, opponent) * action.amount;
+        return parseCount(action.amountFunctionTarget, playing, opponent) * action.amount;
     }
   }
 
   return action.amount;
 }
 
-function parseCount(state: GameState, target: Target, playing: Player, opponent: Player) {
+function parseCount(target: Target, playing: Player, opponent: Player) {
   const parsedTarget = parseTarget(target, playing, opponent);
   return Array.isArray(parsedTarget) ? parsedTarget.length : 1;
 }

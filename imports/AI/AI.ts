@@ -2,7 +2,7 @@ import {PlayableCard} from "../gameLogic/PlayableCard";
 import {Cards, CardType, Decks, EnergyCard, GameStates, Status} from "../api/collections";
 import {GameState} from "../gameLogic/GameState";
 import {GameManager} from "../gameLogic/GameManager";
-import { AbilityReference } from "../api/collections/Cards";
+import { AbilityReference, PokemonCard } from "../api/collections/Cards";
 
 export module AI {
 
@@ -23,8 +23,6 @@ export module AI {
                     GameManager.placeActive(false, benchCard);
                 }else if(handCard){
                     GameManager.placeActive(false, handCard);
-                }else{
-                    //TODO:AI lose
                 }
             }
 
@@ -56,13 +54,13 @@ export module AI {
         }
         state = GameManager.getState();
         let energyCard = findEnergy(state.ai.hand);
-        if(state.ai.active && energyCard !== undefined) {
+        if(state.ai.active && energyCard) {
             if(state.ai.active.currentEnergy.length < 4){
                 GameManager.addEnergy(false, state.ai.active, energyCard);
             }
             else{
                 for(let card of state.ai.bench){
-                    if(card !== undefined && card.currentEnergy.length < 3){
+                    if(card && card.currentEnergy.length < 3){
                         GameManager.addEnergy(false, card, energyCard);
                         break;
                     }
@@ -88,7 +86,7 @@ export module AI {
         console.log('Ending turn');
     }
 
-   export function findPokemon(array: PlayableCard[], basic?: boolean) {
+    export function findPokemon(array: PlayableCard[], basic?: boolean): PlayableCard<PokemonCard> | null {
         for(let card of array){
             try {
                 if (card.card.type === CardType.POKEMON) {
@@ -97,7 +95,7 @@ export module AI {
                             continue
                         }
                     }
-                    return card;
+                    return card as PlayableCard<PokemonCard>;
                 }
             }
             catch(err) {
@@ -107,14 +105,14 @@ export module AI {
         return null;
     }
 
-    export function findEnergy(hand: PlayableCard[]) {
+    export function findEnergy(hand: PlayableCard[]): PlayableCard<EnergyCard> | null {
         for(let card of hand){
             if(card.card.type === CardType.ENERGY){
                 console.log('Found an energy card');
-                return card;
+                return card as PlayableCard<EnergyCard>;
             }
         }
         console.log('Did not find an enery card');
-        return undefined
+        return null;
     }
 }

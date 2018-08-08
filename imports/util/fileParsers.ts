@@ -30,7 +30,7 @@ import{
 
 export function parseCardString(data: string): void {
   Cards.remove({}); // drop all cards
-  
+  data.replace("\r", "");
   // data.replace("#\n", "");
   let ctr = 1;
   data.split("\n").forEach((cardStr: string) => {
