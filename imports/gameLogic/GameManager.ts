@@ -503,9 +503,9 @@ export module GameManager {
     function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard ) {
         let abilityLog="";
         if(humanPlayer){
-            abilityLog="Your " +cardName +" caused: ";
+            abilityLog="Your " +cardName +": ";
         }else{
-            abilityLog="AI's " +cardName +" caused: ";
+            abilityLog="AI " +cardName +": ";
         }
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
