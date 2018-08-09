@@ -63,7 +63,7 @@ export enum AbilityFunction {
 export enum Condition {
   FLIP = "flip",
   ABILITY = "ability",
-  HEAL = "heal",
+  HEAL = "healed",
   CHOICE = "choice",
 }
 
@@ -84,8 +84,8 @@ export interface AbilityAction {
   choice?: Choice;
   status?: Status;
   conditional?: {
-    true?: AbilityAction;
-    false?: AbilityAction;
+    true?: AbilityAction[];
+    false?: AbilityAction[];
     condition?: Condition;
     conditionAbility?: AbilityAction;
     healTarget?: Target;

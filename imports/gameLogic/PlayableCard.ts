@@ -6,6 +6,7 @@ export class PlayableCard<T extends Card = Card> {
     currentDamage:number;
     currentEnergy: PlayableCard<EnergyCard>[];
     statuses: Status[];
+    under?: PlayableCard<PokemonCard>
 
     // return true if damage causes knockout
     damage(amount: number) {
@@ -32,6 +33,8 @@ export class PlayableCard<T extends Card = Card> {
             throw new Error("cannot evolve non pokemon");
         }
         if (evolution.card.evolution === this.card.name) {
+            this.under = new PlayableCard<PokemonCard>(this.id, this.card as PokemonCard);
+            this.id = evolution.id;
             (this.card as PokemonCard) = evolution.card;
         } else {
             throw new Error("Invalid evolution target");

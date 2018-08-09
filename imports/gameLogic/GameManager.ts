@@ -424,7 +424,7 @@ export module GameManager {
     function checkForWinner(state: GameState) {
         if (state.player.outOfPrize() || state.ai.noPokemon()) {
             setWinner(state.player, state);
-        } else if (state.ai.outOfPrize() || state.player.noPokemon()) {            console.log("WINNER WINNER CHICKEN DINNER: ", state.ai.outOfPrize, state.player.noPokemon)
+        } else if (state.ai.outOfPrize() || state.player.noPokemon()) {
             setWinner(state.ai, state);
         }
     }
@@ -504,9 +504,9 @@ export module GameManager {
     function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard ) {
         let abilityLog="";
         if(humanPlayer){
-            abilityLog="Your " +cardName +" caused: ";
+            abilityLog="Your " +cardName +": ";
         }else{
-            abilityLog="AI's " +cardName +" caused: ";
+            abilityLog="AI " +cardName +": ";
         }
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
@@ -626,7 +626,7 @@ export module GameManager {
         player.shuffle()
 
         console.log(name + ' drawing cards.');
-        drawPlayer(player, 7);
+        player.draw(7);
         console.log("Mulligan happened" + "Deck size" + player.deck.length);
     }
     //mulligan logic functions from here
@@ -648,7 +648,7 @@ export module GameManager {
             let msg = "Human draws " + extraCardNum + " additional cards" +
             "due to ai mulligans";
             console.log(msg);
-            drawPlayer(state.player, extraCardNum);
+            state.player.draw(extraCardNum);
             updateGameState(state);
             console.log("Human hand " + state.player.hand);
             return msg;
@@ -659,7 +659,7 @@ export module GameManager {
            let msg = "Ai draws " + extraCardNum + " additional cards" +
            "due to human mulligans";
             console.log(msg);
-            drawPlayer(state.ai, extraCardNum);
+            state.ai.draw(extraCardNum);
             updateGameState(state);
             console.log("AI hand " + state.ai.hand);
             return msg;
