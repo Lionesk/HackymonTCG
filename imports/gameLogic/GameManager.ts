@@ -483,7 +483,7 @@ export module GameManager {
         }
     }
 
-    function checkCost(abilityCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]): boolean {
+    export function checkCost(abilityCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]): boolean {
         const available: Cost = cardEnergy.reduce<Cost>((acc, element) => {
             acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
             acc[element.card.category] = (acc[element.card.category] || 0) + 1;
@@ -512,7 +512,7 @@ export module GameManager {
         });
     }
 
-    function removeCost(retreatCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]) {
+    export function removeCost(retreatCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]) {
         let costEnergy: EnergyCat[] = [];
         let colorlessCount = 0;
         Object.keys(retreatCost).forEach((costKey: EnergyCat) => {
