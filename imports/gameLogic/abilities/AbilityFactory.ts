@@ -26,6 +26,8 @@ export function createAbility(abilityData: AbilityAction, playing: Player, oppon
       return new ApplyStat(abilityData, playing, opponent);
     case AbilityType.SEARCH:
       return new Search(abilityData, playing, opponent);
+    case AbilityType.SHUFFLE:
+      return new Search(abilityData, playing, opponent);
     default:
       throw new Error(`Unsuported ability type ${abilityData.type}`);
   }

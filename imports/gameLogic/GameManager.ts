@@ -60,6 +60,11 @@ export module GameManager {
         let aiDeck: Deck = Decks.find({ "_id": aiDeckId }).fetch()[0];
         state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
         state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
+        if (shuffle) {
+            console.log("SHUFFLING " + shuffle);
+            state.player.shuffle();
+            state.ai.shuffle();
+        }
 
         updateGameState(state);
 
@@ -149,11 +154,6 @@ export module GameManager {
         //     let card = Cards.find({index: i}).fetch()[0];
         //     newDeck.push(new PlayableCard(counter++, card));
         // }
-        if (shuffle) {
-            console.log("SHUFFLING " + shuffle);
-            console.log(shuffle);
-            newDeck = shuffleDeck(newDeck);
-        }
         return newDeck;
     }
 
@@ -616,7 +616,7 @@ export module GameManager {
         console.log(name + " has a mulligan");
         returnHandToDeck(player);
        
-        player.deck = shuffleDeck(player.deck);
+        player.shuffle()
 
         console.log(name + ' drawing cards.');
         drawPlayer(player, 7);
