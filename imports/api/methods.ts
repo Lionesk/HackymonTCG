@@ -83,11 +83,13 @@ Meteor.methods({
             GameManager.checkForOutOfCards(state);
             if (!state.winner) {
                 AI.playTurn();
-                if(!(state.isFirstRound||state.isSecondRound)){
-                    GameManager.draw(true,1);
-                }
                 GameManager.resetRoundParams();
                 GameManager.applyActiveStatuses(false);
+                state= GameManager.getState();
+                if(!(state.isFirstRound||state.isSecondRound)){
+                    GameManager.draw(true,1);
+                    GameManager.appendCombatLog("Make your move!");
+                }
             }            
         }
     },
