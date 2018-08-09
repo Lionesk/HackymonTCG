@@ -207,8 +207,9 @@ export module GameManager {
         state.isFirstRound = false;
         state.energyPlayed = false;
         if(!state.isFirstRound && state.isSecondRound){
-            state.combatLog.push("Select your bench pokemon")
+            state.combatLog.push("Select your bench pokemon then end your turn")
         }
+        
         updateGameState(state);
     }
 
