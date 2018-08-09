@@ -1,0 +1,74 @@
+{
+  "id": "c6f80662-11bf-45bd-9c84-ca0ff5a4bb0b",
+  "name": "Test-6.3.1",
+  "url": "http://dumblev4.encs.concordia.ca",
+  "tests": [{
+    "id": "d9e17d75-7d85-4bf4-affe-34463240b6cd",
+    "name": "Untitled",
+    "commands": [{
+      "id": "5024ab91-00ca-4954-89f6-cd941815ef00",
+      "comment": "",
+      "command": "open",
+      "target": "/",
+      "value": ""
+    }, {
+      "id": "2ce8affb-16d2-4f7d-a8aa-b06d44415ba1",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-sign-in-link",
+      "value": "80,12"
+    }, {
+      "id": "0a3eec86-9f43-4da9-9bd8-29e85e9497d9",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=signup-link",
+      "value": "33,8"
+    }, {
+      "id": "02466941-b734-4f4c-bb99-21b5466e1306",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-username",
+      "value": "102,9"
+    }, {
+      "id": "bbff8152-493e-4777-a8c1-0abdbd6f981b",
+      "comment": "",
+      "command": "type",
+      "target": "id=login-username",
+      "value": "Create"
+    }, {
+      "id": "7c286f1f-eef3-4435-b90a-9bdb5860c6c4",
+      "comment": "",
+      "command": "type",
+      "target": "id=login-password",
+      "value": "123456"
+    }, {
+      "id": "e16d328a-b3d4-4e8a-b690-429df02fa577",
+      "comment": "",
+      "command": "type",
+      "target": "id=login-password-again",
+      "value": "123456"
+    }, {
+      "id": "fa0d681d-386a-40fe-af28-61bc21648038",
+      "comment": "",
+      "command": "clickAt",
+      "target": "id=login-buttons-password",
+      "value": "135,20"
+    }, {
+      "id": "56cf70eb-8bd2-4f99-b5c6-cab05ea53e74",
+      "comment": "",
+      "command": "clickAt",
+      "target": "//div[@id='__blaze-root']/main/main[2]/div/div[2]/div/div[2]",
+      "value": "74,26"
+    }]
+  }],
+  "suites": [{
+    "id": "c392d78d-dcd7-4bc4-8814-93d5d5469565",
+    "name": "Default Suite",
+    "parallel": false,
+    "timeout": 300,
+    "tests": ["d9e17d75-7d85-4bf4-affe-34463240b6cd"]
+  }],
+  "urls": ["http://dumblev4.encs.concordia.ca/"],
+  "plugins": [],
+  "version": "1.0"
+}
