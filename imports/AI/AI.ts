@@ -11,12 +11,14 @@ export module AI {
     }
 
     export function playTurnFromState(){
+        console.log("Ai's turn!")
         let state = GameManager.getState();
         if(!(state.isFirstRound||state.isSecondRound)){
             GameManager.draw(false);
         }
         if(!state.ai.active) {
             if(!state.ai.active){
+                console.log("AI no active!")
                 let benchCard = findPokemon(state.ai.bench,true);
                 let handCard = findPokemon(state.ai.hand,true);
                 if(benchCard){
