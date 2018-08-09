@@ -457,7 +457,7 @@ export module GameManager {
             case CardType.POKEMON:
                 if (ability.cost && checkCost(ability.cost, source.currentEnergy as PlayableCard<EnergyCard>[])) {
                     try {
-                        castAbility(state, ability, player, opponent, selectedTarget);
+                        castAbility(state, ability, player, opponent, humanPlayer, source.card.name, selectedTarget);
                     } catch (e) {
                         console.error(e.message);
                         didPokemonAttack = false;
@@ -467,7 +467,7 @@ export module GameManager {
                 }
                 break;
             case CardType.TRAINER:
-                castAbility(state, ability, player, opponent, selectedTarget);
+                castAbility(state, ability, player, opponent, humanPlayer, source.card.name, selectedTarget);
                 discard(player, source);
                 break;
             default:
@@ -500,12 +500,18 @@ export module GameManager {
         }, true);
     }
 
-    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
+    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard ) {
+        let abilityLog="";
+        if(humanPlayer){
+            abilityLog="Your " +cardName +" caused: ";
+        }else{
+            abilityLog="AI's " +cardName +" caused: ";
+        }
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
                 const executableAbility = createAbility(ability, player, opponent);
                 executableAbility.execute(selectedTarget);
-                state.combatLog.push(executableAbility.toString()); // drop this into an action log
+                state.combatLog.push(abilityLog+executableAbility.toString()); // drop this into an action log
             } catch (e) {
                 console.error(e.message);
             }
