@@ -60,6 +60,11 @@ export module GameManager {
         let aiDeck: Deck = Decks.find({ "_id": aiDeckId }).fetch()[0];
         state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
         state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
+        if (shuffle) {
+            console.log("SHUFFLING " + shuffle);
+            state.player.shuffle();
+            state.ai.shuffle();
+        }
 
         updateGameState(state);
 
@@ -149,11 +154,6 @@ export module GameManager {
         //     let card = Cards.find({index: i}).fetch()[0];
         //     newDeck.push(new PlayableCard(counter++, card));
         // }
-        if (shuffle) {
-            console.log("SHUFFLING " + shuffle);
-            console.log(shuffle);
-            newDeck = shuffleDeck(newDeck);
-        }
         return newDeck;
     }
 
@@ -457,7 +457,7 @@ export module GameManager {
             case CardType.POKEMON:
                 if (ability.cost && checkCost(ability.cost, source.currentEnergy as PlayableCard<EnergyCard>[])) {
                     try {
-                        castAbility(state, ability, player, opponent, selectedTarget);
+                        castAbility(state, ability, player, opponent, humanPlayer, source.card.name, selectedTarget);
                     } catch (e) {
                         console.error(e.message);
                         didPokemonAttack = false;
@@ -467,7 +467,7 @@ export module GameManager {
                 }
                 break;
             case CardType.TRAINER:
-                castAbility(state, ability, player, opponent, selectedTarget);
+                castAbility(state, ability, player, opponent, humanPlayer, source.card.name, selectedTarget);
                 discard(player, source);
                 break;
             default:
@@ -483,7 +483,7 @@ export module GameManager {
         }
     }
 
-    function checkCost(abilityCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]): boolean {
+    export function checkCost(abilityCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]): boolean {
         const available: Cost = cardEnergy.reduce<Cost>((acc, element) => {
             acc.colorless = acc.colorless ? acc.colorless + 1 : 1;
             acc[element.card.category] = (acc[element.card.category] || 0) + 1;
@@ -500,19 +500,25 @@ export module GameManager {
         }, true);
     }
 
-    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, selectedTarget?: PlayableCard) {
+    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard ) {
+        let abilityLog="";
+        if(humanPlayer){
+            abilityLog="Your " +cardName +" caused: ";
+        }else{
+            abilityLog="AI's " +cardName +" caused: ";
+        }
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
                 const executableAbility = createAbility(ability, player, opponent);
                 executableAbility.execute(selectedTarget);
-                state.combatLog.push(executableAbility.toString()); // drop this into an action log
+                state.combatLog.push(abilityLog+executableAbility.toString()); // drop this into an action log
             } catch (e) {
                 console.error(e.message);
             }
         });
     }
 
-    function removeCost(retreatCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]) {
+    export function removeCost(retreatCost: Cost, cardEnergy: PlayableCard<EnergyCard>[]) {
         let costEnergy: EnergyCat[] = [];
         let colorlessCount = 0;
         Object.keys(retreatCost).forEach((costKey: EnergyCat) => {
@@ -616,7 +622,7 @@ export module GameManager {
         console.log(name + " has a mulligan");
         returnHandToDeck(player);
        
-        player.deck = shuffleDeck(player.deck);
+        player.shuffle()
 
         console.log(name + ' drawing cards.');
         player.draw(7);

@@ -5,6 +5,7 @@ import { Player } from "./Player";
 import { PlayableCard } from "./PlayableCard";
 import { Cards, CardType, EnergyCard, GameStates, PokemonCard } from "../api/collections";
 import { parsePokemon } from '../util/fileParsers';
+import { Cost, AbilityReference, EnergyCat } from "../api/collections/Cards";
 
 
 
@@ -39,7 +40,7 @@ describe('coinFlip', function () {
 describe('shuffleDeck', function () {
       it('deck should be shuffled', function () {
             let deck = GameManager.generateDeck([51, 52, 50], false);
-            GameManager.shuffleDeck(deck);
+             GameManager.shuffleDeck(deck);
             assert.equal(deck.length, 3);
       });
 
@@ -150,6 +151,7 @@ describe('resolveMulligan', function () {
             let hands: PlayableCard[]=[];
             thePlayer.deck=[card1];
             thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+            Object.setPrototypeOf(thePlayer, Player.prototype);
             
             GameManager.resolveMulligan(thePlayer, "test");
 
@@ -174,6 +176,8 @@ describe('returnHandToDeck', function () {
             let hands: PlayableCard[]=[];
             thePlayer.deck=[card1];
             thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+           
+            Object.setPrototypeOf(thePlayer, Player.prototype);
             
             GameManager.returnHandToDeck(thePlayer);
 
@@ -295,9 +299,225 @@ describe('noPokemonInDeck', function () {
 
 
 
+describe('checkCost', function () {
+      it('REGRESSION if there is no energy should return false', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                  [EnergyCat.FIGHTING]: 1
+            };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.equal(result, false);
+            });
+});
+
+describe('checkCost', function () {
+      it('REGRESSION checkCost returns true if there is enough energy', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard>(1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.COLORLESS
+            });
+
+            energyArr.push(aCard);
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.equal(result, true);
+            });
+});
+
+describe('checkCost', function () {
+      it('REGRESSION energy type misMatch return false', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.FIGHTING]: 1,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
+
+            energyArr.push(aCard);
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.equal(result, false);
+            });
+});
+
+describe('checkCost', function () {
+      it('checkCost return a boolean value', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                  [EnergyCat.FIGHTING]: 1
+            };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.isBoolean(result);
+            });
+});
+
+describe('checkCost', function () {
+      it('REGRESSION COLORLESS energy should work with any energy requirment', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard>(1,{
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
+
+            energyArr.push(aCard);
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.equal(result, true);
+            });
+});
+
+describe('checkCost', function () {
+      it('REGRESSION COLORLESS energy should work with any energy requirment', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 3,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
+
+            energyArr.push(aCard);
+            let result= GameManager.checkCost(aCost, energyArr);
+
+            assert.equal(result, false);
+            });
+});
 
 
+describe('removeCost', function () {
+      it('cost is removed as required', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
 
+            energyArr.push(aCard);
+            energyArr.push(aCard);
+            let result= GameManager.removeCost(aCost, energyArr);
+
+            assert.equal(result[0].card.index, 17);
+            });
+});
+
+describe('removeCost', function () {
+      it('after removing cost remaining energy kept', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 1,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
+
+            energyArr.push(aCard);
+            energyArr.push(aCard);
+            let result= GameManager.removeCost(aCost, energyArr);
+
+            assert.equal(result.length, 1);
+            });
+});
+
+describe('removeCost', function () {
+      it('energy level removed correctly', function () {
+            //create Cost
+            let aCost: Cost = {
+                  [EnergyCat.COLORLESS]: 2,
+                              };
+            //create energyArr
+            let energyArr: PlayableCard<EnergyCard>[];
+            energyArr=[];
+            
+            //create Energy cards
+            let aCard: PlayableCard<EnergyCard>;
+            aCard = new PlayableCard<EnergyCard> (1, {
+                  name: "Test",
+                  index: 17,
+                  type: CardType.ENERGY,
+                  category: EnergyCat.PSYCHIC
+            });
+
+            energyArr.push(aCard);
+            energyArr.push(aCard);
+            let result= GameManager.removeCost(aCost, energyArr);
+
+            assert.equal(result.length, 0);
+            });
+});
 
 
 

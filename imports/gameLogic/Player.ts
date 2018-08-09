@@ -124,4 +124,16 @@ export class Player{
         }
         this.discardPile = this.discardPile.concat(toDiscard);
     }
+    shuffle(deckIndex: number = 0){       
+        let i = this.deck.length - deckIndex;
+        let temp: PlayableCard;
+        let random: number;
+        while (i !== deckIndex) {
+            random = Math.floor(Math.random() * i) + deckIndex;
+            i--;
+            temp = this.deck[i];
+            this.deck[i] = this.deck[random];
+            this.deck[random] = temp;
+        }
+    }
 }
