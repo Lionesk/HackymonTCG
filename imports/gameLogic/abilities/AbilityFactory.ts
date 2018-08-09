@@ -19,7 +19,7 @@ export function createAbility(abilityData: AbilityAction, playing: Player, oppon
       if (!abilityData.conditional || !abilityData.conditional.true) {
         throw new Error("Invalid conditional ability, missing true")
       }
-      return new Conditional(abilityData, playing, opponent, createAbility(abilityData.conditional.true, playing, opponent), abilityData.conditional.false ? createAbility(abilityData.conditional.false, playing, opponent) : undefined);
+      return new Conditional(abilityData, playing, opponent, abilityData.conditional.true.map(ab => createAbility(ab, playing, opponent)), abilityData.conditional.false ? abilityData.conditional.false.map(ab => createAbility(ab, playing, opponent)) : undefined);
     case AbilityType.DRAW:
       return new Draw(abilityData, playing);
     case AbilityType.APPLY_STAT:

@@ -71,7 +71,7 @@ describe('placePrizeCards', function () {
 
 describe('drawPlayer', function () {
       it('draw cards verify correctness of hand and deck', function () {
-            let thePlayer: Player = Player.constructor();
+            let thePlayer: Player = new Player();
             let card1 = new PlayableCard(20);
             let card2 = new PlayableCard(17);
             let card3 = new PlayableCard(34);
@@ -82,7 +82,7 @@ describe('drawPlayer', function () {
             thePlayer.hand = hands;
 
 
-            GameManager.drawPlayer(thePlayer, 3);
+            thePlayer.draw(3);
 
             assert.equal(thePlayer.deck.length, 1);
             assert.equal(thePlayer.hand[0].id, 34);

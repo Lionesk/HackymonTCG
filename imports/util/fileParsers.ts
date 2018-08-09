@@ -172,8 +172,10 @@ export function parseAbilityString(data: string): void {
 
 }
 
-export function parseAbility(abilityStr: string) {
+export function parseAbility(rawString: string) {
   // cannot split on comma only first comma must be taken into account so use substring
+  const abilityStr = preparseAbilities(rawString);
+  console.log("ABS: ", abilityStr);
   return abilityStr.split(',').map<AbilityAction>((actionStr: string) => {
     let looseAction: Partial<AbilityAction> = {};
     const typeIndex = actionStr.indexOf(':');
@@ -181,7 +183,10 @@ export function parseAbility(abilityStr: string) {
     if (Object.values(AbilityType).includes(actionType)) {
       looseAction.type = actionType as AbilityType;
     } else {
-      throw "invalid ability type"
+      console.log(abilityStr);
+      console.log(actionStr);
+      console.error("invalid ability type")
+      return looseAction as AbilityAction;
     }
     switch (looseAction.type) {
       case AbilityType.DAMAGE:
@@ -289,13 +294,12 @@ function parseDraw(action: Partial<AbilityAction>, actionData: string): Partial<
 
 function parseSearch(action: Partial<AbilityAction>, actionData: string): Partial<AbilityAction> {
   const tokens: string[] = actionData.split(':');
-  action.target = tokens[1] as Target;
   let sourceIndex: number = 3;
   if (action.target === Target.YOUR_POKEMON) {
     action.specification = tokens.slice(2, 4).join(':');
     sourceIndex = 6;
   }
-  action.source = tokens[sourceIndex] as Target;
+  action.target = `${tokens[1]}-${tokens[sourceIndex]}` as Target;
   const fileterTokens = tokens.slice(sourceIndex + 1, tokens.length);
   action = parseFilter(action, fileterTokens);
 
@@ -379,40 +383,69 @@ function parseFilter(action: Partial<AbilityAction>, tokens: string[]): Partial<
   return action;
 }
 
-function parseCondition(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
+function parseConditionX(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
   const tokens: string[] = data.split(":");
   action.conditional = {};
   action.conditional.condition = tokens[0] as Condition;
   switch (action.conditional.condition) {
     case Condition.ABILITY:
       action.conditional.conditionAbility = parseAbility(data.substr(data.indexOf(tokens[1]), data.indexOf(":(") - data.indexOf(tokens[2])))[0];
-      action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.length - data.indexOf("(")))[0];
+      action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.length - data.indexOf("(")));
       break;
     case Condition.FLIP:
-      if (data.indexOf("|") === -1) {
-        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+      if (data.indexOf("else") === -1) {
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])));
       } else {
-        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
-        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf(")")).replace("|", ","));
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")));
       }
       break;
     case Condition.HEAL:
       action.conditional.healTarget = tokens[2] as Target;
       if (data.indexOf("|") === -1) {
-        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])));
       } else {
-        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
-        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")));
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")));
       }
       break;
     case Condition.CHOICE:
       if (data.indexOf("|") === -1) {
-        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])))[0];
+        action.conditional.true = parseAbility(data.substr(data.indexOf(tokens[1]), data.length - data.indexOf(tokens[1])));
       } else {
-        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")))[0];
-        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")))[0];
+        action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.indexOf("|") - data.indexOf("(")));
+        action.conditional.false = parseAbility(data.substr(data.indexOf("|") + 1, data.indexOf(")") - data.indexOf("|")));
       }
   }
+
+  return action;
+}
+
+function parseCondition(action: Partial<AbilityAction>, data: string): Partial<AbilityAction> {
+  action.conditional = {};
+  action.conditional.condition = data.split(":")[0] as Condition;
+  let trueString: string;
+  if (action.conditional.condition === Condition.ABILITY) {
+    console.log("yolo", data.substr(data.indexOf(action.conditional.condition) + action.conditional.condition.length + 1, data.indexOf(":(") - (action.conditional.condition.length + 1)));
+    action.conditional.conditionAbility = parseAbility(data.substr(data.indexOf(action.conditional.condition) + action.conditional.condition.length + 1, data.indexOf(":(") - (action.conditional.condition.length + 1)))[0];
+    action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.lastIndexOf(")") - data.indexOf("(") + 1).replace("|", ","));
+  } else if (action.conditional.condition === Condition.HEAL) {
+    const tokens = data.split(":");
+    const elseIndex = tokens.indexOf("else");
+    action.conditional.true = parseAbility(tokens.slice(3,  elseIndex !== -1 ? elseIndex : undefined).join(":"));
+  } else if (data.indexOf("(") !== -1) {
+    console.log("HELLO", data.substr(data.indexOf("(") + 1, data.lastIndexOf(")", data.indexOf("else") !== -1 ? data.indexOf("else") : data.length)).replace("|", ",").replace(")", ""));
+    action.conditional.true = parseAbility(data.substr(data.indexOf("(") + 1, data.lastIndexOf(")", data.indexOf("else") !== -1 ? data.indexOf("else") : data.length)).replace("|", ",").replace(")", ""));
+  } else {
+    console.log(action.conditional.condition);
+    const tokens = data.split(":");
+    const elseIndex = tokens.indexOf("else");
+    action.conditional.true = parseAbility(tokens.slice(1,  elseIndex !== -1 ? elseIndex : undefined).join(":"));
+  }
+  if (data.indexOf("else") !== -1) {
+    // single else index
+    action.conditional.false = parseAbility(data.substr(data.indexOf("else:") + "else:".length).replace("(", "").replace(")", "").replace("|", ","));
+  } 
 
   return action;
 }
@@ -432,4 +465,16 @@ export function parseDeckFile(fileString: string, name:string, id?: string) {
     // GameStates.update({userid:Meteor.userId()},new GameState(Meteor.userId()),{upsert:true});
     Decks.insert({"userid":Meteor.userId(),"name":name,"deckcards":deckcards});
   }
+}
+
+//replace certain ',' with '|' only good for 2 action cond sub abilities
+function preparseAbilities(data: string): string {
+  console.log("Raw: ", data);
+  const chunks = data.split(",");
+  return chunks.reduce((final: string, chunk:string) => {
+    if (!chunk.includes("(") && chunk.includes(")")) {
+      return `${final}${final ? "|" : ""}${chunk}`;
+    }
+    return `${final}${final ? "," : ""}${chunk}`;
+  }, "");
 }

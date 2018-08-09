@@ -1,5 +1,5 @@
 import {PlayableCard} from './PlayableCard';
-import { PokemonCard, Card, CardType } from '../api/collections';
+import { PokemonCard, Card, CardType, Target } from '../api/collections';
 
 export class Player{
 
@@ -73,6 +73,27 @@ export class Player{
             this.prize = [];
         }
     }
+    
+    updateTarget(target: Target, value: PlayableCard | PlayableCard[]) {
+        switch(target) {
+            case Target.OPPONENT_DECK:
+            case Target.YOUR_DECK:
+                if (!Array.isArray(value)) {
+                    throw new Error("Invalid value for target");   
+                }
+                this.deck = value;
+                break;
+            case Target.OPPONENT_DECK:
+            case Target.YOUR_DISCARD:
+            if (!Array.isArray(value)) {
+                throw new Error("Invalid value for target");   
+            }
+            this.discardPile = value;
+            break;
+            default:
+                console.error("Invalid target type on player");
+        }
+    }
 
     discard(card: PlayableCard<Card>) {
         const toDiscard: PlayableCard<Card>[] = [];
@@ -80,6 +101,10 @@ export class Player{
             case CardType.POKEMON:
                 for (let energy of card.currentEnergy) {
                     toDiscard.push(energy);
+                }
+                if (card.under) {
+                    toDiscard.push(card.under);
+                    card.under = undefined;
                 }
                 card.currentEnergy = [];
                 toDiscard.push(card);
