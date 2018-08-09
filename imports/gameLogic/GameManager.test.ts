@@ -86,9 +86,9 @@ describe('drawPlayer', function () {
             thePlayer.draw(3);
 
             assert.equal(thePlayer.deck.length, 1);
-            assert.equal(thePlayer.hand[0].id, 34);
-            assert.equal(thePlayer.hand[1].id, 17);
-            assert.equal(thePlayer.hand[2].id, 20);
+            assert.equal(thePlayer.hand[0].id, 4);
+            assert.equal(thePlayer.hand[1].id, 20);
+            assert.equal(thePlayer.hand[2].id, 17);
 
       });
 });
