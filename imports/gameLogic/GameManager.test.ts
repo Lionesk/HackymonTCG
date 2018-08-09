@@ -40,7 +40,7 @@ describe('coinFlip', function () {
 describe('shuffleDeck', function () {
       it('deck should be shuffled', function () {
             let deck = GameManager.generateDeck([51, 52, 50], false);
-            GameManager.shuffleDeck(deck);
+             GameManager.shuffleDeck(deck);
             assert.equal(deck.length, 3);
       });
 
@@ -151,6 +151,7 @@ describe('resolveMulligan', function () {
             let hands: PlayableCard[]=[];
             thePlayer.deck=[card1];
             thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+            Object.setPrototypeOf(thePlayer, Player.prototype);
             
             GameManager.resolveMulligan(thePlayer, "test");
 
@@ -175,6 +176,8 @@ describe('returnHandToDeck', function () {
             let hands: PlayableCard[]=[];
             thePlayer.deck=[card1];
             thePlayer.hand = [card1,card2,card3,card1,card2,card3, card3];
+           
+            Object.setPrototypeOf(thePlayer, Player.prototype);
             
             GameManager.returnHandToDeck(thePlayer);
 
