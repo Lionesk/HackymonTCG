@@ -30,7 +30,7 @@ Knuckle Punch:dam:target:opponent-active:20
 Destructive Beam:cond:flip:deenergize:target:opponent-active:1
 Tierno:draw:3
 Potion:heal:target:choice:your:30
-Misty's Determination:cond:ability:deck:target:your:destination:discard:choice:you:1:(search:target:your:source:deck:filter:top:8:1|shuffle:target:your)
+Misty's Determination:cond:ability:deck:target:your:destination:discard:choice:you:1:(search:target:your:source:deck:filter:top:8:1,shuffle:target:your)
 Pokémon Center Lady:heal:target:choice:your:60,destat:target:last
 Clemont:search:target:your:source:deck:filter:energy:4
 Ear Influence:redamage:source:choice:opponent:destination:opponent:count(target:last:source:damage)
@@ -48,7 +48,7 @@ Rollout:dam:target:opponent-active:10
 Flail:dam:target:opponent-active:count(target:your-active:damage)*10
 Skill Dive:dam:target:opponent:10
 Poison Ring:applystat:status:stuck:opponent-active,applystat:status:poisoned:opponent-active
-Sleep Poison:cond:flip:(applystat:status:asleep:opponent-active|applystat:status:poisoned:opponent-active)
+Sleep Poison:cond:flip:(applystat:status:asleep:opponent-active,applystat:status:poisoned:opponent-active)
 Mine:search:target:opponent:source:deck:filter:top:1:0,cond:choice:shuffle:target:opponent
 Mud Slap:dam:target:opponent-active:20
 Earthquake:dam:target:opponent-active:60,dam:target:your-bench:10

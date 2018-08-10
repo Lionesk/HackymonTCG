@@ -40,23 +40,26 @@ function generateFilter(filter: Filter, amount?: number): (t: PlayableCard) => b
 export class Search implements ExecutableAbilityAction {
   reciever: Player;
   parsedTarget: PlayableCard[];
+  target: Target;
+  realTargetNames: string[];
   filter: (target: PlayableCard) => boolean;
   
   
   constructor(data: AbilityAction, playing: Player, opponent: Player) {
-    if (!data.target || !data.source || !data.filter) {
+    if (!data.target || !data.filter) {
       throw new Error("invalid search ability");
     }
     // parse target in file parser
-    const targetCheck: AbilityTarget = parseTarget(`${data.target}-${data.source}` as Target, playing, opponent);
+    const targetCheck: AbilityTarget = parseTarget(data.target as Target, playing, opponent);
     if ((targetCheck instanceof PlayableCard)) {
       throw new Error("Search source should be a card collection, not a single card");
     }
+    this.target = data.target;
     this.parsedTarget = targetCheck;
     this.filter = generateFilter(data.filter, data.amount);
     
     // TODO: wally
-    if (data.target === Target.YOUR) {
+    if (data.target === Target.YOUR_DECK) {
       this.reciever = playing;
     } else {
       this.reciever = opponent;
@@ -64,11 +67,21 @@ export class Search implements ExecutableAbilityAction {
   }
 
   execute(target?: AbilityTarget, index?: number) {
-    const cards = this.parsedTarget.filter(this.filter);
-    this.reciever.hand = this.reciever.hand.concat(cards);
+    // searches that come after a condition will not prompt the player to pick a target
+    if (!target) {
+      const cards = this.parsedTarget.filter(this.filter);
+      this.reciever.hand = this.reciever.hand.concat(cards);
+      this.reciever.updateTarget(this.target, this.parsedTarget.filter(card => !([] as PlayableCard[]).concat(cards).find(filterCard => filterCard.id === card.id)));
+      this.realTargetNames = cards.map(c => c.card.name);
+    } else {
+      const targetArray = ([] as PlayableCard[]).concat(target);
+      this.reciever.hand = this.reciever.hand.concat(target);
+      this.reciever.updateTarget(this.target, this.parsedTarget.filter(card => !targetArray.concat(target).find(filterCard => filterCard.id === card.id)));
+      this.realTargetNames = targetArray.map(c => c.card.name);
+    }
   }
 
   toString() {
-    return "WOWEE cards may or may not have been find, A quality message sure would be nice :3"
+    return `Found ${this.realTargetNames.join(", ")} in ${this.target} and moved it to ${this.target.substring(0, this.target.indexOf("-"))} hand`;
   }
 }

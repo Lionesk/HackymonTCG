@@ -23,12 +23,12 @@ function createConditionString(condition: Condition, conditionResult: boolean): 
 
 export class Conditional implements ExecutableAbilityAction {
   parsedTarget?: AbilityTarget;
-  positive: ExecutableAbilityAction;
-  negative?: ExecutableAbilityAction;
+  positive: ExecutableAbilityAction[];
+  negative?: ExecutableAbilityAction[];
   cond: Condition;
   condResult: boolean;
   
-  constructor(data: AbilityAction, playing: Player, opponent: Player, positive: ExecutableAbilityAction, negative?: ExecutableAbilityAction) {
+  constructor(data: AbilityAction, playing: Player, opponent: Player, positive: ExecutableAbilityAction[], negative?: ExecutableAbilityAction[]) {
     if (!data.conditional || !data.conditional.condition) {
       throw new Error("Invalid conditional AbilityAction");
     }
@@ -43,9 +43,9 @@ export class Conditional implements ExecutableAbilityAction {
 
   execute(target?: AbilityTarget) {
     if (this.condResult) {
-      this.positive.execute(target);
+      this.positive.forEach(cond => cond.execute(target));
     } else if (this.negative) {
-      this.negative.execute(target);
+      this.negative.forEach(cond => cond.execute(target));
     }
   }
 
