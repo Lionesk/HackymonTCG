@@ -63,9 +63,11 @@
                         <br />
 
                         <div class="row">
+                            {{#unless isAdmin}}
                             <div class="col-sm-6 col-sm-offset-3">
                                 <div class="deleteAccount btn btn-danger">Delete Account</div >
                             </div>
+                            {{/unless}}
                         </div>
                         <br />
                         <br />
@@ -77,9 +79,11 @@
                         <div class="col-sm-6 col-sm-offset-3 landing-box">
                             <div class="alert">Please Upload a Deck</div>
                             <br />
+                            {{#unless isAdmin}}
                             <div class="deleteAccount btn btn-danger">Delete Account</div >
                             <br />
                             <br />
+                            {{/unless}}
                         </div>
                     </div>
 
