@@ -1,72 +1,72 @@
 {
-  "id": "65c3859c-fe30-4e54-9db8-fd23f93aa048",
+  "id": "cbbc8497-5613-46be-9e9e-b314c079d939",
   "name": "UseCase3.2",
   "url": "http://dumblev4.encs.concordia.ca",
   "tests": [{
-    "id": "fa631628-fe49-4c51-a285-853ed6cf6770",
-    "name": "UseCase3.2",
+    "id": "b997f0f8-b672-45a8-97ed-f245ae23455d",
+    "name": "Untitled",
     "commands": [{
-      "id": "dae6a6ef-bd00-4742-bd88-afaf31a5d57c",
+      "id": "13306bde-7053-49b6-a162-4d64f75db6c9",
       "comment": "",
       "command": "open",
       "target": "/",
       "value": ""
     }, {
-      "id": "daa9e4bb-5b8f-4543-91b8-7a39cd7ca514",
+      "id": "21666ed4-edd3-4dd4-8293-c891fae8c144",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-sign-in-link",
-      "value": "62,15"
+      "value": "50,12"
     }, {
-      "id": "52063d20-9959-4fd1-aa27-f8e0fe241874",
+      "id": "310628bd-4c97-468b-a27a-7c7bc0f6313c",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-username",
-      "value": "65,12"
+      "value": "47,14"
     }, {
-      "id": "4c3d3db2-66b3-4057-a994-c01ac7761d3d",
+      "id": "5b82df7e-cfe5-4ca1-a672-b7dbd5ac0ced",
       "comment": "",
       "command": "type",
       "target": "id=login-username",
       "value": "123"
     }, {
-      "id": "e4ba2d65-4313-46a6-a45a-90ae39cb238d",
+      "id": "3ba3d960-37cf-4b1f-b28e-116c52d85b6e",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-password",
-      "value": "78,11"
+      "value": "79,6"
     }, {
-      "id": "ce0d356d-2d88-4769-908a-1e517d0769d7",
+      "id": "6c41aa8c-a84d-4da6-baec-177be121d0a1",
       "comment": "",
       "command": "type",
       "target": "id=login-password",
       "value": "123456"
     }, {
-      "id": "8f88c6e4-4902-40cc-ad52-2617e78c1591",
+      "id": "0e1468a3-eb08-4960-989e-ba17d2a7672d",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-buttons-password",
-      "value": "160,9"
+      "value": "90,19"
     }, {
-      "id": "c37d7cd1-967b-4455-9a99-b7f8e37e73f8",
+      "id": "c9143d6a-0fbd-4c0e-bf4a-cb04937dd427",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-name-link",
-      "value": "46,9"
+      "value": "42,5"
     }, {
-      "id": "44b90465-7c08-43bf-864a-c225564f8a01",
+      "id": "9ea5348c-539f-4fdb-b641-1a2ba7013191",
       "comment": "",
       "command": "clickAt",
       "target": "id=login-buttons-logout",
-      "value": "53,17"
+      "value": "53,15"
     }]
   }],
   "suites": [{
-    "id": "8473504b-7bf0-4e3b-9ac7-f16f1f77eaec",
+    "id": "749dfb5b-3f2d-4d0a-845a-b5b4ddb4878e",
     "name": "Default Suite",
     "parallel": false,
     "timeout": 300,
-    "tests": ["fa631628-fe49-4c51-a285-853ed6cf6770"]
+    "tests": ["b997f0f8-b672-45a8-97ed-f245ae23455d"]
   }],
   "urls": ["http://dumblev4.encs.concordia.ca/"],
   "plugins": [],

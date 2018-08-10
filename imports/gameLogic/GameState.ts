@@ -39,6 +39,6 @@ export class GameState implements GameStateInterface{
         this.isSecondRound = true;
         this.humanMulliganCount=0;
         this.aiMulliganCount=0;
-        this.combatLog=["Pick your active pokemon then end your turn"];
+        this.combatLog=[""];
     }
 }

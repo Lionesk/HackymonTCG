@@ -6,6 +6,7 @@ import { GameState } from "./GameState";
 import { AbilityAction, Abilities, Status } from "../api/collections/abilities";
 import { Cost, AbilityReference, EnergyCat, TrainerCard, PokemonCard, Card } from "../api/collections/Cards";
 import { createAbility } from "./abilities/AbilityFactory";
+import { AI } from "../AI/AI";
 
 export module GameManager {
     /***
@@ -138,6 +139,23 @@ export module GameManager {
 
         console.log('Game initialization done, updating the DB.');
         updateGameState(state);
+
+        //this is done in this order cuz of syncronous reasons
+        state = getState();//who goes first
+        if(!state.humanFirst){
+            state.combatLog.push("Tails! AI goes first!");
+        }else{
+            state.combatLog.push("Heads! You go first!");
+        }
+        updateGameState(state);
+
+        if(!state.humanFirst){//had to move here for syncronous reasons
+            AI.playTurn();
+        }
+        state = getState();//
+        state.combatLog.push("Pick your active pokemon then end your turn");
+        updateGameState(state);
+        
     }
 
     /***
@@ -429,7 +447,7 @@ export module GameManager {
         }
     }
     
-    function updateGameState(state: GameState) {
+   export function updateGameState(state: GameState) {
         if (!state.isFirstRound && !state.isSecondRound && !state.winner) {
             checkForDeath(state);
             checkForWinner(state);
