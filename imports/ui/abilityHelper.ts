@@ -55,12 +55,8 @@ export async function executeAbility(ability: Ability, abilityIndex: number, pla
                 choices["active"] = [gs.player.active];
                 break;
             case Target.YOUR: 
-                if(action.source ===Target.DECK){
-                    choices["deck"] = gs.player.deck.filter(filter);
-                }else{
                     choices["bench"] = gs.player.bench.filter(filter);
                     choices["active"] = [gs.player.active];
-                }
                 break;
             case Target.THEM:
                 choices["aiBench"] = gs.ai.bench.filter(filter);
