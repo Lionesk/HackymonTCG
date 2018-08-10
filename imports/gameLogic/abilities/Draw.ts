@@ -19,7 +19,7 @@ export class Draw implements ExecutableAbilityAction {
     this.playing = playing;
   }
   
-  execute(target?: AbilityTarget, index?: number) {
+  execute(target?: PlayableCard[], index?: number) {
     this.playing.draw(this.amount);
   }
 

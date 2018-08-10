@@ -7,7 +7,7 @@ import { Player } from "../Player";
 export class Damage implements ExecutableAbilityAction {
   parsedTarget: AbilityTarget;
   amount: number;
-  actualTarget?: PlayableCard;
+  actualTargets?: PlayableCard[];
   source: PlayableCard;
   constructor(abilityData: AbilityAction, playing: Player, opponent: Player) {
     if (!playing.active) {
@@ -16,25 +16,25 @@ export class Damage implements ExecutableAbilityAction {
     
     if (abilityData.target) {
       this.parsedTarget = parseTarget(abilityData.target, playing, opponent);
+      if (abilityData.choice) {
+        this.parsedTarget = (this.parsedTarget as PlayableCard[])[0]
+      }
     }
     this.amount = parseAmount(abilityData, playing, opponent); // do parsing for multiplied amount
     this.source = playing.active;
   }
   
-  execute(target?: AbilityTarget) {
-    if (Array.isArray(target) || Array.isArray(this.parsedTarget)) {
-      throw new Error("Invalid Target, should be single playable card");
-    }
+  execute(target?: PlayableCard[]) {
     // sort of wonky since target can be provided by front end
-    this.actualTarget = target ? target : this.parsedTarget;
-    this.actualTarget.damage(this.amount);
+    this.actualTargets = ([] as PlayableCard[]).concat(target || this.parsedTarget);
+    this.actualTargets.forEach(target => target.damage(this.amount));
   }
 
   toString() {
-    if (!this.actualTarget) {
+    if (!this.actualTargets) {
       throw new Error("Ability has not yet been executed");
     }
 
-    return `${this.source.card.name} attacked ${this.actualTarget.card.name} dealing ${this.amount} damage`
+    return `${this.source.card.name} attacked ${this.actualTargets.map(card => card.card.name).join(", ")} dealing ${this.amount} damage ${this.actualTargets.length > 1 ? "to each" : ""}`;
   }
 }

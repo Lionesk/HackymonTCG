@@ -5,9 +5,9 @@ import { PlayableCard } from "../PlayableCard";
 import { Player } from "../Player";
 
 export class Heal implements ExecutableAbilityAction {
-  parsedTarget?: AbilityTarget;
+  parsedTarget: AbilityTarget;
   amount: number;
-  actualTarget?: PlayableCard;
+  actualTargets?: PlayableCard[];
 
   constructor(data: AbilityAction, playing: Player, opponent: Player) {
     if (data.target) {
@@ -16,26 +16,15 @@ export class Heal implements ExecutableAbilityAction {
     this.amount = parseAmount(data, playing, opponent); // do parsing for multiplied amount
   }
 
-  execute(target?: AbilityTarget) {
-    if (Array.isArray(target) || Array.isArray(this.parsedTarget)) {
-      throw new Error("Invalid Target, should be s-ingle playable card");
-    }
-    // sort of wonky since target can be provided by front end
-    if (target) {
-      this.actualTarget = target;
-      target.heal(this.amount);
-    } else if (this.parsedTarget) {
-      this.parsedTarget.heal(this.amount);
-      this.actualTarget = this.parsedTarget;
-    } else {
-      throw new Error("no target for ability");
-    }
+  execute(target?: PlayableCard[]) {
+    this.actualTargets = ([] as PlayableCard[]).concat(target || this.parsedTarget);
+    this.actualTargets.forEach(target => target.heal(this.amount));
   }
 
   toString(): string {
-    if (!this.actualTarget) {
+    if (!this.actualTargets) {
       throw new Error("Ability has not yet executed, cannot generate message");
     }
-    return `${this.actualTarget.card.name} healed for ${this.amount}`;
+    return `${this.actualTargets.map(card => card.card.name).join(", ")} ${this.actualTargets.length === 1 ? "was" : "where"} healed for ${this.amount}`;
   }
 }

@@ -6,7 +6,7 @@ import { Player } from "../Player";
 export type AbilityTarget = PlayableCard | PlayableCard[];
 
 export interface ExecutableAbilityAction {
-  execute(target?: AbilityTarget, index?: number): void;
+  execute(target?: PlayableCard[], index?: number): void;
 }
 
 export function parseAmount(action: AbilityAction, playing: Player, opponent: Player): number {
@@ -46,6 +46,8 @@ export function parseTarget(target: Target, playing: Player, opponent: Player): 
       return playing.active;
     case Target.OPPONENT_BENCH:
       return opponent.bench;
+    case Target.YOUR_BENCH:
+      return playing.bench;
     case Target.YOUR_DECK:
       return playing.deck;
     case Target.OPPONENT_DECK:

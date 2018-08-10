@@ -60,7 +60,7 @@ export module GameManager {
         let playerDeck: Deck = Decks.find({ "_id": playerDeckId }).fetch()[0];
         let aiDeck: Deck = Decks.find({ "_id": aiDeckId }).fetch()[0];
         state.player.deck = generateDeck(playerDeck.deckcards, shuffle);
-        state.ai.deck = generateDeck(aiDeck.deckcards, shuffle);
+        state.ai.deck = generateDeck(aiDeck.deckcards, shuffle, playerDeck.deckcards.length);
         if (shuffle) {
             console.log("SHUFFLING " + shuffle);
             state.player.shuffle();
@@ -165,8 +165,8 @@ export module GameManager {
      * @param {Player} player
      * @param {number[]} deck
      */
-    export function generateDeck(deck: number[], shuffle: boolean): PlayableCard[] {
-        let counter: number = 0;
+    export function generateDeck(deck: number[], shuffle: boolean, start: number = 0): PlayableCard[] {
+        let counter: number = start;
         let newDeck: PlayableCard[] = deck.map(((index: number) => new PlayableCard(counter++, Cards.find({ index }).fetch()[0])));
         // for(let i of deck){
         //     let card = Cards.find({index: i}).fetch()[0];
@@ -373,6 +373,12 @@ export module GameManager {
         playableCard = player.bench.find((element) => {
             return element.id === card.id
         });
+        if (playableCard !== undefined) {
+            return playableCard;
+        }
+        playableCard = player.deck.find((element) => {
+            return element.id === card.id
+        });
         if (!playableCard) {
             throw new Error(`Card #${card.id} does not exist in DB`);
         }
@@ -455,7 +461,7 @@ export module GameManager {
         GameStates.update({ userid: Meteor.userId() }, state);
     }
 
-    export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard) {
+    export function executeAbility(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, selectedTarget?: PlayableCard[]) {
         let state = getState();
         let player: Player = humanPlayer ? state.player : state.ai;
         let opponent: Player = humanPlayer ? state.ai : state.player;
@@ -519,8 +525,17 @@ export module GameManager {
         }, true);
     }
 
-    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard ) {
+    function castAbility(state: GameState, abilRef: AbilityReference, player: Player, opponent: Player, humanPlayer:boolean, cardName:string, selectedTarget?: PlayableCard[]) {
         let abilityLog="";
+        let mappedTargets: PlayableCard[];
+        if (selectedTarget) {
+            // hackey way to search through all cards
+            try {
+                mappedTargets = selectedTarget.map(card => mapCardCopy(player, card));
+            } catch {
+                mappedTargets = selectedTarget.map(card => mapCardCopy(opponent, card));
+            }
+        }
         if(humanPlayer){
             abilityLog="Your " +cardName +": ";
         }else{
@@ -529,7 +544,7 @@ export module GameManager {
         Abilities.find({ index: abilRef.index }).fetch()[0].actions.forEach((ability: AbilityAction) => {
             try {
                 const executableAbility = createAbility(ability, player, opponent);
-                executableAbility.execute(selectedTarget);
+                executableAbility.execute(mappedTargets);
                 state.combatLog.push(abilityLog+executableAbility.toString()); // drop this into an action log
             } catch (e) {
                 console.error(e.message);

@@ -66,7 +66,7 @@ export class Search implements ExecutableAbilityAction {
     }
   }
 
-  execute(target?: AbilityTarget, index?: number) {
+  execute(target?: PlayableCard[], index?: number) {
     // searches that come after a condition will not prompt the player to pick a target
     if (!target) {
       const cards = this.parsedTarget.filter(this.filter);
