@@ -49,7 +49,7 @@ Meteor.methods({
             }
         }
     },
-    executeAbility:function(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, target?: PlayableCard) {
+    executeAbility:function(humanPlayer: boolean, source: PlayableCard, abilityIndex: number, target?: PlayableCard[]) {
         if(Meteor.isServer){
             GameManager.executeAbility(humanPlayer, source, abilityIndex, target);
         }

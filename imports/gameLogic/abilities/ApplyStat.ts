@@ -5,7 +5,7 @@ import { AbilityAction, Status } from "../../api/collections/abilities";
 
 export class ApplyStat implements ExecutableAbilityAction {
   parsedTarget: AbilityTarget;
-  actualTarget: AbilityTarget;
+  actualTargets: PlayableCard[];
   status: Status;
   
   constructor(data: AbilityAction, playing: Player, opponent:  Player) {
@@ -16,22 +16,21 @@ export class ApplyStat implements ExecutableAbilityAction {
     this.parsedTarget = parseTarget(data.target, playing, opponent)
   }
   
-  execute(target?: AbilityTarget, index?: number) {
-    this.actualTarget = target || this.parsedTarget;
-    if (this.actualTarget instanceof PlayableCard) {
+  execute(target?: PlayableCard[], index?: number) {
+    this.actualTargets = ([] as PlayableCard[]).concat(target || this.parsedTarget);
+    this.actualTargets.forEach(actualTarget => {
       console.log(this.status)
-      if(!this.actualTarget.statuses.find((stat)=>{return stat===this.status})){
-      console.log(this.status)
-      console.log(this.actualTarget)
-        
-        this.actualTarget.applyStat(this.status);
+      if (!actualTarget.statuses.find((stat) => { return stat === this.status })) {
+        console.log(this.status)
+        console.log(actualTarget)
+
+        actualTarget.applyStat(this.status);
       }
-    } else {
-      throw new Error("cannot apply stat on multiple cards");
-    }
+      
+    });
   }
 
   toString() {
-    return `${(this.actualTarget as PlayableCard).card.name} was afflicted by ${this.status}`;
+    return `${this.actualTargets.map(card => card.card.name).join(", ")} ${this.actualTargets.length === 1 ? 'was' : 'where'} afflicted by ${this.status}`;
   }
 }

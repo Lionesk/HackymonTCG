@@ -2,6 +2,7 @@ import { AbilityAction, Condition } from "../../api/collections/abilities";
 import { ExecutableAbilityAction, AbilityTarget, parseTarget } from "./Ability"
 import { GameState } from "../GameState";
 import { Player } from "../Player";
+import { PlayableCard } from "../PlayableCard";
 
 function createCondition(condition: Condition) {
   switch (condition) {
@@ -41,7 +42,7 @@ export class Conditional implements ExecutableAbilityAction {
     this.condResult = createCondition(data.conditional.condition)();;
   }
 
-  execute(target?: AbilityTarget) {
+  execute(target?: PlayableCard[]) {
     if (this.condResult) {
       this.positive.forEach(cond => cond.execute(target));
     } else if (this.negative) {

@@ -85,7 +85,7 @@ Template.DisplayCard.events({
             return elem.id!==this.card.id&&elem.card.name!==this.card.card.name
         })
        }
-       if(ac.targets.length>ac.ability.actions[ac.actionIndex].amount){
+       if(ac.targets.length>(ac.ability.actions[ac.actionIndex].amount < 10 ? ac.ability.actions[ac.actionIndex].amount : 1)){
            ac.targets.shift();
        }
        Session.set("ability",ac);
