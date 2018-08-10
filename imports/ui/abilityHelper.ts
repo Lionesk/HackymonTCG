@@ -13,7 +13,7 @@ export async function executeAbility(ability: Ability, abilityIndex: number, pla
             && elem.choice !== Choice.RANDOM
             && elem.choice !== undefined)
             || elem.type === AbilityType.SEARCH
-    })
+    }) || (playableCard.card.name==="Zubat")
     ) {
         yourChoice = true;
     }
@@ -52,23 +52,23 @@ export async function executeAbility(ability: Ability, abilityIndex: number, pla
                 break;
             case Target.YOUR_POKEMON:
                 choices["bench"] = gs.player.bench.filter(filter);
-                // choices["hand"]=gs.player.hand;
                 choices["active"] = [gs.player.active];
                 break;
-            case Target.YOUR:
-                choices["bench"] = gs.player.bench.filter(filter);
-                choices["active"] = [gs.player.active];
+            case Target.YOUR: 
+                    choices["bench"] = gs.player.bench.filter(filter);
+                    choices["active"] = [gs.player.active];
                 break;
             case Target.THEM:
-                choices["bench"] = gs.ai.bench.filter(filter);
-                choices["active"] = [gs.ai.active];
-                break; case Target.YOUR:
+                choices["aiBench"] = gs.ai.bench.filter(filter);
+                choices["aiActive"] = [gs.ai.active];
+                break; 
+            case Target.YOU:
                 choices["bench"] = gs.player.bench.filter(filter);
                 choices["active"] = [gs.player.active];
                 break;
-            case Target.YOU:
-                choices["bench"] = gs.ai.bench.filter(filter);
-                choices["active"] = [gs.ai.active];
+            case Target.OPPONENT:
+                choices["aiBench"] = gs.ai.bench.filter(filter);
+                choices["aiActive"] = [gs.ai.active];
                 break;
         }
         Session.set("ability", {

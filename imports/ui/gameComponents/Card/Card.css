@@ -64,6 +64,11 @@
     -webkit-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8);
     -moz-box-shadow: 0px 0px 33px -4px rgba(0,0,0,0.8); 
 }
+
+.mini-card:hover{
+    cursor:pointer;
+    background-color:rgb(226, 226, 226);
+}
 .mini{
     font-size: 65%;
     margin:0px!important;

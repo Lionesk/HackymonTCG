@@ -47,10 +47,16 @@
                  {{> Action action=action.healTarget}} was healed
             {{/if}}
             {{#if action.conditional.true}}
-                Success: {{> Action action=action.conditional.true}}
+                Success: 
+                {{#each success in action.conditional.true}}
+                    {{> Action action=success}}
+                {{/each}}
             {{/if}}
             {{#if action.conditional.false}}
-                Fail: {{> Action action=action.conditional.false}}
+                Fail: 
+                {{#each fail in action.conditional.false}}
+                    {{> Action action=fail}}
+                {{/each}}
             {{/if}}
         {{/if}}
         {{{bottomActionString action}}}
